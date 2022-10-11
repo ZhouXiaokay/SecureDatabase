@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+message encrypted {
+  //the following values correspond to
+  // - protobuf data type
+  // - name
+  // - numeric tag corresponding to the ordering in which the fields are serialized
+  int32 round =1;
+  int32 client_rank = 2;
+  int32 epoch =3;
+  bytes msg = 4;
+}
+
+message gradenc {
+  int32 client_rank = 1;
+  bytes msg = 2;
+}
+
+message sendgradflag{
+    int32 flag = 1;
+}
+
+
+service SafeTransmission {
+  rpc ComDCNforward (encrypted) returns (gradenc);
+  rpc ComDCNbackward (gradenc) returns (sendgradflag);
+}
