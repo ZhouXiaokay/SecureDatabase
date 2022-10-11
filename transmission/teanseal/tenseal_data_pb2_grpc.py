@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import tenseal_data_pb2 as tenseal__data__pb2
+import transmission.teanseal.tenseal_data_pb2 as tenseal__data__pb2
 
 
 class SafeTransmissionStub(object):

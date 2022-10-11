@@ -1,7 +1,7 @@
 import transmission.teanseal.tenseal_data_pb2_grpc as tenseal_data_pb2_grpc
 import transmission.teanseal.tenseal_data_pb2 as tenseal_data_pb2
 import tenseal as ts
-from DataServer.conn_mysql import *
+from databaseServer.conn_mysql import *
 
 
 class DatabaseServer(tenseal_data_pb2_grpc.SafeTransmissionServicer):

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+
+message requestOP {
+  int32 id =1;
+  bytes msg = 2;
+}
+
+service RequestTransmission {
+  rpc RequestParsing (requestOP) returns (requestOP);
+}
