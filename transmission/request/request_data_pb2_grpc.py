@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import request_data_pb2 as request__data__pb2
+import transmission.request.request_data_pb2 as request__data__pb2
 
 
 class RequestTransmissionStub(object):
@@ -16,8 +16,13 @@ class RequestTransmissionStub(object):
         """
         self.RequestParsing = channel.unary_unary(
                 '/RequestTransmission/RequestParsing',
-                request_serializer=request__data__pb2.requestOP.SerializeToString,
-                response_deserializer=request__data__pb2.requestOP.FromString,
+                request_serializer=request__data__pb2.requestQuery.SerializeToString,
+                response_deserializer=request__data__pb2.results.FromString,
+                )
+        self.RequestDecrypt = channel.unary_unary(
+                '/RequestTransmission/RequestDecrypt',
+                request_serializer=request__data__pb2.results.SerializeToString,
+                response_deserializer=request__data__pb2.results.FromString,
                 )
 
 
@@ -30,13 +35,24 @@ class RequestTransmissionServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def RequestDecrypt(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_RequestTransmissionServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'RequestParsing': grpc.unary_unary_rpc_method_handler(
                     servicer.RequestParsing,
-                    request_deserializer=request__data__pb2.requestOP.FromString,
-                    response_serializer=request__data__pb2.requestOP.SerializeToString,
+                    request_deserializer=request__data__pb2.requestQuery.FromString,
+                    response_serializer=request__data__pb2.results.SerializeToString,
+            ),
+            'RequestDecrypt': grpc.unary_unary_rpc_method_handler(
+                    servicer.RequestDecrypt,
+                    request_deserializer=request__data__pb2.results.FromString,
+                    response_serializer=request__data__pb2.results.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -60,7 +76,24 @@ class RequestTransmission(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/RequestTransmission/RequestParsing',
-            request__data__pb2.requestOP.SerializeToString,
-            request__data__pb2.requestOP.FromString,
+            request__data__pb2.requestQuery.SerializeToString,
+            request__data__pb2.results.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def RequestDecrypt(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/RequestTransmission/RequestDecrypt',
+            request__data__pb2.results.SerializeToString,
+            request__data__pb2.results.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

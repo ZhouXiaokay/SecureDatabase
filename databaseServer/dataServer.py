@@ -22,3 +22,25 @@ class DatabaseServer(tenseal_data_pb2_grpc.SafeTransmissionServicer):
         response = tenseal_data_pb2.encrypted(id=1, msg=serialize_msg)
 
         return response
+
+    def MinValue(self, request, context):
+        minvalue = getMinValue(self.name)
+
+        plain_vector = ts.plain_tensor([minvalue])
+        enc_vector = ts.ckks_vector(self.pk_ctx, plain_vector)
+        serialize_msg = enc_vector.serialize()
+        response = tenseal_data_pb2.encrypted(id=1, msg=serialize_msg)
+
+        return response
+
+    def SumValue(self, request, context):
+        sumValue = getSumValue(self.name)
+
+        plain_vector = ts.plain_tensor([sumValue])
+        enc_vector = ts.ckks_vector(self.pk_ctx, plain_vector)
+        serialize_msg = enc_vector.serialize()
+        response = tenseal_data_pb2.encrypted(id=1, msg=serialize_msg)
+
+        return response
+
+

@@ -1,12 +1,17 @@
 syntax = "proto3";
 
+message requestOP{
+  string id = 1;
+  string op = 2;
+}
 
 message encrypted {
-  int32 id =1;
+  int32 id = 1;
   bytes msg = 2;
 }
 
 service SafeTransmission {
-  rpc MaxValue (encrypted) returns (encrypted);
-  rpc MinValue (encrypted) returns (encrypted);
+  rpc MaxValue (requestOP) returns (encrypted);
+  rpc MinValue (requestOP) returns (encrypted);
+  rpc SumValue (requestOP) returns (encrypted);
 }

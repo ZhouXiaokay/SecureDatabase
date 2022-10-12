@@ -1,5 +1,5 @@
 import tenseal as ts
-
+import torch
 sk_file = "ts_ckks.config"
 pk_file = "ts_ckks_pk.config"
 
@@ -11,6 +11,9 @@ sk_ctx = ts.context_from(sk_bytes)
 sk = sk_ctx.secret_key()
 
 
-plain_vector = ts.plain_tensor([60])
-enc = ts.ckks_vector(pk_ctx,plain_vector)
-print(enc.decrypt(sk))
+plain_vector = ts.plain_tensor([60,50])
+enc_1 = ts.ckks_vector(pk_ctx,plain_vector)
+enc_2 = ts.ckks_vector(sk_ctx,plain_vector)
+
+print(enc_2.decrypt())
+print(enc_1.decrypt(sk))

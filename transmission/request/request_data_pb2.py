@@ -14,24 +14,34 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12request_data.proto\"$\n\trequestOP\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0b\n\x03msg\x18\x02 \x01(\x0c\x32?\n\x13RequestTransmission\x12(\n\x0eRequestParsing\x12\n.requestOP\x1a\n.requestOPb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12request_data.proto\"&\n\x0crequestQuery\x12\n\n\x02id\x18\x01 \x01(\t\x12\n\n\x02op\x18\x02 \x01(\t\"\x16\n\x07results\x12\x0b\n\x03msg\x18\x01 \x01(\x0c\x32\x66\n\x13RequestTransmission\x12)\n\x0eRequestParsing\x12\r.requestQuery\x1a\x08.results\x12$\n\x0eRequestDecrypt\x12\x08.results\x1a\x08.resultsb\x06proto3')
 
 
 
-_REQUESTOP = DESCRIPTOR.message_types_by_name['requestOP']
-requestOP = _reflection.GeneratedProtocolMessageType('requestOP', (_message.Message,), {
-  'DESCRIPTOR' : _REQUESTOP,
+_REQUESTQUERY = DESCRIPTOR.message_types_by_name['requestQuery']
+_RESULTS = DESCRIPTOR.message_types_by_name['results']
+requestQuery = _reflection.GeneratedProtocolMessageType('requestQuery', (_message.Message,), {
+  'DESCRIPTOR' : _REQUESTQUERY,
   '__module__' : 'request_data_pb2'
-  # @@protoc_insertion_point(class_scope:requestOP)
+  # @@protoc_insertion_point(class_scope:requestQuery)
   })
-_sym_db.RegisterMessage(requestOP)
+_sym_db.RegisterMessage(requestQuery)
+
+results = _reflection.GeneratedProtocolMessageType('results', (_message.Message,), {
+  'DESCRIPTOR' : _RESULTS,
+  '__module__' : 'request_data_pb2'
+  # @@protoc_insertion_point(class_scope:results)
+  })
+_sym_db.RegisterMessage(results)
 
 _REQUESTTRANSMISSION = DESCRIPTOR.services_by_name['RequestTransmission']
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  _REQUESTOP._serialized_start=22
-  _REQUESTOP._serialized_end=58
-  _REQUESTTRANSMISSION._serialized_start=60
-  _REQUESTTRANSMISSION._serialized_end=123
+  _REQUESTQUERY._serialized_start=22
+  _REQUESTQUERY._serialized_end=60
+  _RESULTS._serialized_start=62
+  _RESULTS._serialized_end=84
+  _REQUESTTRANSMISSION._serialized_start=86
+  _REQUESTTRANSMISSION._serialized_end=188
 # @@protoc_insertion_point(module_scope)

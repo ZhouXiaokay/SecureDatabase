@@ -14,11 +14,19 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12tenseal_data.proto\"$\n\tencrypted\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0b\n\x03msg\x18\x02 \x01(\x0c\x32Z\n\x10SafeTransmission\x12\"\n\x08MaxValue\x12\n.encrypted\x1a\n.encrypted\x12\"\n\x08MinValue\x12\n.encrypted\x1a\n.encryptedb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12tenseal_data.proto\"#\n\trequestOP\x12\n\n\x02id\x18\x01 \x01(\t\x12\n\n\x02op\x18\x02 \x01(\t\"$\n\tencrypted\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0b\n\x03msg\x18\x02 \x01(\x0c\x32~\n\x10SafeTransmission\x12\"\n\x08MaxValue\x12\n.requestOP\x1a\n.encrypted\x12\"\n\x08MinValue\x12\n.requestOP\x1a\n.encrypted\x12\"\n\x08SumValue\x12\n.requestOP\x1a\n.encryptedb\x06proto3')
 
 
 
+_REQUESTOP = DESCRIPTOR.message_types_by_name['requestOP']
 _ENCRYPTED = DESCRIPTOR.message_types_by_name['encrypted']
+requestOP = _reflection.GeneratedProtocolMessageType('requestOP', (_message.Message,), {
+  'DESCRIPTOR' : _REQUESTOP,
+  '__module__' : 'tenseal_data_pb2'
+  # @@protoc_insertion_point(class_scope:requestOP)
+  })
+_sym_db.RegisterMessage(requestOP)
+
 encrypted = _reflection.GeneratedProtocolMessageType('encrypted', (_message.Message,), {
   'DESCRIPTOR' : _ENCRYPTED,
   '__module__' : 'tenseal_data_pb2'
@@ -30,8 +38,10 @@ _SAFETRANSMISSION = DESCRIPTOR.services_by_name['SafeTransmission']
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  _ENCRYPTED._serialized_start=22
-  _ENCRYPTED._serialized_end=58
-  _SAFETRANSMISSION._serialized_start=60
-  _SAFETRANSMISSION._serialized_end=150
+  _REQUESTOP._serialized_start=22
+  _REQUESTOP._serialized_end=57
+  _ENCRYPTED._serialized_start=59
+  _ENCRYPTED._serialized_end=95
+  _SAFETRANSMISSION._serialized_start=97
+  _SAFETRANSMISSION._serialized_end=223
 # @@protoc_insertion_point(module_scope)

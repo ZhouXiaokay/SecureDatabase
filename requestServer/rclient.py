@@ -9,23 +9,11 @@ def run(pk_ctx):
     channel = grpc.insecure_channel('127.0.0.1:50051', options=options)
     stub = tenseal_data_pb2_grpc.SafeTransmissionStub(channel)
 
-    plain_vector = ts.plain_tensor([0])
-    enc_vector = ts.ckks_vector(pk_ctx,plain_vector)
-    serialize_msg = enc_vector.serialize()
-    request = tenseal_data_pb2.encrypted(id=1,msg=serialize_msg)
+    request = tenseal_data_pb2.requestOP(id="",op="")
     response = stub.MaxValue(request)
     enc_vector_1 = ts.ckks_vector_from(pk_ctx,response.msg)
 
-    channel = grpc.insecure_channel('127.0.0.1:50052', options=options)
-    stub = tenseal_data_pb2_grpc.SafeTransmissionStub(channel)
-    plain_vector = ts.plain_tensor([0])
-    enc_vector = ts.ckks_vector(pk_ctx,plain_vector)
-    serialize_msg = enc_vector.serialize()
-    request = tenseal_data_pb2.encrypted(id=1,msg=serialize_msg)
-    response = stub.MaxValue(request)
-    enc_vector_2 = ts.ckks_vector_from(pk_ctx,response.msg)
-
-    return enc_vector_1,enc_vector_2
+    return enc_vector_1
 
 
 
@@ -35,16 +23,16 @@ if __name__ == "__main__":
     pk_bytes = open(pk_file,"rb").read()
     pk_ctx = ts.context_from(pk_bytes)
 
-    enc1,enc_2 = run(pk_ctx)
-    add_results = enc1+enc_2
+    enc1 = run(pk_ctx)
+
 
 
     sk_ctx_file = "../transmission/ts_ckks.config"
     sk_context_bytes = open(sk_ctx_file,"rb").read()
     ctx = ts.context_from(sk_context_bytes)
     sk = ctx.secret_key()
+
     print(enc1.decrypt(sk))
-    print(enc_2.decrypt(sk))
-    print(add_results.decrypt(sk))
+    print(enc1.decrypt())
 
 

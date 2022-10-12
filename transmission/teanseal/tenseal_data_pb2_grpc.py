@@ -16,12 +16,17 @@ class SafeTransmissionStub(object):
         """
         self.MaxValue = channel.unary_unary(
                 '/SafeTransmission/MaxValue',
-                request_serializer=tenseal__data__pb2.encrypted.SerializeToString,
+                request_serializer=tenseal__data__pb2.requestOP.SerializeToString,
                 response_deserializer=tenseal__data__pb2.encrypted.FromString,
                 )
         self.MinValue = channel.unary_unary(
                 '/SafeTransmission/MinValue',
-                request_serializer=tenseal__data__pb2.encrypted.SerializeToString,
+                request_serializer=tenseal__data__pb2.requestOP.SerializeToString,
+                response_deserializer=tenseal__data__pb2.encrypted.FromString,
+                )
+        self.SumValue = channel.unary_unary(
+                '/SafeTransmission/SumValue',
+                request_serializer=tenseal__data__pb2.requestOP.SerializeToString,
                 response_deserializer=tenseal__data__pb2.encrypted.FromString,
                 )
 
@@ -41,17 +46,28 @@ class SafeTransmissionServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def SumValue(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_SafeTransmissionServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'MaxValue': grpc.unary_unary_rpc_method_handler(
                     servicer.MaxValue,
-                    request_deserializer=tenseal__data__pb2.encrypted.FromString,
+                    request_deserializer=tenseal__data__pb2.requestOP.FromString,
                     response_serializer=tenseal__data__pb2.encrypted.SerializeToString,
             ),
             'MinValue': grpc.unary_unary_rpc_method_handler(
                     servicer.MinValue,
-                    request_deserializer=tenseal__data__pb2.encrypted.FromString,
+                    request_deserializer=tenseal__data__pb2.requestOP.FromString,
+                    response_serializer=tenseal__data__pb2.encrypted.SerializeToString,
+            ),
+            'SumValue': grpc.unary_unary_rpc_method_handler(
+                    servicer.SumValue,
+                    request_deserializer=tenseal__data__pb2.requestOP.FromString,
                     response_serializer=tenseal__data__pb2.encrypted.SerializeToString,
             ),
     }
@@ -76,7 +92,7 @@ class SafeTransmission(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/SafeTransmission/MaxValue',
-            tenseal__data__pb2.encrypted.SerializeToString,
+            tenseal__data__pb2.requestOP.SerializeToString,
             tenseal__data__pb2.encrypted.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -93,7 +109,24 @@ class SafeTransmission(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/SafeTransmission/MinValue',
-            tenseal__data__pb2.encrypted.SerializeToString,
+            tenseal__data__pb2.requestOP.SerializeToString,
+            tenseal__data__pb2.encrypted.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def SumValue(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/SafeTransmission/SumValue',
+            tenseal__data__pb2.requestOP.SerializeToString,
             tenseal__data__pb2.encrypted.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
