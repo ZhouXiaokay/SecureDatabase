@@ -2,7 +2,8 @@ syntax = "proto3";
 
 message requestQuery{
   string id = 1;
-  string op = 2;
+  string db_name = 2;
+  string op = 3;
 }
 
 message results {

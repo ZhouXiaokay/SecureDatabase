@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12request_data.proto\"&\n\x0crequestQuery\x12\n\n\x02id\x18\x01 \x01(\t\x12\n\n\x02op\x18\x02 \x01(\t\"\x16\n\x07results\x12\x0b\n\x03msg\x18\x01 \x01(\x0c\x32\x66\n\x13RequestTransmission\x12)\n\x0eRequestParsing\x12\r.requestQuery\x1a\x08.results\x12$\n\x0eRequestDecrypt\x12\x08.results\x1a\x08.resultsb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12request_data.proto\"7\n\x0crequestQuery\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0f\n\x07\x64\x62_name\x18\x02 \x01(\t\x12\n\n\x02op\x18\x03 \x01(\t\"\x16\n\x07results\x12\x0b\n\x03msg\x18\x01 \x01(\x0c\x32\x66\n\x13RequestTransmission\x12)\n\x0eRequestParsing\x12\r.requestQuery\x1a\x08.results\x12$\n\x0eRequestDecrypt\x12\x08.results\x1a\x08.resultsb\x06proto3')
 
 
 
@@ -39,9 +39,9 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   _REQUESTQUERY._serialized_start=22
-  _REQUESTQUERY._serialized_end=60
-  _RESULTS._serialized_start=62
-  _RESULTS._serialized_end=84
-  _REQUESTTRANSMISSION._serialized_start=86
-  _REQUESTTRANSMISSION._serialized_end=188
+  _REQUESTQUERY._serialized_end=77
+  _RESULTS._serialized_start=79
+  _RESULTS._serialized_end=101
+  _REQUESTTRANSMISSION._serialized_start=103
+  _REQUESTTRANSMISSION._serialized_end=205
 # @@protoc_insertion_point(module_scope)
