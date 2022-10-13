@@ -20,3 +20,6 @@ def requestParsing(request,pk_ctx):
         enc_vector = getSumValue(pk_ctx)
         return enc_vector
 
+    if msg == "ADDMAX":
+        enc_vector = getAddMaxValue(pk_ctx)
+        return enc_vector

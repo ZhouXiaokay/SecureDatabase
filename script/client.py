@@ -31,3 +31,6 @@ if __name__ == "__main__":
     op = "sum"
     sumResult = sendRequest(op)
     print(sumResult)
+    op = "addmax"
+    addResult = sendRequest(op)
+    print(addResult)
