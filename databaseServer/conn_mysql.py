@@ -1,5 +1,8 @@
 import pymysql
 
+"""
+conn_mysql.py provides 
+"""
 
 # establish connection with mysql
 def conn():
