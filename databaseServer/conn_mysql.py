@@ -1,7 +1,10 @@
 import pymysql
 
 """
-conn_mysql.py provides 
+conn_mysql.py provides operations over database:
+1. get max value
+2. get min value
+3. get sum value
 """
 
 # establish connection with mysql
