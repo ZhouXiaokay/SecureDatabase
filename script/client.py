@@ -31,6 +31,4 @@ if __name__ == "__main__":
     op = "sum"
     sumResult = sendRequest(op)
     print(sumResult)
-    op = "addsum"
-    addResult = sendRequest(op)
-    print(addResult)
+
