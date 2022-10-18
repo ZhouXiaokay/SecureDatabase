@@ -1,14 +1,34 @@
+import pymysql
+from pymysql import converters
 import tenseal as ts
+pk_file = "../transmission/ts_ckks.config"
+pk_bytes = open(pk_file, "rb").read()
+pk_ctx = ts.context_from(pk_bytes)
 
-context = ts.context(ts.SCHEME_TYPE.BFV, poly_modulus_degree=4096, plain_modulus=1032193)
+db = pymysql.connect(host='localhost',
+                     user='root',
+                     password='199966',
+                     database='database_{0}'.format(1))
 
-sk = context.secret_key()
+sql = "SELECT SUM({0}),COUNT({0}) FROM {1}".format("VALUE1", "DATA_A")
 
-context.make_context_public()
+cursor = db.cursor()
+cursor.execute(sql)
+results = cursor.fetchone()
+# close conn
+db.close()
+print(results[0],results[1])
 
-plain_vector = [60]
-encrypted_vector = ts.bfv_vector(context, plain_vector)
+l=[]
+for i in range(len(results)):
 
-plain2_vector = [1]
-encrypted2_vector = ts.bfv_vector(context, plain2_vector)
-
+    l.append(results[i])
+print(l)
+plain_vector = ts.plain_tensor(l)
+print(plain_vector)
+enc_vector = ts.ckks_vector(pk_ctx, plain_vector)
+enc_1 = enc_vector**(-1)
+lis=[]
+lis.append(enc_vector)
+lis.append(enc_vector)
+print(enc_1.decrypt())

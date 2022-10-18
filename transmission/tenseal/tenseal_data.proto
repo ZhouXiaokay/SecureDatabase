@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+message requestOP{
+  string op = 1;
+  string table_name = 2;
+  string column_name = 3;
+}
+
+message responseEncResult {
+
+  bytes encResult= 1;
+}
+
+service DatabaseServerService {
+  rpc QueryOperation(requestOP) returns(responseEncResult);
+}

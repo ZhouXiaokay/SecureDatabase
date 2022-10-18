@@ -1,16 +1,56 @@
 syntax = "proto3";
+import "google/protobuf/empty.proto";
 
-message requestQuery{
-  string id = 1;
-  string db_name = 2;
-  string op = 3;
+// client send it to clientProxy
+message requestProxy{
+  int32 cid = 1; // client id
+  int32 qid = 2; //query id
+  string db_name = 3; // database name
+  string column_name =4; // database column name
+  string op = 5; // operation
 }
 
-message results {
-  bytes msg = 1;
+// clientProxy send it to requestServer
+message requestQuery{
+    int32 cid = 1; // client id
+    int32 qid = 2; //query id
+    string db_name = 3; // database name
+    string column_name =4; // database column name
+    string op = 5; // operation
+    string ipaddress = 6;
+}
+
+// requestServer send it to keyServer
+message requestEncResult{
+  int32 cid = 1; // client id
+  int32 qid = 2; //query id
+  string ipaddress = 3;
+  bytes encResult = 4;
+}
+
+// keyServer send it to clientProxy
+message requestDecResult{
+  int32 cid = 1; // client id
+  int32 qid = 2; //query id
+  bytes decResult = 3;
+}
+
+// clientProxy send it to client
+message responseResult {
+  bytes result = 1;
+}
+
+message flag{
+  bool flag =1;
 }
 
 service RequestTransmission {
-  rpc RequestParsing (requestQuery) returns (results);
-  rpc RequestDecrypt (results) returns(results);
+  // clientProxy provides the interface, client remotes the call
+  rpc RequestProxy(requestProxy) returns(responseResult);
+  //  requestServer provides the interface, clientProxy remotes the call
+  rpc RequestParsing (requestQuery) returns (google.protobuf.Empty);
+  // keyServer provides the interface, requestServer remotes the call
+  rpc RequestDecrypt (requestEncResult) returns(google.protobuf.Empty);
+  // clientProxy provides the interface, keyServer remotes the call
+  rpc RequestResult (requestDecResult) returns(google.protobuf.Empty);
 }

@@ -1,0 +1,18 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+// requestServer send it to keyServer
+message requestEncResult{
+  int32 cid = 1; // client id
+  int32 qid = 2; //query id
+  string ipaddress = 3;
+  bytes encResult = 4;
+}
+
+
+service KeyServerService {
+
+  // keyServer provides the interface, requestServer remotes the call
+  rpc RequestDecrypt (requestEncResult) returns(google.protobuf.Empty);
+
+}
