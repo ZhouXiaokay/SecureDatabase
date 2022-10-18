@@ -6,7 +6,7 @@ import transmission.request.request_parseServer_pb2_grpc as request_parseServer_
 
 
 def launch_parseServer():
-    address_dict = {"DATABASE_1": "127.0.0.1:50052", "KEYSERVER": "127.0.0.1:50054"}
+    address_dict = {"DATABASE_1": "127.0.0.1:50052", "KEYSERVER": "127.0.0.1:50054","DATABASE_2": "127.0.0.1:50053"}
     max_msg_size = 1000000000
     pk_ctx_file = "../transmission/ts_ckks_pk.config"
     options = [('grpc.max_send_message_length', max_msg_size), ('grpc.max_receive_message_length', max_msg_size)]

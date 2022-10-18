@@ -17,8 +17,8 @@ class ParseServer(request_parseServer_pb2_grpc.ParseServerServiceServicer):
 
 
     def RequestParsing(self, request, context):
-        data_stub = getDBStub(request.db_name, self.address_dict, self.options)
-        enc_vector = requestParsing(data_stub, request, self.pk_ctx)
+
+        enc_vector = requestParsing(request, self.pk_ctx,self.address_dict, self.options)
 
         keyserver_stub = getKSStub(self.address_dict, self.options)
         resultsDecrypt(keyserver_stub, enc_vector, request)

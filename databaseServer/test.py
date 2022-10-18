@@ -22,9 +22,13 @@ print(results[0],results[1])
 l=[]
 for i in range(len(results)):
 
-    print(results[i])
     l.append(results[i])
 print(l)
 plain_vector = ts.plain_tensor(l)
+print(plain_vector)
 enc_vector = ts.ckks_vector(pk_ctx, plain_vector)
-print(enc_vector.decrypt())
+enc_1 = enc_vector**(-1)
+lis=[]
+lis.append(enc_vector)
+lis.append(enc_vector)
+print(enc_1.decrypt())

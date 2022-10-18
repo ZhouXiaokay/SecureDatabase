@@ -23,8 +23,8 @@ def generateSQL(request):
     column_name = request.column_name.upper()
     op = request.op.upper()
     sql = "SELECT {0}({1}) FROM {2}".format(op, column_name, table_name)
-    if op == "AVERAGETOTAL":
-        sql = "SELECT SUM({0}),COUNT({0}) FROM {1}".format(column_name, table_name)
+    # if op == "AVG-TOTAL":
+    #     sql = "SELECT SUM({0}),COUNT({0}) FROM {1}".format(column_name, table_name)
 
     return sql
 

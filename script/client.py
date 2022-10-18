@@ -13,7 +13,7 @@ def sendRequest():
     channel = grpc.insecure_channel('127.0.0.1:50060', options=options)
     stub = request_clientProxy_pb2_grpc.ClientProxyServiceStub(channel)
 
-    request = request_clientProxy_pb2.requestProxy(cid=1, qid=3457, db_name="database_1", column_name="value2",
+    request = request_clientProxy_pb2.requestProxy(cid=1, qid=3457, db_name="TOTAL", column_name="value2",
                                                    op="sum",
                                                    table_name="data_a")
     response = stub.RequestProxy(request)
