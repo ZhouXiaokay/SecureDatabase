@@ -12,14 +12,26 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12request_data.proto\"7\n\x0crequestQuery\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0f\n\x07\x64\x62_name\x18\x02 \x01(\t\x12\n\n\x02op\x18\x03 \x01(\t\"\x16\n\x07results\x12\x0b\n\x03msg\x18\x01 \x01(\x0c\x32\x66\n\x13RequestTransmission\x12)\n\x0eRequestParsing\x12\r.requestQuery\x1a\x08.results\x12$\n\x0eRequestDecrypt\x12\x08.results\x1a\x08.resultsb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12request_data.proto\x1a\x1bgoogle/protobuf/empty.proto\"Z\n\x0crequestProxy\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x0f\n\x07\x64\x62_name\x18\x03 \x01(\t\x12\x13\n\x0b\x63olumn_name\x18\x04 \x01(\t\x12\n\n\x02op\x18\x05 \x01(\t\"m\n\x0crequestQuery\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x0f\n\x07\x64\x62_name\x18\x03 \x01(\t\x12\x13\n\x0b\x63olumn_name\x18\x04 \x01(\t\x12\n\n\x02op\x18\x05 \x01(\t\x12\x11\n\tipaddress\x18\x06 \x01(\t\"R\n\x10requestEncResult\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x11\n\tipaddress\x18\x03 \x01(\t\x12\x11\n\tencResult\x18\x04 \x01(\x0c\"?\n\x10requestDecResult\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x11\n\tdecResult\x18\x03 \x01(\x0c\" \n\x0eresponseResult\x12\x0e\n\x06result\x18\x01 \x01(\x0c\"\x14\n\x04\x66lag\x12\x0c\n\x04\x66lag\x18\x01 \x01(\x08\x32\xf7\x01\n\x13RequestTransmission\x12.\n\x0cRequestProxy\x12\r.requestProxy\x1a\x0f.responseResult\x12\x37\n\x0eRequestParsing\x12\r.requestQuery\x1a\x16.google.protobuf.Empty\x12;\n\x0eRequestDecrypt\x12\x11.requestEncResult\x1a\x16.google.protobuf.Empty\x12:\n\rRequestResult\x12\x11.requestDecResult\x1a\x16.google.protobuf.Emptyb\x06proto3')
 
 
 
+_REQUESTPROXY = DESCRIPTOR.message_types_by_name['requestProxy']
 _REQUESTQUERY = DESCRIPTOR.message_types_by_name['requestQuery']
-_RESULTS = DESCRIPTOR.message_types_by_name['results']
+_REQUESTENCRESULT = DESCRIPTOR.message_types_by_name['requestEncResult']
+_REQUESTDECRESULT = DESCRIPTOR.message_types_by_name['requestDecResult']
+_RESPONSERESULT = DESCRIPTOR.message_types_by_name['responseResult']
+_FLAG = DESCRIPTOR.message_types_by_name['flag']
+requestProxy = _reflection.GeneratedProtocolMessageType('requestProxy', (_message.Message,), {
+  'DESCRIPTOR' : _REQUESTPROXY,
+  '__module__' : 'request_data_pb2'
+  # @@protoc_insertion_point(class_scope:requestProxy)
+  })
+_sym_db.RegisterMessage(requestProxy)
+
 requestQuery = _reflection.GeneratedProtocolMessageType('requestQuery', (_message.Message,), {
   'DESCRIPTOR' : _REQUESTQUERY,
   '__module__' : 'request_data_pb2'
@@ -27,21 +39,50 @@ requestQuery = _reflection.GeneratedProtocolMessageType('requestQuery', (_messag
   })
 _sym_db.RegisterMessage(requestQuery)
 
-results = _reflection.GeneratedProtocolMessageType('results', (_message.Message,), {
-  'DESCRIPTOR' : _RESULTS,
+requestEncResult = _reflection.GeneratedProtocolMessageType('requestEncResult', (_message.Message,), {
+  'DESCRIPTOR' : _REQUESTENCRESULT,
   '__module__' : 'request_data_pb2'
-  # @@protoc_insertion_point(class_scope:results)
+  # @@protoc_insertion_point(class_scope:requestEncResult)
   })
-_sym_db.RegisterMessage(results)
+_sym_db.RegisterMessage(requestEncResult)
+
+requestDecResult = _reflection.GeneratedProtocolMessageType('requestDecResult', (_message.Message,), {
+  'DESCRIPTOR' : _REQUESTDECRESULT,
+  '__module__' : 'request_data_pb2'
+  # @@protoc_insertion_point(class_scope:requestDecResult)
+  })
+_sym_db.RegisterMessage(requestDecResult)
+
+responseResult = _reflection.GeneratedProtocolMessageType('responseResult', (_message.Message,), {
+  'DESCRIPTOR' : _RESPONSERESULT,
+  '__module__' : 'request_data_pb2'
+  # @@protoc_insertion_point(class_scope:responseResult)
+  })
+_sym_db.RegisterMessage(responseResult)
+
+flag = _reflection.GeneratedProtocolMessageType('flag', (_message.Message,), {
+  'DESCRIPTOR' : _FLAG,
+  '__module__' : 'request_data_pb2'
+  # @@protoc_insertion_point(class_scope:flag)
+  })
+_sym_db.RegisterMessage(flag)
 
 _REQUESTTRANSMISSION = DESCRIPTOR.services_by_name['RequestTransmission']
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  _REQUESTQUERY._serialized_start=22
-  _REQUESTQUERY._serialized_end=77
-  _RESULTS._serialized_start=79
-  _RESULTS._serialized_end=101
-  _REQUESTTRANSMISSION._serialized_start=103
-  _REQUESTTRANSMISSION._serialized_end=205
+  _REQUESTPROXY._serialized_start=51
+  _REQUESTPROXY._serialized_end=141
+  _REQUESTQUERY._serialized_start=143
+  _REQUESTQUERY._serialized_end=252
+  _REQUESTENCRESULT._serialized_start=254
+  _REQUESTENCRESULT._serialized_end=336
+  _REQUESTDECRESULT._serialized_start=338
+  _REQUESTDECRESULT._serialized_end=401
+  _RESPONSERESULT._serialized_start=403
+  _RESPONSERESULT._serialized_end=435
+  _FLAG._serialized_start=437
+  _FLAG._serialized_end=457
+  _REQUESTTRANSMISSION._serialized_start=460
+  _REQUESTTRANSMISSION._serialized_end=707
 # @@protoc_insertion_point(module_scope)

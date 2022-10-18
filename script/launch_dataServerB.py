@@ -1,4 +1,4 @@
-import transmission.teanseal.tenseal_data_pb2_grpc as tenseal_data_pb2_grpc
+import transmission.tenseal.tenseal_data_pb2_grpc as tenseal_data_pb2_grpc
 from databaseServer import DatabaseServer
 import grpc
 from concurrent import futures

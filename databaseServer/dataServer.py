@@ -1,10 +1,10 @@
-import transmission.teanseal.tenseal_data_pb2_grpc as tenseal_data_pb2_grpc
-import transmission.teanseal.tenseal_data_pb2 as tenseal_data_pb2
+import transmission.tenseal.tenseal_data_pb2_grpc as tenseal_data_pb2_grpc
+import transmission.tenseal.tenseal_data_pb2 as tenseal_data_pb2
 import tenseal as ts
 from databaseServer.conn_mysql import *
 
 
-class DatabaseServer(tenseal_data_pb2_grpc.SafeTransmissionServicer):
+class DatabaseServer(tenseal_data_pb2_grpc.DatabaseServerServiceServicer):
 
     def __init__(self, address, pk_ctx_file, name):
         self.address = address
@@ -13,34 +13,15 @@ class DatabaseServer(tenseal_data_pb2_grpc.SafeTransmissionServicer):
         self.sleep_time = 0.01
         self.name = name
 
-    def MaxValue(self, request, context):
-        maxvalue = getMaxValue(self.name)
+    def QueryOperation(self, request, context):
+        sql = generateSQL(request)
 
-        plain_vector = ts.plain_tensor([maxvalue])
+        query_result = getQueryResult(self.name, sql)
+
+        plain_vector = ts.plain_tensor(query_result)
         enc_vector = ts.ckks_vector(self.pk_ctx, plain_vector)
         serialize_msg = enc_vector.serialize()
-        response = tenseal_data_pb2.encrypted(id=1, msg=serialize_msg)
+
+        response = tenseal_data_pb2.responseEncResult(encResult=serialize_msg)
 
         return response
-
-    def MinValue(self, request, context):
-        minvalue = getMinValue(self.name)
-
-        plain_vector = ts.plain_tensor([minvalue])
-        enc_vector = ts.ckks_vector(self.pk_ctx, plain_vector)
-        serialize_msg = enc_vector.serialize()
-        response = tenseal_data_pb2.encrypted(id=1, msg=serialize_msg)
-
-        return response
-
-    def SumValue(self, request, context):
-        sumValue = getSumValue(self.name)
-
-        plain_vector = ts.plain_tensor([sumValue])
-        enc_vector = ts.ckks_vector(self.pk_ctx, plain_vector)
-        serialize_msg = enc_vector.serialize()
-        response = tenseal_data_pb2.encrypted(id=1, msg=serialize_msg)
-
-        return response
-
-
