@@ -6,10 +6,10 @@ import transmission.request.request_keyServer_pb2_grpc as request_keyServer_pb2_
 
 import tenseal as ts
 import grpc
-
+import pickle
 
 # establish connection with dataServer_dbname,return stub
-def getDBStub(db_name, address_dict, options):
+def get_db_stub(db_name, address_dict, options):
     db_name = db_name.upper()
 
     address = address_dict[db_name]
@@ -19,7 +19,7 @@ def getDBStub(db_name, address_dict, options):
 
 
 # establish connection with keyServer
-def getKSStub(address_dict, options):
+def get_keyserver_stub(address_dict, options):
     address = address_dict["KEYSERVER"]
     channel = grpc.insecure_channel(address, options=options)
     stub = request_keyServer_pb2_grpc.KeyServerServiceStub(channel)
@@ -28,7 +28,7 @@ def getKSStub(address_dict, options):
 
 
 # establish all connection with dataServer and return the list
-def getAllDBStub(address_dict, options):
+def get_all_db_stub(address_dict, options):
     stub_list = []
     for key in address_dict:
         if key.upper() != "KEYSERVER":
@@ -47,9 +47,17 @@ process: send request to KeyServer
 
 
 # send the encrypted result to keyServer
-def resultsDecrypt(stub, enc_vector, proxy_request):
+def return_results(key_server_stub, enc_vector, proxy_request):
     serialize_msg = enc_vector.serialize()
     request = request_keyServer_pb2.requestEncResult(cid=proxy_request.cid, qid=proxy_request.qid,
                                                      ipaddress=proxy_request.ipaddress, encResult=serialize_msg)
-    response = stub.RequestDecrypt(request)
-    print(response)
+    response = key_server_stub.ReturnResult(request)
+
+
+def decrypt_results(key_server_stub, enc_vector):
+    enc_serialize_msg = enc_vector.serialize()
+    request = request_keyServer_pb2.vectorResult(vectorMsg = enc_serialize_msg)
+    response = key_server_stub.RequestDecrypt(request)
+    dec_serialize_msg = response.vectorMsg
+    dec_vector = pickle.loads(dec_serialize_msg)
+    return dec_vector

@@ -14,9 +14,9 @@ class DatabaseServer(tenseal_data_pb2_grpc.DatabaseServerServiceServicer):
         self.name = name
 
     def QueryOperation(self, request, context):
-        sql = generateSQL(request)
+        sql = generate_sql(request)
 
-        query_result = getQueryResult(self.name, sql)
+        query_result = get_query_results(self.name, sql)
 
         plain_vector = ts.plain_tensor(query_result)
         enc_vector = ts.ckks_vector(self.pk_ctx, plain_vector)

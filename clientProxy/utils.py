@@ -3,24 +3,24 @@ import transmission.request.request_parseServer_pb2 as request_parseServer_pb2
 import grpc
 
 
-def getPSStub(requestServer_address, options):
-    channel = grpc.insecure_channel(requestServer_address, options=options)
+def get_parse_server_stub(parse_server_address, options):
+    channel = grpc.insecure_channel(parse_server_address, options=options)
     stub = request_parseServer_pb2_grpc.ParseServerServiceStub(channel)
     return stub
 
 
-def findResult(cid, qid, resultList):
+def boolean_find_result(cid, qid, result_list):
     flag = False
-    for result in resultList:
+    for result in result_list:
         if result['cid'] == cid and result['qid'] == qid:
             flag = True
             return flag
     return flag
 
 
-def getResult(cid, qid, resultList):
-    for result in resultList:
+def get_result(cid, qid, result_list):
+    for result in result_list:
         if result['cid'] == cid and result['qid'] == qid:
             t = result['result']
-            resultList.remove(result)
+            result_list.remove(result)
             return t

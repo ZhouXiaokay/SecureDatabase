@@ -12,13 +12,13 @@ conn_mysql.py provides query operations over database:
 def conn(name):
     db = pymysql.connect(host='localhost',
                          user='root',
-                         password='199966',
+                         password='99996666',
                          database='database_{0}'.format(name))
     return db
 
 
 # generate sql from request
-def generateSQL(request):
+def generate_sql(request):
     table_name = request.table_name.upper()
     column_name = request.column_name.upper()
     op = request.op.upper()
@@ -30,7 +30,7 @@ def generateSQL(request):
 
 
 # get query result from database_dbname
-def getQueryResult(db_name, sql):
+def get_query_results(db_name, sql):
     resultl=[]
     db = conn(db_name)
     cursor = db.cursor()

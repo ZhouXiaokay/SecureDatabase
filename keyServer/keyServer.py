@@ -17,7 +17,7 @@ class KeyServer(request_keyServer_pb2_grpc.KeyServerServiceServicer):
         self.options = [('grpc.max_send_message_length', self.max_msg_size),
                         ('grpc.max_receive_message_length', self.max_msg_size)]
 
-    def RequestDecrypt(self, request, context):
+    def ReturnResult(self, request, context):
         # receive and decrypt the results from parseServer
         ipaddress = request.ipaddress
         enc_serialize_msg = request.encResult
@@ -37,3 +37,17 @@ class KeyServer(request_keyServer_pb2_grpc.KeyServerServiceServicer):
         response = request_keyServer_pb2.google_dot_protobuf_dot_empty__pb2.Empty()
 
         return response
+
+    def RequestDecrypt(self, request, context):
+        enc_serialize_msg = request.vectorMsg
+        enc_vector = ts.ckks_vector_from(self.sk_ctx, enc_serialize_msg)
+        dec_vector = enc_vector.decrypt()
+        print(dec_vector)
+
+        # make request and send it to requestServer
+        dec_serialize_msg = pickle.dumps(dec_vector)
+
+        response = request_keyServer_pb2.vectorResult(vectorMsg = dec_serialize_msg)
+
+        return response
+
