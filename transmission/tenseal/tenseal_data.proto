@@ -11,6 +11,8 @@ message responseEncResult {
   bytes encResult= 1;
 }
 
+
 service DatabaseServerService {
   rpc QueryOperation(requestOP) returns(responseEncResult);
+  rpc NoiseQueryOperation(requestOP) returns(responseEncResult);
 }

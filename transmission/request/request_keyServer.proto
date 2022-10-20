@@ -9,10 +9,16 @@ message requestEncResult{
   bytes encResult = 4;
 }
 
+// requestServer send serialized encrypted vector, keyServer send serialized decrypted vector
+message vectorResult{
+  bytes vectorMsg = 1;
+}
+
 
 service KeyServerService {
-
-  // keyServer provides the interface, requestServer remotes the call
-  rpc RequestDecrypt (requestEncResult) returns(google.protobuf.Empty);
+  // keyServer provides the interface, requestServer remotes the call and get decrypt data.
+  rpc RequestDecrypt (vectorResult) returns(vectorResult);
+  //keyServer provides the interface, requestServer remotes the call and keyServer send decrypted result to clientProxy
+  rpc ReturnResult (requestEncResult) returns(google.protobuf.Empty);
 
 }

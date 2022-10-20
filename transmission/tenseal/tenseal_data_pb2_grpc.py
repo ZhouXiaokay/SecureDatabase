@@ -19,6 +19,11 @@ class DatabaseServerServiceStub(object):
                 request_serializer=tenseal__data__pb2.requestOP.SerializeToString,
                 response_deserializer=tenseal__data__pb2.responseEncResult.FromString,
                 )
+        self.NoiseQueryOperation = channel.unary_unary(
+                '/DatabaseServerService/NoiseQueryOperation',
+                request_serializer=tenseal__data__pb2.requestOP.SerializeToString,
+                response_deserializer=tenseal__data__pb2.responseEncResult.FromString,
+                )
 
 
 class DatabaseServerServiceServicer(object):
@@ -30,11 +35,22 @@ class DatabaseServerServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def NoiseQueryOperation(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_DatabaseServerServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'QueryOperation': grpc.unary_unary_rpc_method_handler(
                     servicer.QueryOperation,
+                    request_deserializer=tenseal__data__pb2.requestOP.FromString,
+                    response_serializer=tenseal__data__pb2.responseEncResult.SerializeToString,
+            ),
+            'NoiseQueryOperation': grpc.unary_unary_rpc_method_handler(
+                    servicer.NoiseQueryOperation,
                     request_deserializer=tenseal__data__pb2.requestOP.FromString,
                     response_serializer=tenseal__data__pb2.responseEncResult.SerializeToString,
             ),
@@ -60,6 +76,23 @@ class DatabaseServerService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/DatabaseServerService/QueryOperation',
+            tenseal__data__pb2.requestOP.SerializeToString,
+            tenseal__data__pb2.responseEncResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def NoiseQueryOperation(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/DatabaseServerService/NoiseQueryOperation',
             tenseal__data__pb2.requestOP.SerializeToString,
             tenseal__data__pb2.responseEncResult.FromString,
             options, channel_credentials,

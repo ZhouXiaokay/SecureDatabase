@@ -13,9 +13,9 @@ def sendRequest():
     channel = grpc.insecure_channel('127.0.0.1:50060', options=options)
     stub = request_clientProxy_pb2_grpc.ClientProxyServiceStub(channel)
 
-    request = request_clientProxy_pb2.requestProxy(cid=1, qid=3457, db_name="TOTAL", column_name="value2",
-                                                   op="sum",
-                                                   table_name="data_a")
+    request = request_clientProxy_pb2.requestProxy(cid=1, qid=3457, db_name="total", column_name="value_1",
+                                                   op="avg",
+                                                   table_name="table_2")
     response = stub.RequestProxy(request)
     result = pickle.loads(response.result)
     print(result)
