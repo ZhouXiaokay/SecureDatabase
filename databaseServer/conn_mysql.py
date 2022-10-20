@@ -1,4 +1,5 @@
 import pymysql
+import numpy as np
 
 """
 conn_mysql.py provides query operations over database:
@@ -31,7 +32,7 @@ def generate_sql(request):
 
 # get query result from database_dbname
 def get_query_results(db_name, sql):
-    resultl=[]
+    resultl = []
     db = conn(db_name)
     cursor = db.cursor()
     cursor.execute(sql)
@@ -42,3 +43,14 @@ def get_query_results(db_name, sql):
         resultl.append(results[i])
 
     return resultl
+
+# get the query results with laplace noise
+def get_noise_query_results(db_name, sql):
+    sensitivity = 1
+    epsilon = 5
+    noise = np.random.laplace(loc=0, scale=sensitivity / epsilon)
+    result_list = get_query_results(db_name, sql)
+    noise_result = np.add(result_list,noise).tolist()
+
+    return noise_result
+

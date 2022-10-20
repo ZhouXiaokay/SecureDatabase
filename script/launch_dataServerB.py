@@ -1,3 +1,6 @@
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import transmission.tenseal.tenseal_data_pb2_grpc as tenseal_data_pb2_grpc
 from databaseServer import DatabaseServer
 import grpc

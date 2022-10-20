@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+print(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from keyServer import KeyServer
 import transmission.request.request_keyServer_pb2_grpc as request_keyServer_pb2_grpc
 import grpc

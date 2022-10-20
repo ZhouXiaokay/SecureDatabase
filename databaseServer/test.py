@@ -1,34 +1,24 @@
-import pymysql
-from pymysql import converters
-import tenseal as ts
-pk_file = "../transmission/ts_ckks.config"
-pk_bytes = open(pk_file, "rb").read()
-pk_ctx = ts.context_from(pk_bytes)
+import numpy as np
+import math
 
-db = pymysql.connect(host='localhost',
-                     user='root',
-                     password='199966',
-                     database='database_{0}'.format(1))
-
-sql = "SELECT SUM({0}),COUNT({0}) FROM {1}".format("VALUE1", "DATA_A")
-
-cursor = db.cursor()
-cursor.execute(sql)
-results = cursor.fetchone()
-# close conn
-db.close()
-print(results[0],results[1])
-
-l=[]
-for i in range(len(results)):
-
-    l.append(results[i])
-print(l)
-plain_vector = ts.plain_tensor(l)
-print(plain_vector)
-enc_vector = ts.ckks_vector(pk_ctx, plain_vector)
-enc_1 = enc_vector**(-1)
-lis=[]
-lis.append(enc_vector)
-lis.append(enc_vector)
-print(enc_1.decrypt())
+sensitivity = 1
+epsilon = 2
+x = 10
+# np.random.seed(123)
+sum = []
+sum_1 = []
+for i in range(100):
+    np.random.seed(1)
+    noise = np.random.laplace(loc=0, scale=sensitivity / 0.001)
+    x_n = x + noise
+    x_n_1 = x + noise
+    x_n_2 = x + noise
+    sum.append(x_n + x_n_1 + x_n_2)
+    sum_1.append(noise)
+    print(noise)
+    # print(round(x_n)+round(x_n_1)+round(x_n_2))
+print(np.mean(sum))
+print(np.mean(sum_1))
+t = [1]
+n = 0.5
+print(type(np.add(t, n).tolist()))
