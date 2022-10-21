@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12tenseal_data.proto\"@\n\trequestOP\x12\n\n\x02op\x18\x01 \x01(\t\x12\x12\n\ntable_name\x18\x02 \x01(\t\x12\x13\n\x0b\x63olumn_name\x18\x03 \x01(\t\"&\n\x11responseEncResult\x12\x11\n\tencResult\x18\x01 \x01(\x0c\x32\x80\x01\n\x15\x44\x61tabaseServerService\x12\x30\n\x0eQueryOperation\x12\n.requestOP\x1a\x12.responseEncResult\x12\x35\n\x13NoiseQueryOperation\x12\n.requestOP\x1a\x12.responseEncResultb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12tenseal_data.proto\"Z\n\trequestOP\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\n\n\x02op\x18\x03 \x01(\t\x12\x12\n\ntable_name\x18\x04 \x01(\t\x12\x13\n\x0b\x63olumn_name\x18\x05 \x01(\t\"&\n\x11responseEncResult\x12\x11\n\tencResult\x18\x01 \x01(\x0c\x32\x80\x01\n\x15\x44\x61tabaseServerService\x12\x30\n\x0eQueryOperation\x12\n.requestOP\x1a\x12.responseEncResult\x12\x35\n\x13NoiseQueryOperation\x12\n.requestOP\x1a\x12.responseEncResultb\x06proto3')
 
 
 
@@ -39,9 +39,9 @@ if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
   _REQUESTOP._serialized_start=22
-  _REQUESTOP._serialized_end=86
-  _RESPONSEENCRESULT._serialized_start=88
-  _RESPONSEENCRESULT._serialized_end=126
-  _DATABASESERVERSERVICE._serialized_start=129
-  _DATABASESERVERSERVICE._serialized_end=257
+  _REQUESTOP._serialized_end=112
+  _RESPONSEENCRESULT._serialized_start=114
+  _RESPONSEENCRESULT._serialized_end=152
+  _DATABASESERVERSERVICE._serialized_start=155
+  _DATABASESERVERSERVICE._serialized_end=283
 # @@protoc_insertion_point(module_scope)

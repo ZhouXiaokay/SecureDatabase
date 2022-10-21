@@ -1,5 +1,7 @@
 import pymysql
 import numpy as np
+import transmission.request.request_keyServer_pb2 as request_keyServer_pb2
+import pickle
 
 """
 conn_mysql.py provides query operations over database:
@@ -44,13 +46,18 @@ def get_query_results(db_name, sql):
 
     return resultl
 
+
 # get the query results with laplace noise
-def get_noise_query_results(db_name, sql):
-    sensitivity = 1
-    epsilon = 5
-    noise = np.random.laplace(loc=0, scale=sensitivity / epsilon)
+def get_noise_query_results(db_name, cid, qid, sql, key_stub):
+    # sensitivity = 1
+    # epsilon = 5
+    # noise = np.random.laplace(loc=0, scale=sensitivity / epsilon)
+    noise_request = request_keyServer_pb2.requestGetNoise(db_name=db_name, cid=cid, qid=qid)
+    response = key_stub.GetNoise(noise_request)
+    noise_msg = response.noiseMsg
+    noise = pickle.loads(noise_msg)
+
     result_list = get_query_results(db_name, sql)
-    noise_result = np.add(result_list,noise).tolist()
+    noise_result = np.add(result_list, noise).tolist()
 
     return noise_result
-

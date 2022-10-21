@@ -14,11 +14,36 @@ message vectorResult{
   bytes vectorMsg = 1;
 }
 
+message booleanResult{
+  bool boolMsg = 1;
+}
+
+message requestGenerateNoise{
+  int32 cid = 1;
+  int32 qid = 2;
+  string type = 3;
+}
+
+message requestGetNoise{
+  int32 db_name = 1;
+  int32 cid = 2;
+  int32 qid = 3;
+}
+
+message responseNoise{
+  bytes noiseMsg = 1;
+}
 
 service KeyServerService {
-  // keyServer provides the interface, requestServer remotes the call and get decrypt data.
+  // requestServer remotes the call and get decrypt data.
   rpc RequestDecrypt (vectorResult) returns(vectorResult);
-  //keyServer provides the interface, requestServer remotes the call and keyServer send decrypted result to clientProxy
+  // requestServer remotes the call and keyServer send decrypted result to clientProxy
   rpc ReturnResult (requestEncResult) returns(google.protobuf.Empty);
+  // requestServer remotes the call and keyServer judges whether the encrypted vector is positive,return flag back
+  rpc BooleanPositive(vectorResult) returns(booleanResult);
+  //requestServer remotes the call, and keyServer generates noise list
+  rpc GenerateNoise(requestGenerateNoise) returns(google.protobuf.Empty);
+  //dataServer remotes the call, and keyServer sends noise back
+  rpc GetNoise(requestGetNoise) returns(responseNoise);
 
 }
