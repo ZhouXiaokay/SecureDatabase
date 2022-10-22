@@ -31,7 +31,7 @@ def process_local_request(request, pk_ctx, db_stub):
     return enc_vector
 
 
-# process the request which need query result with noise
+# process the request in which query data is only from local database and needs noise.
 def process_noise_local_request(request, db_stub):
     query_request = tenseal_data_pb2.requestOP(cid=request.cid, qid=request.qid, op=request.op,
                                                column_name=request.column_name,
@@ -47,9 +47,15 @@ def process_total_request(request, pk_ctx, address_dict, options):
     db_stub_list = get_all_db_stub(address_dict, options)
     op = request.op.upper()
     # sum value of column from all dataServer, op: count or sum
-    if op == "SUM" or op == "COUNT":
+    if op == "SUM":
         sum_enc_vector = get_total_sum(request, db_stub_list, pk_ctx)
         return sum_enc_vector
+    elif op == "COUNT":
+        key_stub = get_keyserver_stub(address_dict, options)
+        count_vector = get_total_count(request, db_stub_list, key_stub)
+        count_palin_vector = ts.plain_tensor(count_vector)
+        count_enc_vector = ts.ckks_vector(pk_ctx, count_palin_vector)
+        return count_enc_vector
     # max value of column from all dataServer
     elif op == "MAX":
         key_stub = get_keyserver_stub(address_dict, options)
@@ -77,6 +83,7 @@ def get_total_list(request, stub_list, pk_ctx):
     return total_list
 
 
+# get all query result with noise from databaseServer,stored in a list
 def get_noise_total_list(request, db_stub_list):
     total_list = []
     for stub in db_stub_list:
@@ -85,6 +92,7 @@ def get_noise_total_list(request, db_stub_list):
     return total_list
 
 
+# sum all noise query results, get the plain sum
 def get_noise_total_sum(request, db_stub_list):
     noise_total_list = get_noise_total_list(request, db_stub_list)
     print(noise_total_list)
@@ -92,10 +100,24 @@ def get_noise_total_sum(request, db_stub_list):
     return sum_noise_vector
 
 
+# sum all query results, get the encrypted sum
 def get_total_sum(request, db_stub_list, pk_ctx):
     total_list = get_total_list(request, db_stub_list, pk_ctx)
     sum_enc_vector = sum(total_list)
     return sum_enc_vector
+
+
+# get the count over the total query result list with noise
+def get_total_count(request, db_stub_list, key_stub):
+    sum_noise_vector = []
+    generate_noise_request = request_keyServer_pb2.requestGenerateNoise(cid=request.cid, qid=request.qid,
+                                                                        type="float")
+    key_stub.GenerateNoise(generate_noise_request)
+    noise_total_list = get_noise_total_list(request, db_stub_list)
+    sum_noise = sum(noise_total_list)
+    sum_noise_vector.append(sum_noise)
+    print(sum_noise_vector)
+    return sum_noise_vector
 
 
 # get the max encrypted vector over the total query result list
@@ -115,6 +137,7 @@ def get_total_max(request, db_stub_list, pk_ctx, key_stub):
     return max_enc_vector
 
 
+# get the min encrypted vector over the total query result list
 def get_total_min(request, db_stub_list, pk_ctx, key_stub):
     request.op = "min"
     total_list = get_total_list(request, db_stub_list, pk_ctx)
@@ -131,6 +154,7 @@ def get_total_min(request, db_stub_list, pk_ctx, key_stub):
     return min_enc_vector
 
 
+# get the average encrypted vector over the total query result list
 def get_total_avg(request, db_stub_list, pk_ctx, key_stub):
     generate_noise_request = request_keyServer_pb2.requestGenerateNoise(cid=request.cid, qid=request.qid,
                                                                         type="float")
@@ -140,7 +164,9 @@ def get_total_avg(request, db_stub_list, pk_ctx, key_stub):
     sum_enc_vector = sum(total_list)
 
     request.op = "count"
-    noise_count_sum = get_noise_total_sum(request, db_stub_list)
+    # noise_count_sum = get_noise_total_sum(request, db_stub_list)
+    # noise_count_sum = round(noise_count_sum)
+    noise_count_sum = get_total_count(request, db_stub_list)
     noise_count_sum = round(noise_count_sum)
 
     avg_enc_vector = 1 / noise_count_sum * sum_enc_vector

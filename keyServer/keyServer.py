@@ -83,7 +83,6 @@ class KeyServer(request_keyServer_pb2_grpc.KeyServerServiceServicer):
         noise_list = generate_noise_list(self.db_num, noise_type)
         noise_dict = {'cid': cid, 'qid': qid, 'noise_list': noise_list}
         self.total_noise_list.append(noise_dict)
-        print(self.total_noise_list)
         response = request_keyServer_pb2.google_dot_protobuf_dot_empty__pb2.Empty()
 
         return response

@@ -22,4 +22,5 @@ print(np.mean(sum_1))
 t = [1]
 n = 0.5
 list1 = [1,2,3]
+print(round(list1[0]))
 

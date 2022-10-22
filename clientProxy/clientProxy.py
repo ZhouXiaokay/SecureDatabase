@@ -24,11 +24,13 @@ class ClientProxy(request_clientProxy_pb2_grpc.ClientProxyServiceServicer):
                                                              column_name=request.column_name, op=request.op,
                                                              table_name=request.table_name,
                                                              ipaddress=self.address)
-        ps_response = ps_stub.RequestParsing(request_query)
+        ps_stub.RequestParsing(request_query)
 
         while not boolean_find_result(request.cid, request.qid, self.result_list):
             time.sleep(self.sleep_time)
         result = get_result(request.cid, request.qid, self.result_list)
+        if request.op.upper() == "COUNT":
+            result = [round(x) for x in result]
 
         serialize_msg = pickle.dumps(result)
 
