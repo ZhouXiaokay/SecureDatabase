@@ -1,6 +1,5 @@
 import sys
 import os
-
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import transmission.tenseal.tenseal_data_pb2_grpc as tenseal_data_pb2_grpc
 from databaseServer import DatabaseServer
@@ -17,7 +16,7 @@ def launch_dataServer():
                                                                       server)
     server.add_insecure_port("127.0.0.1:50053")
     server.start()
-    print("grpc server start...")
+    print("grpc dataServer_2 start...")
     server.wait_for_termination()
 
 

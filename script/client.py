@@ -1,3 +1,8 @@
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+
 import transmission.request.request_clientProxy_pb2 as request_clientProxy_pb2
 import transmission.request.request_clientProxy_pb2_grpc as request_clientProxy_pb2_grpc
 
@@ -13,8 +18,8 @@ def sendRequest():
     channel = grpc.insecure_channel('127.0.0.1:50060', options=options)
     stub = request_clientProxy_pb2_grpc.ClientProxyServiceStub(channel)
 
-    request = request_clientProxy_pb2.requestProxy(cid=1, qid=3457, db_name="database_1", column_name="value_2",
-                                                   op="avg",
+    request = request_clientProxy_pb2.requestProxy(cid=1, qid=3457, db_name="total", column_name="value_1",
+                                                   op="sum",
                                                    table_name="table_1")
     response = stub.RequestProxy(request)
     result = pickle.loads(response.result)

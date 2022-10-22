@@ -17,7 +17,7 @@ def launch_dataServer():
                                                                       server)
     server.add_insecure_port("127.0.0.1:50052")
     server.start()
-    print("grpc server start...")
+    print("grpc dataServer_1 start...")
     server.wait_for_termination()
 
 

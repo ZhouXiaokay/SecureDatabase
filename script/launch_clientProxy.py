@@ -17,7 +17,7 @@ def launch_clientProxy():
         ClientProxy('127.0.0.1:50051', '127.0.0.1:50060'), server)
     server.add_insecure_port('127.0.0.1:50060')
     server.start()
-    print("grpc server start...")
+    print("grpc clientProxy start...")
     server.wait_for_termination()
 
 

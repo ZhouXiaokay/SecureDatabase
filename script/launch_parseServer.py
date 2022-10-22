@@ -1,6 +1,5 @@
 import sys
 import os
-
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from parseServer import ParseServer
 from concurrent import futures
@@ -20,7 +19,7 @@ def launch_parseServer():
                                                                           server)
     server.add_insecure_port("127.0.0.1:50051")
     server.start()
-    print("grpc server start...")
+    print("grpc parseServer start...")
     server.wait_for_termination()
 
 
