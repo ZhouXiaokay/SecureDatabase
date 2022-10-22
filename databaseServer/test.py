@@ -21,4 +21,5 @@ print(np.mean(sum))
 print(np.mean(sum_1))
 t = [1]
 n = 0.5
-print(type(np.add(t, n).tolist()))
+list1 = [1,2,3]
+

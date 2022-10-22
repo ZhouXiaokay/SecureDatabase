@@ -1,7 +1,6 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-print(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from keyServer import KeyServer
 import transmission.request.request_keyServer_pb2_grpc as request_keyServer_pb2_grpc
 import grpc
@@ -16,7 +15,7 @@ def launch_keyServer():
     request_keyServer_pb2_grpc.add_KeyServerServiceServicer_to_server(KeyServer(sk_ctx_file), server)
     server.add_insecure_port("127.0.0.1:50054")
     server.start()
-    print("grpc server start...")
+    print("grpc keyServer start...")
     server.wait_for_termination()
 
 if __name__ == '__main__':
