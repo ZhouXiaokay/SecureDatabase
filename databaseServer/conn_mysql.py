@@ -14,8 +14,9 @@ conn_mysql.py provides query operations over database:
 # establish connection with mysql
 def conn(name):
     db = pymysql.connect(host='localhost',
+                         port=3337,
                          user='root',
-                         password='99996666',
+                         password='kblcda',
                          database='database_{0}'.format(name))
     return db
 
