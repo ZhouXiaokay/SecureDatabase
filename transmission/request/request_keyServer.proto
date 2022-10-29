@@ -9,9 +9,14 @@ message requestEncResult{
   bytes encResult = 4;
 }
 
-// requestServer send serialized encrypted vector, keyServer send serialized decrypted vector
+// requestServer send serialized encrypted vector, keyServer send serialized encrypted vector
 message vectorResult{
   bytes vectorMsg = 1;
+}
+
+message divVectors{
+  bytes dividendMsg = 1;
+  bytes divisorMsg = 2;
 }
 
 message booleanResult{
@@ -39,11 +44,13 @@ service KeyServerService {
   rpc RequestDecrypt (vectorResult) returns(vectorResult);
   // requestServer remotes the call and keyServer send decrypted result to clientProxy
   rpc ReturnResult (requestEncResult) returns(google.protobuf.Empty);
-  // requestServer remotes the call and keyServer judges whether the encrypted vector is positive,return flag back
-  rpc BooleanPositive(vectorResult) returns(booleanResult);
   //requestServer remotes the call, and keyServer generates noise list
   rpc GenerateNoise(requestGenerateNoise) returns(google.protobuf.Empty);
   //dataServer remotes the call, and keyServer sends noise back
   rpc GetNoise(requestGetNoise) returns(responseNoise);
+  //keyServer provides the following operations: division,sqrt,boolean positive
+  rpc BooleanPositive(vectorResult) returns(booleanResult);
+  rpc SqrtEncVector(vectorResult) returns(vectorResult);
+  rpc DivEncVector(divVectors) returns(vectorResult);
 
 }

@@ -2,6 +2,7 @@ import pymysql
 import numpy as np
 import transmission.request.request_keyServer_pb2 as request_keyServer_pb2
 import pickle
+import re
 
 """
 conn_mysql.py provides query operations over database:
@@ -20,14 +21,60 @@ def conn(name):
     return db
 
 
+def parse_op(op, column_name):
+    column_name = '(' + column_name + ')'
+    op_sql = ''
+    pattern = r'[+,\-,*,/,(,)]'
+    func_list = [i for i in re.split(pattern, op) if i != '']
+    op_list = re.findall(pattern, op)
+    if '(' or ')' in op_list:
+        j = 0
+        for i in range(len(func_list)):
+            if func_list[i].isdigit():
+                if j < len(op_list):
+                    op_sql = op_sql + func_list[i] + op_list[j]
+                else:
+                    op_sql = op_sql + func_list[i]
+            else:
+                if j < len(op_list):
+                    op_sql = op_sql + func_list[i] + column_name + op_list[j]
+                else:
+                    op_sql = op_sql + func_list[i] + column_name
+
+            if j + 1 < len(op_list):
+                if op_list[j] == ')':
+                    op_sql = op_sql + op_list[j + 1]
+                    j += 2
+                    if op_list[j] == '(':
+                        op_sql = op_sql + op_list[j]
+                        j += 1
+                elif op_list[j + 1] == '(':
+                    op_sql = op_sql + op_list[j + 1]
+                    j += 2
+                else:
+                    j += 1
+            else:
+                j += 1
+    else:
+        for i in range(len(func_list)):
+            if func_list[i].isdigit():
+                op_sql = op_sql + func_list[i] + op_list[i]
+            else:
+                if i < len(op_list):
+                    op_sql = op_sql + func_list[i] + column_name + op_list[i]
+                else:
+                    op_sql = op_sql + func_list[i] + column_name
+    op_sql = op_sql.upper()
+    return op_sql
+
+
 # generate sql from request
 def generate_sql(request):
     table_name = request.table_name.upper()
     column_name = request.column_name.upper()
     op = request.op.upper()
-    sql = "SELECT {0}({1}) FROM {2}".format(op, column_name, table_name)
-    # if op == "AVG-TOTAL":
-    #     sql = "SELECT SUM({0}),COUNT({0}) FROM {1}".format(column_name, table_name)
+    op_sql = parse_op(op, column_name)
+    sql = "SELECT " + op_sql + " FROM {0}".format(table_name)
 
     return sql
 
@@ -42,7 +89,7 @@ def get_query_results(db_name, sql):
     # close conn
     db.close()
     for i in range(len(results)):
-        resultl.append(results[i])
+        resultl.append(float(results[i]))
 
     return resultl
 

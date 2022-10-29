@@ -25,11 +25,6 @@ class KeyServerServiceStub(object):
                 request_serializer=request__keyServer__pb2.requestEncResult.SerializeToString,
                 response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 )
-        self.BooleanPositive = channel.unary_unary(
-                '/KeyServerService/BooleanPositive',
-                request_serializer=request__keyServer__pb2.vectorResult.SerializeToString,
-                response_deserializer=request__keyServer__pb2.booleanResult.FromString,
-                )
         self.GenerateNoise = channel.unary_unary(
                 '/KeyServerService/GenerateNoise',
                 request_serializer=request__keyServer__pb2.requestGenerateNoise.SerializeToString,
@@ -39,6 +34,21 @@ class KeyServerServiceStub(object):
                 '/KeyServerService/GetNoise',
                 request_serializer=request__keyServer__pb2.requestGetNoise.SerializeToString,
                 response_deserializer=request__keyServer__pb2.responseNoise.FromString,
+                )
+        self.BooleanPositive = channel.unary_unary(
+                '/KeyServerService/BooleanPositive',
+                request_serializer=request__keyServer__pb2.vectorResult.SerializeToString,
+                response_deserializer=request__keyServer__pb2.booleanResult.FromString,
+                )
+        self.SqrtEncVector = channel.unary_unary(
+                '/KeyServerService/SqrtEncVector',
+                request_serializer=request__keyServer__pb2.vectorResult.SerializeToString,
+                response_deserializer=request__keyServer__pb2.vectorResult.FromString,
+                )
+        self.DivEncVector = channel.unary_unary(
+                '/KeyServerService/DivEncVector',
+                request_serializer=request__keyServer__pb2.divVectors.SerializeToString,
+                response_deserializer=request__keyServer__pb2.vectorResult.FromString,
                 )
 
 
@@ -59,13 +69,6 @@ class KeyServerServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def BooleanPositive(self, request, context):
-        """requestServer remotes the call and keyServer judges whether the encrypted vector is positive,return flag back
-        """
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
     def GenerateNoise(self, request, context):
         """requestServer remotes the call, and keyServer generates noise list
         """
@@ -76,6 +79,25 @@ class KeyServerServiceServicer(object):
     def GetNoise(self, request, context):
         """dataServer remotes the call, and keyServer sends noise back
         """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def BooleanPositive(self, request, context):
+        """keyServer provides the following operations: division,sqrt,boolean positive
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SqrtEncVector(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DivEncVector(self, request, context):
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -93,11 +115,6 @@ def add_KeyServerServiceServicer_to_server(servicer, server):
                     request_deserializer=request__keyServer__pb2.requestEncResult.FromString,
                     response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             ),
-            'BooleanPositive': grpc.unary_unary_rpc_method_handler(
-                    servicer.BooleanPositive,
-                    request_deserializer=request__keyServer__pb2.vectorResult.FromString,
-                    response_serializer=request__keyServer__pb2.booleanResult.SerializeToString,
-            ),
             'GenerateNoise': grpc.unary_unary_rpc_method_handler(
                     servicer.GenerateNoise,
                     request_deserializer=request__keyServer__pb2.requestGenerateNoise.FromString,
@@ -107,6 +124,21 @@ def add_KeyServerServiceServicer_to_server(servicer, server):
                     servicer.GetNoise,
                     request_deserializer=request__keyServer__pb2.requestGetNoise.FromString,
                     response_serializer=request__keyServer__pb2.responseNoise.SerializeToString,
+            ),
+            'BooleanPositive': grpc.unary_unary_rpc_method_handler(
+                    servicer.BooleanPositive,
+                    request_deserializer=request__keyServer__pb2.vectorResult.FromString,
+                    response_serializer=request__keyServer__pb2.booleanResult.SerializeToString,
+            ),
+            'SqrtEncVector': grpc.unary_unary_rpc_method_handler(
+                    servicer.SqrtEncVector,
+                    request_deserializer=request__keyServer__pb2.vectorResult.FromString,
+                    response_serializer=request__keyServer__pb2.vectorResult.SerializeToString,
+            ),
+            'DivEncVector': grpc.unary_unary_rpc_method_handler(
+                    servicer.DivEncVector,
+                    request_deserializer=request__keyServer__pb2.divVectors.FromString,
+                    response_serializer=request__keyServer__pb2.vectorResult.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -153,23 +185,6 @@ class KeyServerService(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def BooleanPositive(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/KeyServerService/BooleanPositive',
-            request__keyServer__pb2.vectorResult.SerializeToString,
-            request__keyServer__pb2.booleanResult.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
     def GenerateNoise(request,
             target,
             options=(),
@@ -200,5 +215,56 @@ class KeyServerService(object):
         return grpc.experimental.unary_unary(request, target, '/KeyServerService/GetNoise',
             request__keyServer__pb2.requestGetNoise.SerializeToString,
             request__keyServer__pb2.responseNoise.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def BooleanPositive(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/KeyServerService/BooleanPositive',
+            request__keyServer__pb2.vectorResult.SerializeToString,
+            request__keyServer__pb2.booleanResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def SqrtEncVector(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/KeyServerService/SqrtEncVector',
+            request__keyServer__pb2.vectorResult.SerializeToString,
+            request__keyServer__pb2.vectorResult.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def DivEncVector(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/KeyServerService/DivEncVector',
+            request__keyServer__pb2.divVectors.SerializeToString,
+            request__keyServer__pb2.vectorResult.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
