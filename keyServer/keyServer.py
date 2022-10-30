@@ -7,6 +7,7 @@ import tenseal as ts
 import pickle
 from keyServer.utils import *
 import time
+import numpy as np
 
 
 class KeyServer(request_keyServer_pb2_grpc.KeyServerServiceServicer):
@@ -27,10 +28,9 @@ class KeyServer(request_keyServer_pb2_grpc.KeyServerServiceServicer):
         self.n_sum_request = 0
         self.n_sum_response = 0
 
-
     def ReturnResult(self, request, context):
         # remove the noise list by cid and qid
-        remove_noise_list(request.cid,request.qid,self.total_noise_list)
+        remove_noise_list(request.cid, request.qid, self.total_noise_list)
 
         # receive and decrypt the results from parseServer
         ipaddress = request.ipaddress
@@ -121,3 +121,36 @@ class KeyServer(request_keyServer_pb2_grpc.KeyServerServiceServicer):
     #         self.reset_sum()
     #
     #     return response
+
+    def SqrtEncVector(self, request, context):
+        enc_serialize_msg = request.vectorMsg
+        enc_vector = ts.ckks_vector_from(self.sk_ctx, enc_serialize_msg)
+        dec_vector = enc_vector.decrypt()
+        sqrt_dec_vector = np.sqrt(dec_vector)
+
+        sqrt_plain_vector = ts.plain_tensor(sqrt_dec_vector)
+        sqrt_enc_vector = ts.ckks_vector(self.sk_ctx,sqrt_plain_vector)
+        sqrt_serialized_msg = sqrt_enc_vector.serialize()
+        response = request_keyServer_pb2.vectorResult(vectorMsg=sqrt_serialized_msg)
+
+        return response
+
+    def DivEncVector(self, request, context):
+        # get the dividend vector
+        dividend_enc_msg = request.dividendMsg
+        dividend_enc_vector = ts.ckks_vector_from(self.sk_ctx, dividend_enc_msg)
+        dividend_dec_vector = dividend_enc_vector.decrypt()
+        # get the divisor vector
+        divisor_enc_msg = request.divisorMsg
+        divisor_enc_vector = ts.ckks_vector_from(self.sk_ctx, divisor_enc_msg)
+        divisor_dec_vector = divisor_enc_vector.decrypt()
+        # get the division(dividend/divisor)
+        div_dec_vector = np.divide(dividend_dec_vector, divisor_dec_vector)
+
+        # make response and return
+        div_plain_vector = ts.plain_tensor(div_dec_vector)
+        div_enc_vector = ts.ckks_vector(self.sk_ctx,div_plain_vector)
+        sqrt_serialized_msg = div_enc_vector.serialize()
+        response = request_keyServer_pb2.vectorResult(vectorMsg=sqrt_serialized_msg)
+
+        return response

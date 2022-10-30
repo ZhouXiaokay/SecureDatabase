@@ -3,7 +3,7 @@ import numpy as np
 
 def generate_noise_list(db_num, noise_type):
     sensitivity = 1
-    epsilon = 1e-5
+    epsilon = 1e-7
     noise_type = noise_type.upper()
     # generate laplace noise list
     noise_list = np.random.laplace(loc=0, scale=sensitivity / epsilon, size=db_num - 1)

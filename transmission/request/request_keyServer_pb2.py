@@ -15,12 +15,13 @@ _sym_db = _symbol_database.Default()
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17request_keyServer.proto\x1a\x1bgoogle/protobuf/empty.proto\"R\n\x10requestEncResult\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x11\n\tipaddress\x18\x03 \x01(\t\x12\x11\n\tencResult\x18\x04 \x01(\x0c\"!\n\x0cvectorResult\x12\x11\n\tvectorMsg\x18\x01 \x01(\x0c\" \n\rbooleanResult\x12\x0f\n\x07\x62oolMsg\x18\x01 \x01(\x08\">\n\x14requestGenerateNoise\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x0c\n\x04type\x18\x03 \x01(\t\"<\n\x0frequestGetNoise\x12\x0f\n\x07\x64\x62_name\x18\x01 \x01(\x05\x12\x0b\n\x03\x63id\x18\x02 \x01(\x05\x12\x0b\n\x03qid\x18\x03 \x01(\x05\"!\n\rresponseNoise\x12\x10\n\x08noiseMsg\x18\x01 \x01(\x0c\x32\x9d\x02\n\x10KeyServerService\x12.\n\x0eRequestDecrypt\x12\r.vectorResult\x1a\r.vectorResult\x12\x39\n\x0cReturnResult\x12\x11.requestEncResult\x1a\x16.google.protobuf.Empty\x12\x30\n\x0f\x42ooleanPositive\x12\r.vectorResult\x1a\x0e.booleanResult\x12>\n\rGenerateNoise\x12\x15.requestGenerateNoise\x1a\x16.google.protobuf.Empty\x12,\n\x08GetNoise\x12\x10.requestGetNoise\x1a\x0e.responseNoiseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17request_keyServer.proto\x1a\x1bgoogle/protobuf/empty.proto\"R\n\x10requestEncResult\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x11\n\tipaddress\x18\x03 \x01(\t\x12\x11\n\tencResult\x18\x04 \x01(\x0c\"!\n\x0cvectorResult\x12\x11\n\tvectorMsg\x18\x01 \x01(\x0c\"5\n\ndivVectors\x12\x13\n\x0b\x64ividendMsg\x18\x01 \x01(\x0c\x12\x12\n\ndivisorMsg\x18\x02 \x01(\x0c\" \n\rbooleanResult\x12\x0f\n\x07\x62oolMsg\x18\x01 \x01(\x08\">\n\x14requestGenerateNoise\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x0c\n\x04type\x18\x03 \x01(\t\"<\n\x0frequestGetNoise\x12\x0f\n\x07\x64\x62_name\x18\x01 \x01(\x05\x12\x0b\n\x03\x63id\x18\x02 \x01(\x05\x12\x0b\n\x03qid\x18\x03 \x01(\x05\"!\n\rresponseNoise\x12\x10\n\x08noiseMsg\x18\x01 \x01(\x0c\x32\xf8\x02\n\x10KeyServerService\x12.\n\x0eRequestDecrypt\x12\r.vectorResult\x1a\r.vectorResult\x12\x39\n\x0cReturnResult\x12\x11.requestEncResult\x1a\x16.google.protobuf.Empty\x12>\n\rGenerateNoise\x12\x15.requestGenerateNoise\x1a\x16.google.protobuf.Empty\x12,\n\x08GetNoise\x12\x10.requestGetNoise\x1a\x0e.responseNoise\x12\x30\n\x0f\x42ooleanPositive\x12\r.vectorResult\x1a\x0e.booleanResult\x12-\n\rSqrtEncVector\x12\r.vectorResult\x1a\r.vectorResult\x12*\n\x0c\x44ivEncVector\x12\x0b.divVectors\x1a\r.vectorResultb\x06proto3')
 
 
 
 _REQUESTENCRESULT = DESCRIPTOR.message_types_by_name['requestEncResult']
 _VECTORRESULT = DESCRIPTOR.message_types_by_name['vectorResult']
+_DIVVECTORS = DESCRIPTOR.message_types_by_name['divVectors']
 _BOOLEANRESULT = DESCRIPTOR.message_types_by_name['booleanResult']
 _REQUESTGENERATENOISE = DESCRIPTOR.message_types_by_name['requestGenerateNoise']
 _REQUESTGETNOISE = DESCRIPTOR.message_types_by_name['requestGetNoise']
@@ -38,6 +39,13 @@ vectorResult = _reflection.GeneratedProtocolMessageType('vectorResult', (_messag
   # @@protoc_insertion_point(class_scope:vectorResult)
   })
 _sym_db.RegisterMessage(vectorResult)
+
+divVectors = _reflection.GeneratedProtocolMessageType('divVectors', (_message.Message,), {
+  'DESCRIPTOR' : _DIVVECTORS,
+  '__module__' : 'request_keyServer_pb2'
+  # @@protoc_insertion_point(class_scope:divVectors)
+  })
+_sym_db.RegisterMessage(divVectors)
 
 booleanResult = _reflection.GeneratedProtocolMessageType('booleanResult', (_message.Message,), {
   'DESCRIPTOR' : _BOOLEANRESULT,
@@ -75,14 +83,16 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _REQUESTENCRESULT._serialized_end=138
   _VECTORRESULT._serialized_start=140
   _VECTORRESULT._serialized_end=173
-  _BOOLEANRESULT._serialized_start=175
-  _BOOLEANRESULT._serialized_end=207
-  _REQUESTGENERATENOISE._serialized_start=209
-  _REQUESTGENERATENOISE._serialized_end=271
-  _REQUESTGETNOISE._serialized_start=273
-  _REQUESTGETNOISE._serialized_end=333
-  _RESPONSENOISE._serialized_start=335
-  _RESPONSENOISE._serialized_end=368
-  _KEYSERVERSERVICE._serialized_start=371
-  _KEYSERVERSERVICE._serialized_end=656
+  _DIVVECTORS._serialized_start=175
+  _DIVVECTORS._serialized_end=228
+  _BOOLEANRESULT._serialized_start=230
+  _BOOLEANRESULT._serialized_end=262
+  _REQUESTGENERATENOISE._serialized_start=264
+  _REQUESTGENERATENOISE._serialized_end=326
+  _REQUESTGETNOISE._serialized_start=328
+  _REQUESTGETNOISE._serialized_end=388
+  _RESPONSENOISE._serialized_start=390
+  _RESPONSENOISE._serialized_end=423
+  _KEYSERVERSERVICE._serialized_start=426
+  _KEYSERVERSERVICE._serialized_end=802
 # @@protoc_insertion_point(module_scope)
