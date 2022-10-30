@@ -10,7 +10,7 @@ import transmission.request.request_parseServer_pb2_grpc as request_parseServer_
 
 
 def launch_parseServer(host, port, delay):
-    parseServer_socket = host + ":" + str(port)
+    parseServer_address = host + ":" + str(port)
     address_dict = {"DATABASE_1": "10.254.19.25:50052", "KEYSERVER": "10.254.19.25:50054", "DATABASE_2": "10.254.19.25:50053",
                     "DATABASE_3": "10.254.19.25:50055"}
     max_msg_size = 1000000000
@@ -19,7 +19,7 @@ def launch_parseServer(host, port, delay):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=5), options=options)
     request_parseServer_pb2_grpc.add_ParseServerServiceServicer_to_server(ParseServer(address_dict, pk_ctx_file),
                                                                           server)
-    server.add_insecure_port(parseServer_socket)
+    server.add_insecure_port(parseServer_address)
     server.start()
     print("grpc parseServer start...")
 
@@ -36,6 +36,6 @@ def launch_parseServer(host, port, delay):
 
 if __name__ == '__main__':
     host = "10.254.19.25"
-    port = 50053
+    port = 50066
     delay = 5
     launch_parseServer(host, port, delay)

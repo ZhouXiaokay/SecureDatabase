@@ -10,14 +10,14 @@ from concurrent import futures
 
 
 def launch_dataServer(host, port, delay):
-    dataServer_socket = host + ":" + str(port)
+    dataServer_address = host + ":" + str(port)
     max_msg_size = 1000000000
     pk_file = "../transmission/ts_ckks_pk.config"
     options = [('grpc.max_send_message_length', max_msg_size), ('grpc.max_receive_message_length', max_msg_size)]
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=5), options=options)
-    tenseal_data_pb2_grpc.add_DatabaseServerServiceServicer_to_server(DatabaseServer(dataServer_socket, pk_file, 2),
+    tenseal_data_pb2_grpc.add_DatabaseServerServiceServicer_to_server(DatabaseServer(dataServer_address, pk_file, 2),
                                                                       server)
-    server.add_insecure_port(dataServer_socket)
+    server.add_insecure_port(dataServer_address)
     server.start()
     print("grpc dataServer_2 start...")
 

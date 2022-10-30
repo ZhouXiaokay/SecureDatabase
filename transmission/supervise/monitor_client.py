@@ -1,6 +1,7 @@
 import socket
 import threading
 import time
+import datetime
 
 MAX_BYTES = 1024
 
@@ -37,16 +38,15 @@ def HeartBeatClient(host, port, delay):
             count_status = is_server_alive_count
             time.sleep(delay)
             if count_status != is_server_alive_count:
-                print(f"{host}:{port} Server  online!")
+                print(f'{datetime.datetime.now()} >>{host}:{port} Server  online!')
                 continue
 
-        print(f"{host}:{port} Server offline!")
-        #
+        print(f'{datetime.datetime.now()} >>{host}:{port} Server offline!')
         IS_SERVER_ALIVE = True
 
 
 if __name__ == "__main__":
     host = ''
-    port = 1235
+    port = 1236
     delay = 5
     HeartBeatClient(host, port, delay)
