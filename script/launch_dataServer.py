@@ -1,5 +1,6 @@
 import sys
 import os
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import transmission.tenseal.tenseal_data_pb2_grpc as tenseal_data_pb2_grpc
 from databaseServer import DatabaseServer
@@ -21,7 +22,7 @@ def launch_dataServer(host, port, delay):
     server.start()
     print("grpc dataServer_1 start...")
 
-    #launch heart-beat sever.
+    # launch heart-beat sever.
     monitor_server = threading.Thread(target=HeartBeatServer, args=(host, port, delay))
     monitor_server.setDaemon(True)
     monitor_server.start()
@@ -31,7 +32,7 @@ def launch_dataServer(host, port, delay):
 
 
 if __name__ == '__main__':
-    host = "10.254.19.25"
+    host = "127.0.0.1"
     port = 50052
     delay = 2
     launch_dataServer(host, port, delay)
