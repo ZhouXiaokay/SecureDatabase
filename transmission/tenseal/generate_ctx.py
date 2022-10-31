@@ -16,16 +16,16 @@ if __name__ == '__main__':
     # 16384: [60, 40, 40, 40, 40, 40, 40, 40, 60]
     # 32768: [60, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 60]
 
-    # context = ts.context(
-    #     ts.SCHEME_TYPE.CKKS,
-    #     poly_modulus_degree=8192,
-    #     coeff_mod_bit_sizes=[60, 40, 40, 60]
-    # )
     context = ts.context(
         ts.SCHEME_TYPE.CKKS,
-        poly_modulus_degree=16384,
-        coeff_mod_bit_sizes=[60, 40, 40, 40, 40, 40, 40, 40, 60]
+        poly_modulus_degree=8192,
+        coeff_mod_bit_sizes=[60, 40, 40, 60]
     )
+    # context = ts.context(
+    #     ts.SCHEME_TYPE.CKKS,
+    #     poly_modulus_degree=16384,
+    #     coeff_mod_bit_sizes=[60, 40, 40, 40, 40, 40, 40, 40, 60]
+    # )
 
     context.global_scale = 2 ** 40
     context.generate_galois_keys()

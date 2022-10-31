@@ -5,4 +5,5 @@ __pycache__/
 # ignore .DS_Store
 .DS_Store
 */.DS_Store
-
+# ignore ctx_file
+.config

@@ -30,7 +30,7 @@ def launch_keyServer(host, port, delay):
     server.wait_for_termination()
 
 if __name__ == '__main__':
-    host = "10.254.19.25"
+    host = "127.0.0.1"
     port = 50054
     delay = 2
     launch_keyServer(host, port, delay)
