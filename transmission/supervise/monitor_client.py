@@ -14,10 +14,13 @@ def HeartBeatClient(host, port, delay):
         nonlocal is_server_alive_count
         while True:
             try:
-                msg, addr = client_sock.recvfrom(MAX_BYTES)
-            except:
+                # msg, addr = client_sock.recvfrom(MAX_BYTES)
+                msg = client_sock.recvfrom(MAX_BYTES)
+            except Exception as e:
+                print(f'{host}:{port}. {e}')
                 continue
-            is_server_alive_count += 1
+            if len(msg) != 0:
+                is_server_alive_count += 1
             if is_server_alive_count > 10000:
                 is_server_alive_count = 0
 
@@ -28,17 +31,18 @@ def HeartBeatClient(host, port, delay):
     # print(threading.enumerate())
 
     while True:
-        client_sock.connect((host, port))
         try:
+            client_sock.connect((host, port))
             client_sock.send('Connect.'.encode('ascii'))
-        except:
+        except Exception as e:
+            print(f'{host}:{port}. {e}')
             IS_SERVER_ALIVE = False
 
         if IS_SERVER_ALIVE:
             count_status = is_server_alive_count
             time.sleep(delay)
             if count_status != is_server_alive_count:
-                print(f'{datetime.datetime.now()} >>{host}:{port} Server  online!')
+                print(f'{datetime.datetime.now()} >>{host}:{port} Server online!')
                 continue
 
         print(f'{datetime.datetime.now()} >>{host}:{port} Server offline!')
