@@ -16,7 +16,7 @@ class RequestTransmissionStub(object):
             channel: A grpc.Channel.
         """
         self.RequestProxy = channel.unary_unary(
-                '/RequestTransmission/RequestProxy',
+                '/RequestTransmission/get_query_result',
                 request_serializer=request__data__pb2.requestProxy.SerializeToString,
                 response_deserializer=request__data__pb2.responseResult.FromString,
                 )
@@ -41,28 +41,28 @@ class RequestTransmissionServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def RequestProxy(self, request, context):
-        """clientProxy provides the interface, client remotes the call
+        """client_proxy provides the interface, client remotes the call
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def RequestParsing(self, request, context):
-        """parseServer provides the interface, clientProxy remotes the call
+        """parse_server provides the interface, client_proxy remotes the call
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def RequestDecrypt(self, request, context):
-        """keyServer provides the interface, parseServer remotes the call
+        """key_server provides the interface, parse_server remotes the call
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def RequestResult(self, request, context):
-        """clientProxy provides the interface, keyServer remotes the call
+        """client_proxy provides the interface, key_server remotes the call
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -71,7 +71,7 @@ class RequestTransmissionServicer(object):
 
 def add_RequestTransmissionServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'RequestProxy': grpc.unary_unary_rpc_method_handler(
+            'get_query_result': grpc.unary_unary_rpc_method_handler(
                     servicer.RequestProxy,
                     request_deserializer=request__data__pb2.requestProxy.FromString,
                     response_serializer=request__data__pb2.responseResult.SerializeToString,
@@ -112,7 +112,7 @@ class RequestTransmission(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/RequestTransmission/RequestProxy',
+        return grpc.experimental.unary_unary(request, target, '/RequestTransmission/get_query_result',
             request__data__pb2.requestProxy.SerializeToString,
             request__data__pb2.responseResult.FromString,
             options, channel_credentials,

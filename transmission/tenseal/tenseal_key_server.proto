@@ -1,0 +1,54 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+// requestServer send it to keyServer
+message query_result_parse_server{
+  int32 cid = 1; // client id
+  int32 qid = 2; //query id
+  string ip_address = 3;//client proxy
+  bytes enc_result = 4;
+}
+
+// requestServer send serialized encrypted vector, keyServer send serialized encrypted vector
+message vector{
+  bytes vector_msg = 1;
+}
+
+message div_vectors{
+  bytes dividend_msg = 1;
+  bytes divisor_msg = 2;
+}
+
+message boolean_result{
+  bool bool_msg = 1;
+}
+
+message generate_noise_request{
+  int32 cid = 1;
+  int32 qid = 2;
+  string type = 3;
+}
+
+message get_noise_request{
+  int32 db_name = 1;
+  int32 cid = 2;
+  int32 qid = 3;
+}
+
+message noise{
+  bytes noise_msg= 1;
+}
+
+service KeyServerService {
+  // requestServer remotes the call and keyServer send decrypted result to clientProxy
+  rpc return_enc_query_result (query_result_parse_server) returns(google.protobuf.Empty);
+  //requestServer remotes the call, and keyServer generates noise list
+  rpc generate_noise(generate_noise_request) returns(google.protobuf.Empty);
+  //dataServer remotes the call, and keyServer sends noise back
+  rpc get_noise(get_noise_request) returns(noise);
+  //keyServer provides the following operations: division,sqrt,boolean positive
+  rpc boolean_positive(vector) returns(boolean_result);
+  rpc sqrt_enc_vector(vector) returns(vector);
+  rpc div_enc_vector(div_vectors) returns(vector);
+
+}

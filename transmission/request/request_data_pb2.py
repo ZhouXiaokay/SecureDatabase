@@ -15,20 +15,20 @@ _sym_db = _symbol_database.Default()
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12request_data.proto\x1a\x1bgoogle/protobuf/empty.proto\"Z\n\x0crequestProxy\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x0f\n\x07\x64\x62_name\x18\x03 \x01(\t\x12\x13\n\x0b\x63olumn_name\x18\x04 \x01(\t\x12\n\n\x02op\x18\x05 \x01(\t\"m\n\x0crequestQuery\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x0f\n\x07\x64\x62_name\x18\x03 \x01(\t\x12\x13\n\x0b\x63olumn_name\x18\x04 \x01(\t\x12\n\n\x02op\x18\x05 \x01(\t\x12\x11\n\tipaddress\x18\x06 \x01(\t\"R\n\x10requestEncResult\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x11\n\tipaddress\x18\x03 \x01(\t\x12\x11\n\tencResult\x18\x04 \x01(\x0c\"?\n\x10requestDecResult\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x11\n\tdecResult\x18\x03 \x01(\x0c\" \n\x0eresponseResult\x12\x0e\n\x06result\x18\x01 \x01(\x0c\"\x14\n\x04\x66lag\x12\x0c\n\x04\x66lag\x18\x01 \x01(\x08\x32\xf7\x01\n\x13RequestTransmission\x12.\n\x0cRequestProxy\x12\r.requestProxy\x1a\x0f.responseResult\x12\x37\n\x0eRequestParsing\x12\r.requestQuery\x1a\x16.google.protobuf.Empty\x12;\n\x0eRequestDecrypt\x12\x11.requestEncResult\x1a\x16.google.protobuf.Empty\x12:\n\rRequestResult\x12\x11.requestDecResult\x1a\x16.google.protobuf.Emptyb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x12request_data.proto\x1a\x1bgoogle/protobuf/empty.proto\"Z\n\x0crequestProxy\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x0f\n\x07\x64\x62_name\x18\x03 \x01(\t\x12\x13\n\x0b\x63olumn_name\x18\x04 \x01(\t\x12\n\n\x02op\x18\x05 \x01(\t\"m\n\x0crequestQuery\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x0f\n\x07\x64\x62_name\x18\x03 \x01(\t\x12\x13\n\x0b\x63olumn_name\x18\x04 \x01(\t\x12\n\n\x02op\x18\x05 \x01(\t\x12\x11\n\tipaddress\x18\x06 \x01(\t\"R\n\x10requestEncResult\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x11\n\tipaddress\x18\x03 \x01(\t\x12\x11\n\tencResult\x18\x04 \x01(\x0c\"?\n\x10requestDecResult\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x11\n\tresult\x18\x03 \x01(\x0c\" \n\x0eresponseResult\x12\x0e\n\x06result\x18\x01 \x01(\x0c\"\x14\n\x04\x66lag\x12\x0c\n\x04\x66lag\x18\x01 \x01(\x08\x32\xf7\x01\n\x13RequestTransmission\x12.\n\x0cRequestProxy\x12\r.client_query_msg\x1a\x0f.query_result\x12\x37\n\x0eRequestParsing\x12\r.requestQuery\x1a\x16.google.protobuf.Empty\x12;\n\x0eRequestDecrypt\x12\x11.requestEncResult\x1a\x16.google.protobuf.Empty\x12:\n\rRequestResult\x12\x11.query_result\x1a\x16.google.protobuf.Emptyb\x06proto3')
 
 
 
-_REQUESTPROXY = DESCRIPTOR.message_types_by_name['requestProxy']
+_REQUESTPROXY = DESCRIPTOR.message_types_by_name['client_query_msg']
 _REQUESTQUERY = DESCRIPTOR.message_types_by_name['requestQuery']
 _REQUESTENCRESULT = DESCRIPTOR.message_types_by_name['requestEncResult']
-_REQUESTDECRESULT = DESCRIPTOR.message_types_by_name['requestDecResult']
-_RESPONSERESULT = DESCRIPTOR.message_types_by_name['responseResult']
+_REQUESTDECRESULT = DESCRIPTOR.message_types_by_name['query_result']
+_RESPONSERESULT = DESCRIPTOR.message_types_by_name['query_result']
 _FLAG = DESCRIPTOR.message_types_by_name['flag']
-requestProxy = _reflection.GeneratedProtocolMessageType('requestProxy', (_message.Message,), {
+requestProxy = _reflection.GeneratedProtocolMessageType('client_query_msg', (_message.Message,), {
   'DESCRIPTOR' : _REQUESTPROXY,
   '__module__' : 'request_data_pb2'
-  # @@protoc_insertion_point(class_scope:requestProxy)
+  # @@protoc_insertion_point(class_scope:client_query_msg)
   })
 _sym_db.RegisterMessage(requestProxy)
 
@@ -46,17 +46,17 @@ requestEncResult = _reflection.GeneratedProtocolMessageType('requestEncResult', 
   })
 _sym_db.RegisterMessage(requestEncResult)
 
-requestDecResult = _reflection.GeneratedProtocolMessageType('requestDecResult', (_message.Message,), {
+requestDecResult = _reflection.GeneratedProtocolMessageType('query_result', (_message.Message,), {
   'DESCRIPTOR' : _REQUESTDECRESULT,
   '__module__' : 'request_data_pb2'
-  # @@protoc_insertion_point(class_scope:requestDecResult)
+  # @@protoc_insertion_point(class_scope:query_result)
   })
 _sym_db.RegisterMessage(requestDecResult)
 
-responseResult = _reflection.GeneratedProtocolMessageType('responseResult', (_message.Message,), {
+responseResult = _reflection.GeneratedProtocolMessageType('query_result', (_message.Message,), {
   'DESCRIPTOR' : _RESPONSERESULT,
   '__module__' : 'request_data_pb2'
-  # @@protoc_insertion_point(class_scope:responseResult)
+  # @@protoc_insertion_point(class_scope:query_result)
   })
 _sym_db.RegisterMessage(responseResult)
 

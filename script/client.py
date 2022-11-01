@@ -1,14 +1,11 @@
 import os
 import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-
-import transmission.request.request_clientProxy_pb2 as request_clientProxy_pb2
-import transmission.request.request_clientProxy_pb2_grpc as request_clientProxy_pb2_grpc
-
-import tenseal as ts
+import transmission.tenseal.tenseal_client_proxy_pb2 as tenseal_client_proxy_pb2
+import transmission.tenseal.tenseal_client_proxy_pb2_grpc as tenseal_client_proxy_pb2_grpc
 import grpc
 import pickle
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 
 
 def sendRequest():
@@ -16,13 +13,13 @@ def sendRequest():
     options = [('grpc.max_send_message_length', max_msg_size),
                ('grpc.max_receive_message_length', max_msg_size)]
     channel = grpc.insecure_channel('127.0.0.1:50060', options=options)
-    stub = request_clientProxy_pb2_grpc.ClientProxyServiceStub(channel)
+    stub = tenseal_client_proxy_pb2_grpc.ClientProxyServiceStub(channel)
 
-    request = request_clientProxy_pb2.requestProxy(cid=1, qid=3457, db_name="total", column_name="value_2",
-                                                   op="stddev_samp",
-                                                   table_name="table_1")
-    response = stub.RequestProxy(request)
-    result = pickle.loads(response.result)
+    request = tenseal_client_proxy_pb2.query_msg_client(cid=1, qid=3457, db_name="database_1", column_name="value_1",
+                                                        op="max",
+                                                        table_name="table_1")
+    response = stub.data_query(request)
+    result = pickle.loads(response.dec_result)
     print(result)
 
 

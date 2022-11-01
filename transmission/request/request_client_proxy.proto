@@ -1,0 +1,32 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+// client send it to clientProxy
+message query_msg_client{
+  int32 cid = 1; // client id
+  int32 qid = 2; //query id
+  string db_name = 3; // database name
+  string table_name =4;
+  string column_name =5; // database column name
+  string op = 6; // operation
+}
+
+// clientProxy send it to client
+message query_result {
+  bytes dec_result = 1;
+}
+
+// KeyServer send the decrypted result to clientProxy
+message query_result_key_server{
+  int32 cid = 1; // client id
+  int32 qid = 2; //query id
+  bytes dec_result = 3;
+}
+
+
+service ClientProxyService {
+  // clientProxy provides the interface, client remotes the call
+  rpc data_query(query_msg_client) returns(query_result);
+  // clientProxy provides the interface, keyServer remotes the call
+  rpc get_query_result (query_result_key_server) returns(google.protobuf.Empty);
+}
