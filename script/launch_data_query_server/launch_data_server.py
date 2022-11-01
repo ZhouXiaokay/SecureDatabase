@@ -1,23 +1,27 @@
 import sys
 import os
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import transmission.tenseal.tenseal_data_server_pb2_grpc as tenseal_data_server_pb2_grpc
 from data_query.data_server import DatabaseServer
 import grpc
 import threading
 from transmission.supervise import HeartBeatServer
 from concurrent import futures
+import hydra
+from omegaconf import DictConfig
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-def launch_data_server(host, port, delay):
+def launch_data_server(host, port, delay, name, cfg):
     dataServer_address = host + ":" + str(port)
     max_msg_size = 1000000000
     pk_file = "../../transmission/ts_ckks_pk.config"
     options = [('grpc.max_send_message_length', max_msg_size), ('grpc.max_receive_message_length', max_msg_size)]
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=5), options=options)
-    tenseal_data_server_pb2_grpc.add_DatabaseServerServiceServicer_to_server(DatabaseServer(dataServer_address, pk_file, 1),
-                                                                             server)
+    tenseal_data_server_pb2_grpc.add_DatabaseServerServiceServicer_to_server(
+        DatabaseServer(dataServer_address, pk_file, name, cfg),
+        server)
     server.add_insecure_port(dataServer_address)
     server.start()
     print("grpc dataServer_1 start...")
@@ -31,8 +35,14 @@ def launch_data_server(host, port, delay):
     server.wait_for_termination()
 
 
+@hydra.main(version_base=None, config_path="../../conf", config_name="conf")
+def main(cfg: DictConfig):
+    host = cfg.servers.data_server_1.host
+    port = int(cfg.servers.data_server_1.port)
+    delay = cfg.defs.delay
+    name = cfg.servers.data_server_1.name
+    launch_data_server(host, port, delay, name, cfg)
+
+
 if __name__ == '__main__':
-    host = "127.0.0.1"
-    port = 50052
-    delay = 2
-    launch_data_server(host, port, delay)
+    main()

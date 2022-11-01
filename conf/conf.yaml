@@ -1,0 +1,41 @@
+
+defs:
+  host: '127.0.0.1'
+  delay: 2
+  parse_server_delay: 5
+
+servers:
+  client_proxy:
+    host: ${defs.host}
+    port: '50060'
+  key_server:
+    host: ${defs.host}
+    port: '50070'
+  parse_server:
+    host: ${defs.host}
+    port: '50080'
+  data_server_1:
+    host: ${defs.host}
+    name: '1'
+    port: '50051'
+  data_server_2:
+    host: ${defs.host}
+    name: '2'
+    port: '50052'
+  data_server_3:
+    host: ${defs.host}
+    name: '3'
+    port: '50053'
+
+clients:
+  client_1:
+    host: ${defs.host}
+    port: '50060'
+
+database:
+  host: ${defs.host}
+  port: '3306'
+  user: 'root'
+  password: '99996666'
+  database: 'mysql'
+  charset: utf8mb4

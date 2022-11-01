@@ -7,6 +7,7 @@ from numpy import *
 import tenseal as ts
 from .utils import *
 
+
 # parse the request from client_proxy, divided into two schemes:local and total
 def request_parsing(request, pk_ctx, address_dict, options):
     db_name = request.db_name.upper()

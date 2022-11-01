@@ -1,12 +1,15 @@
 import sys
 import os
 import threading
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import hydra
+from omegaconf import DictConfig
 from data_query.key_server import KeyServer
 import transmission.tenseal.tenseal_key_server_pb2_grpc as tenseal_key_server_pb2_grpc
 import grpc
 from transmission.supervise import HeartBeatServer
 from concurrent import futures
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def launch_key_server(host, port, delay):
@@ -29,8 +32,14 @@ def launch_key_server(host, port, delay):
 
     server.wait_for_termination()
 
-if __name__ == '__main__':
-    host = "127.0.0.1"
-    port = 50054
-    delay = 2
+
+@hydra.main(version_base=None, config_path="../../conf", config_name="conf")
+def main(cfg: DictConfig):
+    host = cfg.servers.key_server.host
+    port = int(cfg.servers.key_server.port)
+    delay = cfg.defs.delay
     launch_key_server(host, port, delay)
+
+
+if __name__ == '__main__':
+    main()

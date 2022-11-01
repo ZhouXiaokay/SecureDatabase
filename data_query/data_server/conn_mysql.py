@@ -3,6 +3,7 @@ import numpy as np
 import transmission.tenseal.tenseal_key_server_pb2 as tenseal_key_server_pb2
 import pickle
 import re
+from omegaconf import DictConfig
 
 """
 conn_mysql.py provides query operations over database:
@@ -13,11 +14,11 @@ conn_mysql.py provides query operations over database:
 
 
 # establish connection with mysql
-def conn(name):
-    db = pymysql.connect(host='localhost',
-                         port=3306,
-                         user='root',
-                         password='99996666',
+def conn(name, cfg: DictConfig):
+    db = pymysql.connect(host=cfg.database.host,
+                         port=int(cfg.database.port),
+                         user=cfg.database.user,
+                         password=cfg.database.password,
                          database='database_{0}'.format(name))
     return db
 
@@ -81,9 +82,9 @@ def generate_sql(request):
 
 
 # get query result from database_dbname
-def get_query_results(db_name, sql):
+def get_query_results(db_name, cfg, sql):
     result_list = []
-    db = conn(db_name)
+    db = conn(db_name, cfg)
     cursor = db.cursor()
     cursor.execute(sql)
     results = cursor.fetchone()
@@ -96,7 +97,7 @@ def get_query_results(db_name, sql):
 
 
 # get the query results with laplace noise
-def get_noise_query_results(db_name, cid, qid, sql, key_stub):
+def get_noise_query_results(db_name, cfg, cid, qid, sql, key_stub):
     # sensitivity = 1
     # epsilon = 5
     # noise = np.random.laplace(loc=0, scale=sensitivity / epsilon)

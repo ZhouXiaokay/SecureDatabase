@@ -1,6 +1,7 @@
 import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import hydra
+from omegaconf import DictConfig
 from data_query.parse_server import ParseServer
 from concurrent import futures
 import grpc
@@ -8,11 +9,11 @@ import threading
 from transmission.supervise import HeartBeatClient
 import transmission.tenseal.tenseal_parse_server_pb2_grpc as tenseal_parse_server_pb2_grpc
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-def launch_parse_server(host, port, delay):
+
+def launch_parse_server(host, port, delay, address_dict):
     parseServer_address = host + ":" + str(port)
-    address_dict = {"DATABASE_1": "127.0.0.1:50052", "KEYSERVER": "127.0.0.1:50054", "DATABASE_2": "127.0.0.1:50053",
-                    "DATABASE_3": "127.0.0.1:50055"}
     max_msg_size = 1000000000
     pk_ctx_file = "../../transmission/ts_ckks_pk.config"
     options = [('grpc.max_send_message_length', max_msg_size), ('grpc.max_receive_message_length', max_msg_size)]
@@ -23,19 +24,28 @@ def launch_parse_server(host, port, delay):
     server.start()
     print("grpc parse_server start...")
 
-    #launch heart-beat client
+    # launch heart-beat client
     for index, value in enumerate(address_dict.values()):
         server_host, server_port = value.split(':')
         monitor_client = threading.Thread(target=HeartBeatClient, args=(server_host, int(server_port), delay))
         monitor_client.setDaemon(True)
         monitor_client.start()
-        print(f"monitor client {index+1} service start... ")
+        print(f"monitor client {index + 1} service start... ")
 
     server.wait_for_termination()
 
 
+@hydra.main(version_base=None, config_path="../../conf", config_name="conf")
+def main(cfg: DictConfig):
+    host = cfg.servers.parse_server.host
+    port = int(cfg.servers.parse_server.port)
+    delay = cfg.defs.parse_server_delay
+    address_dict = {"DATABASE_1": cfg.servers.data_server_1.host + ':' + cfg.servers.data_server_1.port,
+                    "DATABASE_2": cfg.servers.data_server_2.host + ':' + cfg.servers.data_server_2.port,
+                    "DATABASE_3": cfg.servers.data_server_3.host + ':' + cfg.servers.data_server_3.port,
+                    "KEYSERVER": cfg.servers.key_server.host + ':' + cfg.servers.key_server.port, }
+    launch_parse_server(host, port, delay, address_dict)
+
+
 if __name__ == '__main__':
-    host = "127.0.0.1"
-    port = 50051
-    delay = 5
-    launch_parse_server(host, port, delay)
+    main()
