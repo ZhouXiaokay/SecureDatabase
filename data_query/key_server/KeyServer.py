@@ -5,8 +5,7 @@ import transmission.tenseal.tenseal_client_proxy_pb2_grpc as tenseal_client_prox
 import grpc
 import tenseal as ts
 import pickle
-from key_server.utils import *
-import time
+from .utils import *
 import numpy as np
 
 

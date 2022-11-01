@@ -1,7 +1,7 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from client_proxy import ClientProxy
+from data_query.client_proxy import ClientProxy
 from concurrent import futures
 import grpc
 

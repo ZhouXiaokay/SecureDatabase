@@ -1,5 +1,4 @@
 import transmission.tenseal.tenseal_parse_server_pb2_grpc as tenseal_parse_server_pb2_grpc
-import transmission.tenseal.tenseal_parse_server_pb2 as tenseal_parse_server_pb2
 import grpc
 
 

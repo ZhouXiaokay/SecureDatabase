@@ -2,10 +2,10 @@
 parsing.py responses to parse the request from clients,
 and return results
 """
-from parse_server.utils import *
 import pickle
 from numpy import *
-
+import tenseal as ts
+from .utils import *
 
 # parse the request from client_proxy, divided into two schemes:local and total
 def request_parsing(request, pk_ctx, address_dict, options):
@@ -21,7 +21,7 @@ def request_parsing(request, pk_ctx, address_dict, options):
         return enc_vector
 
 
-# process the request in which query data is only from local database
+# process the request in which query data_modeling is only from local database
 def process_local_request(request, pk_ctx, db_stub):
     query_request = tenseal_data_server_pb2.query_msg_parse_server(cid=request.cid, qid=request.qid, op=request.op,
                                                                    column_name=request.column_name,
@@ -32,7 +32,7 @@ def process_local_request(request, pk_ctx, db_stub):
     return enc_vector
 
 
-# process the request in which query data is only from local database and needs noise.
+# process the request in which query data_modeling is only from local database and needs noise.
 def process_noise_local_request(request, db_stub):
     query_request = tenseal_data_server_pb2.query_msg_parse_server(cid=request.cid, qid=request.qid, op=request.op,
                                                                    column_name=request.column_name,

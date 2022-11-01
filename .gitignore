@@ -8,3 +8,6 @@ __pycache__/
 # ignore ctx_file
 .config
 */.config
+# ignore
+.sql
+*/.sql

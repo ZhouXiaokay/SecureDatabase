@@ -2,7 +2,7 @@ import transmission.tenseal.tenseal_data_server_pb2_grpc as tenseal_data_server_
 import transmission.tenseal.tenseal_data_server_pb2 as tenseal_data_server_pb2
 import transmission.tenseal.tenseal_key_server_pb2_grpc as tenseal_key_server_pb2_grpc
 import tenseal as ts
-from data_server.conn_mysql import *
+from data_query.data_server.conn_mysql import *
 import pickle
 import grpc
 

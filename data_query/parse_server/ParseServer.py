@@ -1,6 +1,7 @@
-from parse_server.parsing import *
 import transmission.tenseal.tenseal_parse_server_pb2 as tenseal_parse_server_pb2
 import transmission.tenseal.tenseal_parse_server_pb2_grpc as tenseal_parse_server_pb2_grpc
+from .utils import *
+from .parsing import *
 
 
 class ParseServer(tenseal_parse_server_pb2_grpc.ParseServerServiceServicer):

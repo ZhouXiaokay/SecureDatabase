@@ -1,7 +1,7 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from parse_server import ParseServer
+from data_query.parse_server import ParseServer
 from concurrent import futures
 import grpc
 import threading
@@ -14,11 +14,11 @@ def launch_parse_server(host, port, delay):
     address_dict = {"DATABASE_1": "127.0.0.1:50052", "KEYSERVER": "127.0.0.1:50054", "DATABASE_2": "127.0.0.1:50053",
                     "DATABASE_3": "127.0.0.1:50055"}
     max_msg_size = 1000000000
-    pk_ctx_file = "../transmission/ts_ckks_pk.config"
+    pk_ctx_file = "../../transmission/ts_ckks_pk.config"
     options = [('grpc.max_send_message_length', max_msg_size), ('grpc.max_receive_message_length', max_msg_size)]
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=5), options=options)
     tenseal_parse_server_pb2_grpc.add_ParseServerServiceServicer_to_server(ParseServer(address_dict, pk_ctx_file),
-                                                                          server)
+                                                                           server)
     server.add_insecure_port(parseServer_address)
     server.start()
     print("grpc parse_server start...")

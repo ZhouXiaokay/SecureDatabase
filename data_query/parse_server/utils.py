@@ -3,10 +3,7 @@ import transmission.tenseal.tenseal_data_server_pb2 as tenseal_data_server_pb2
 
 import transmission.tenseal.tenseal_key_server_pb2 as tenseal_key_server_pb2
 import transmission.tenseal.tenseal_key_server_pb2_grpc as tenseal_key_server_pb2_grpc
-
-import tenseal as ts
 import grpc
-import pickle
 
 
 # establish connection with dataServer_dbname,return stub

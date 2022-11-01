@@ -1,5 +1,5 @@
-import transmission.tenseal.tenseal_data_pb2_grpc as tenseal_data_pb2_grpc
-import transmission.tenseal.tenseal_data_pb2 as tenseal_data_pb2
+from data_query import transmission as tenseal_data_pb2_grpc
+import transmission as tenseal_data_pb2
 import tenseal as ts
 import grpc
 
@@ -19,13 +19,13 @@ def run(pk_ctx):
 
 
 if __name__ == "__main__":
-    pk_file = "../transmission/ts_ckks_pk.config"
+    pk_file = "../../transmission/ts_ckks_pk.config"
     pk_bytes = open(pk_file, "rb").read()
     pk_ctx = ts.context_from(pk_bytes)
 
     enc1 = run(pk_ctx)
 
-    sk_ctx_file = "../transmission/ts_ckks.config"
+    sk_ctx_file = "../../transmission/ts_ckks.config"
     sk_context_bytes = open(sk_ctx_file, "rb").read()
     ctx = ts.context_from(sk_context_bytes)
     sk = ctx.secret_key()

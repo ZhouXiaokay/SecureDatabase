@@ -1,9 +1,9 @@
 import transmission.tenseal.tenseal_client_proxy_pb2 as tenseal_client_proxy_pb2
 import transmission.tenseal.tenseal_client_proxy_pb2_grpc as tenseal_client_proxy_pb2_grpc
+import transmission.tenseal.tenseal_parse_server_pb2 as tenseal_parse_server_pb2
 import time
-import grpc
 import pickle
-from client_proxy.utils import *
+from data_query.client_proxy.utils import *
 
 
 class ClientProxy(tenseal_client_proxy_pb2_grpc.ClientProxyServiceServicer):

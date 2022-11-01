@@ -15,8 +15,8 @@ def sendRequest():
     channel = grpc.insecure_channel('127.0.0.1:50060', options=options)
     stub = tenseal_client_proxy_pb2_grpc.ClientProxyServiceStub(channel)
 
-    request = tenseal_client_proxy_pb2.query_msg_client(cid=1, qid=3457, db_name="database_1", column_name="value_1",
-                                                        op="max",
+    request = tenseal_client_proxy_pb2.query_msg_client(cid=1, qid=3457, db_name="total", column_name="value_1",
+                                                        op="var_samp",
                                                         table_name="table_1")
     response = stub.data_query(request)
     result = pickle.loads(response.dec_result)

@@ -53,7 +53,7 @@ def parse_op(op, column_name):
     return op_sql
 
 
-ctx_bytes = open('../transmission/ts_ckks.config','rb').read()
+ctx_bytes = open('../../transmission/ts_ckks.config', 'rb').read()
 ctx = ts.context_from(ctx_bytes)
 vec_1 = [10893537.6585275]
 vec_2 = [1.0344827589305388]
