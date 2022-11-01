@@ -6,7 +6,7 @@ import datetime
 MAX_BYTES = 1024
 
 
-def HeartBeatClient(host, port, delay):
+def heart_beat_client(host, port, delay):
     client_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     is_server_alive_count = 0
 
@@ -48,9 +48,3 @@ def HeartBeatClient(host, port, delay):
         print(f'{datetime.datetime.now()} >>{host}:{port} Server offline!')
         IS_SERVER_ALIVE = True
 
-
-if __name__ == "__main__":
-    host = ''
-    port = 1236
-    delay = 5
-    HeartBeatClient(host, port, delay)

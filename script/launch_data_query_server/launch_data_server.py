@@ -6,7 +6,7 @@ import transmission.tenseal.tenseal_data_server_pb2_grpc as tenseal_data_server_
 from data_query.data_server import DatabaseServer
 import grpc
 import threading
-from transmission.supervise import HeartBeatServer
+from transmission.supervise import heart_beat_server
 from concurrent import futures
 import hydra
 from omegaconf import DictConfig
@@ -26,7 +26,7 @@ def launch_data_server(host, port, delay, name, cfg):
     print("grpc dataServer_1 start...")
 
     # launch heart-beat sever.
-    monitor_server = threading.Thread(target=HeartBeatServer, args=(host, port, delay))
+    monitor_server = threading.Thread(target=heart_beat_server, args=(host, port, delay))
     monitor_server.setDaemon(True)
     monitor_server.start()
     # print(threading.enumerate())

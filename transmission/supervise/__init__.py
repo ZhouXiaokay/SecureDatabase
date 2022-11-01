@@ -1,2 +1,2 @@
-from .monitor_client import HeartBeatClient
-from .monitor_server import HeartBeatServer
+from .monitor_client import heart_beat_client
+from .monitor_server import heart_beat_server

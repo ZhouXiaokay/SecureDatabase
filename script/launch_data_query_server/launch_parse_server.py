@@ -8,7 +8,7 @@ from data_query.parse_server import ParseServer
 from concurrent import futures
 import grpc
 import threading
-from transmission.supervise import HeartBeatClient
+from transmission.supervise import heart_beat_client
 import transmission.tenseal.tenseal_parse_server_pb2_grpc as tenseal_parse_server_pb2_grpc
 
 
@@ -27,7 +27,7 @@ def launch_parse_server(host, port, delay, address_dict):
     # launch heart-beat client
     for index, value in enumerate(address_dict.values()):
         server_host, server_port = value.split(':')
-        monitor_client = threading.Thread(target=HeartBeatClient, args=(server_host, int(server_port), delay))
+        monitor_client = threading.Thread(target=heart_beat_client, args=(server_host, int(server_port), delay))
         monitor_client.setDaemon(True)
         monitor_client.start()
         print(f"monitor client {index + 1} service start... ")

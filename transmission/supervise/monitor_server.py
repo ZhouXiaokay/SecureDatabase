@@ -6,7 +6,7 @@ import datetime
 MAX_BYTES = 1024
 
 
-def HeartBeatServer(host, port, delay):
+def heart_beat_server(host, port, delay):
     server_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server_sock.bind((host, port))
     print("Server online!")
@@ -18,10 +18,3 @@ def HeartBeatServer(host, port, delay):
         print(f'{datetime.datetime.now()} >>Receive client message {msg}.')
         server_sock.sendto(("Received.".encode('ascii')), addr)
         print(f'{datetime.datetime.now()} >>Send message back.')
-
-
-if __name__ == "__main__":
-    host = ''
-    port = 1236
-    delay = 1
-    HeartBeatServer(host, port, delay)

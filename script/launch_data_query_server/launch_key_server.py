@@ -7,7 +7,7 @@ from omegaconf import DictConfig
 from data_query.key_server import KeyServer
 import transmission.tenseal.tenseal_key_server_pb2_grpc as tenseal_key_server_pb2_grpc
 import grpc
-from transmission.supervise import HeartBeatServer
+from transmission.supervise import heart_beat_server
 from concurrent import futures
 
 
@@ -24,7 +24,7 @@ def launch_key_server(host, port, delay):
     server.start()
     print("grpc key_server start...")
     # launch heart-beat sever.
-    monitor_server = threading.Thread(target=HeartBeatServer, args=(host, port, delay))
+    monitor_server = threading.Thread(target=heart_beat_server, args=(host, port, delay))
     monitor_server.setDaemon(True)
     monitor_server.start()
     # print(threading.enumerate())
