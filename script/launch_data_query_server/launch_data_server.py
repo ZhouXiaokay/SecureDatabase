@@ -1,6 +1,7 @@
 import sys
 import os
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import transmission.tenseal.tenseal_data_server_pb2_grpc as tenseal_data_server_pb2_grpc
 from data_query.data_server import DatabaseServer
 import grpc
@@ -9,8 +10,6 @@ from transmission.supervise import HeartBeatServer
 from concurrent import futures
 import hydra
 from omegaconf import DictConfig
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def launch_data_server(host, port, delay, name, cfg):

@@ -1,14 +1,14 @@
 import os
 import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import transmission.tenseal.tenseal_client_proxy_pb2 as tenseal_client_proxy_pb2
 import transmission.tenseal.tenseal_client_proxy_pb2_grpc as tenseal_client_proxy_pb2_grpc
 import grpc
 import pickle
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 
-def sendRequest():
+def send_request():
     max_msg_size = 1000000000
     options = [('grpc.max_send_message_length', max_msg_size),
                ('grpc.max_receive_message_length', max_msg_size)]
@@ -24,4 +24,4 @@ def sendRequest():
 
 
 if __name__ == "__main__":
-    sendRequest()
+    send_request()

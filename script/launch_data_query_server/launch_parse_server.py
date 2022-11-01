@@ -1,5 +1,7 @@
 import sys
 import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import hydra
 from omegaconf import DictConfig
 from data_query.parse_server import ParseServer
@@ -8,8 +10,6 @@ import grpc
 import threading
 from transmission.supervise import HeartBeatClient
 import transmission.tenseal.tenseal_parse_server_pb2_grpc as tenseal_parse_server_pb2_grpc
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def launch_parse_server(host, port, delay, address_dict):

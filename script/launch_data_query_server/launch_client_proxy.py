@@ -1,14 +1,13 @@
 import sys
 import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from data_query.client_proxy import ClientProxy
 from concurrent import futures
 import grpc
-
 import transmission.tenseal.tenseal_client_proxy_pb2_grpc as tenseal_client_proxy_pb2_grpc
 import hydra
 from omegaconf import DictConfig
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 @hydra.main(version_base=None, config_path="../../conf", config_name="conf")

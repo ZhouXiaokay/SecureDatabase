@@ -1,5 +1,6 @@
 import sys
 import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import threading
 import hydra
 from omegaconf import DictConfig
@@ -9,7 +10,6 @@ import grpc
 from transmission.supervise import HeartBeatServer
 from concurrent import futures
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 def launch_key_server(host, port, delay):
