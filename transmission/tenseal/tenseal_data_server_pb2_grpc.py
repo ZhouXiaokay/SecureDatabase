@@ -17,12 +17,12 @@ class DatabaseServerServiceStub(object):
         self.query_operation = channel.unary_unary(
                 '/DatabaseServerService/query_operation',
                 request_serializer=tenseal__data__server__pb2.query_msg_parse_server.SerializeToString,
-                response_deserializer=tenseal__data__server__pb2.query_result.FromString,
+                response_deserializer=tenseal__data__server__pb2.enc_query_result.FromString,
                 )
         self.noise_query_operation = channel.unary_unary(
                 '/DatabaseServerService/noise_query_operation',
                 request_serializer=tenseal__data__server__pb2.query_msg_parse_server.SerializeToString,
-                response_deserializer=tenseal__data__server__pb2.query_result.FromString,
+                response_deserializer=tenseal__data__server__pb2.enc_query_result.FromString,
                 )
 
 
@@ -47,12 +47,12 @@ def add_DatabaseServerServiceServicer_to_server(servicer, server):
             'query_operation': grpc.unary_unary_rpc_method_handler(
                     servicer.query_operation,
                     request_deserializer=tenseal__data__server__pb2.query_msg_parse_server.FromString,
-                    response_serializer=tenseal__data__server__pb2.query_result.SerializeToString,
+                    response_serializer=tenseal__data__server__pb2.enc_query_result.SerializeToString,
             ),
             'noise_query_operation': grpc.unary_unary_rpc_method_handler(
                     servicer.noise_query_operation,
                     request_deserializer=tenseal__data__server__pb2.query_msg_parse_server.FromString,
-                    response_serializer=tenseal__data__server__pb2.query_result.SerializeToString,
+                    response_serializer=tenseal__data__server__pb2.enc_query_result.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -77,7 +77,7 @@ class DatabaseServerService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/DatabaseServerService/query_operation',
             tenseal__data__server__pb2.query_msg_parse_server.SerializeToString,
-            tenseal__data__server__pb2.query_result.FromString,
+            tenseal__data__server__pb2.enc_query_result.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -94,6 +94,6 @@ class DatabaseServerService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/DatabaseServerService/noise_query_operation',
             tenseal__data__server__pb2.query_msg_parse_server.SerializeToString,
-            tenseal__data__server__pb2.query_result.FromString,
+            tenseal__data__server__pb2.enc_query_result.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

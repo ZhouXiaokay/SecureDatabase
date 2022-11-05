@@ -8,13 +8,13 @@ message query_msg_parse_server{
   string column_name = 5;
 }
 
-message query_result {
+message enc_query_result {
   bytes enc_result= 1;
 }
 
 
 service DatabaseServerService {
-  rpc query_operation(query_msg_parse_server) returns(query_result);
-  rpc noise_query_operation(query_msg_parse_server) returns(query_result);
+  rpc query_operation(query_msg_parse_server) returns(enc_query_result);
+  rpc noise_query_operation(query_msg_parse_server) returns(enc_query_result);
 
 }

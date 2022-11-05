@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+
+// client send it to requestServer
+message aggr_params{
+    int32 client_rank = 1;
+    bytes params_msg = 2;
+}
+
+//message aggr_params{
+//    bytes params_msg = 1;
+//}
+
+service AggregationServerService {
+  //  AggregateServer provides the interface, client remotes the call
+  rpc sum_encrypted(aggr_params) returns (aggr_params);
+
+}

@@ -18,7 +18,7 @@ class ClientProxyServiceStub(object):
         self.data_query = channel.unary_unary(
                 '/ClientProxyService/data_query',
                 request_serializer=tenseal__client__proxy__pb2.query_msg_client.SerializeToString,
-                response_deserializer=tenseal__client__proxy__pb2.query_result.FromString,
+                response_deserializer=tenseal__client__proxy__pb2.dec_query_result.FromString,
                 )
         self.return_dec_query_result = channel.unary_unary(
                 '/ClientProxyService/return_dec_query_result',
@@ -50,7 +50,7 @@ def add_ClientProxyServiceServicer_to_server(servicer, server):
             'data_query': grpc.unary_unary_rpc_method_handler(
                     servicer.data_query,
                     request_deserializer=tenseal__client__proxy__pb2.query_msg_client.FromString,
-                    response_serializer=tenseal__client__proxy__pb2.query_result.SerializeToString,
+                    response_serializer=tenseal__client__proxy__pb2.dec_query_result.SerializeToString,
             ),
             'return_dec_query_result': grpc.unary_unary_rpc_method_handler(
                     servicer.return_dec_query_result,
@@ -80,7 +80,7 @@ class ClientProxyService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/ClientProxyService/data_query',
             tenseal__client__proxy__pb2.query_msg_client.SerializeToString,
-            tenseal__client__proxy__pb2.query_result.FromString,
+            tenseal__client__proxy__pb2.dec_query_result.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

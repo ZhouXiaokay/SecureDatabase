@@ -29,7 +29,7 @@ class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer)
         enc_vector = ts.ckks_vector(self.pk_ctx, plain_vector)
         serialize_msg = enc_vector.serialize()
 
-        response = tenseal_data_server_pb2.query_result(enc_result=serialize_msg)
+        response = tenseal_data_server_pb2.enc_query_result(enc_result=serialize_msg)
 
         return response
 
@@ -43,6 +43,6 @@ class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer)
         query_result = get_noise_query_results(self.name, self.cfg, cid, qid, sql, key_stub)
         serialize_msg = pickle.dumps(query_result)
 
-        response = tenseal_data_server_pb2.query_result(enc_result=serialize_msg)
+        response = tenseal_data_server_pb2.enc_query_result(enc_result=serialize_msg)
 
         return response

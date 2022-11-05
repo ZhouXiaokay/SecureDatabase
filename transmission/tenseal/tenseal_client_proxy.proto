@@ -1,6 +1,5 @@
 syntax = "proto3";
 import "google/protobuf/empty.proto";
-
 // client send it to clientProxy
 message query_msg_client{
   int32 cid = 1; // client id
@@ -12,7 +11,7 @@ message query_msg_client{
 }
 
 // clientProxy send it to client
-message query_result {
+message dec_query_result {
   bytes dec_result = 1;
 }
 
@@ -26,7 +25,7 @@ message query_result_key_server{
 
 service ClientProxyService {
   // clientProxy provides the interface, client remotes the call
-  rpc data_query(query_msg_client) returns(query_result);
+  rpc data_query(query_msg_client) returns(dec_query_result);
   // clientProxy provides the interface, keyServer remotes the call
   rpc return_dec_query_result (query_result_key_server) returns(google.protobuf.Empty);
 }

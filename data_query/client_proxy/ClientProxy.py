@@ -35,7 +35,7 @@ class ClientProxy(tenseal_client_proxy_pb2_grpc.ClientProxyServiceServicer):
 
         serialize_msg = pickle.dumps(result)
 
-        response = tenseal_client_proxy_pb2.query_result(dec_result=serialize_msg)
+        response = tenseal_client_proxy_pb2.dec_query_result(dec_result=serialize_msg)
 
         return response
 

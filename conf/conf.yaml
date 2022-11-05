@@ -15,6 +15,9 @@ servers:
   parse_server:
     host: ${defs.host}
     port: '50080'
+  aggregate_server:
+    host: ${defs.host}
+    port: '50090'
   data_server_1:
     host: ${defs.host}
     name: '1'
@@ -37,6 +40,6 @@ database:
   host: ${defs.host}
   port: '3306'
   user: 'root'
-  password: '99996666'
+  password: '9966'
   database: 'mysql'
   charset: utf8mb4

@@ -14,12 +14,12 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x19tenseal_data_server.proto\"g\n\x16query_msg_parse_server\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\n\n\x02op\x18\x03 \x01(\t\x12\x12\n\ntable_name\x18\x04 \x01(\t\x12\x13\n\x0b\x63olumn_name\x18\x05 \x01(\t\"\"\n\x0cquery_result\x12\x12\n\nenc_result\x18\x01 \x01(\x0c\x32\x93\x01\n\x15\x44\x61tabaseServerService\x12\x39\n\x0fquery_operation\x12\x17.query_msg_parse_server\x1a\r.query_result\x12?\n\x15noise_query_operation\x12\x17.query_msg_parse_server\x1a\r.query_resultb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x19tenseal_data_server.proto\"g\n\x16query_msg_parse_server\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\n\n\x02op\x18\x03 \x01(\t\x12\x12\n\ntable_name\x18\x04 \x01(\t\x12\x13\n\x0b\x63olumn_name\x18\x05 \x01(\t\"&\n\x10\x65nc_query_result\x12\x12\n\nenc_result\x18\x01 \x01(\x0c\x32\x9b\x01\n\x15\x44\x61tabaseServerService\x12=\n\x0fquery_operation\x12\x17.query_msg_parse_server\x1a\x11.enc_query_result\x12\x43\n\x15noise_query_operation\x12\x17.query_msg_parse_server\x1a\x11.enc_query_resultb\x06proto3')
 
 
 
 _QUERY_MSG_PARSE_SERVER = DESCRIPTOR.message_types_by_name['query_msg_parse_server']
-_QUERY_RESULT = DESCRIPTOR.message_types_by_name['query_result']
+_ENC_QUERY_RESULT = DESCRIPTOR.message_types_by_name['enc_query_result']
 query_msg_parse_server = _reflection.GeneratedProtocolMessageType('query_msg_parse_server', (_message.Message,), {
   'DESCRIPTOR' : _QUERY_MSG_PARSE_SERVER,
   '__module__' : 'tenseal_data_server_pb2'
@@ -27,12 +27,12 @@ query_msg_parse_server = _reflection.GeneratedProtocolMessageType('query_msg_par
   })
 _sym_db.RegisterMessage(query_msg_parse_server)
 
-query_result = _reflection.GeneratedProtocolMessageType('query_result', (_message.Message,), {
-  'DESCRIPTOR' : _QUERY_RESULT,
+enc_query_result = _reflection.GeneratedProtocolMessageType('enc_query_result', (_message.Message,), {
+  'DESCRIPTOR' : _ENC_QUERY_RESULT,
   '__module__' : 'tenseal_data_server_pb2'
-  # @@protoc_insertion_point(class_scope:query_result)
+  # @@protoc_insertion_point(class_scope:enc_query_result)
   })
-_sym_db.RegisterMessage(query_result)
+_sym_db.RegisterMessage(enc_query_result)
 
 _DATABASESERVERSERVICE = DESCRIPTOR.services_by_name['DatabaseServerService']
 if _descriptor._USE_C_DESCRIPTORS == False:
@@ -40,8 +40,8 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   DESCRIPTOR._options = None
   _QUERY_MSG_PARSE_SERVER._serialized_start=29
   _QUERY_MSG_PARSE_SERVER._serialized_end=132
-  _QUERY_RESULT._serialized_start=134
-  _QUERY_RESULT._serialized_end=168
-  _DATABASESERVERSERVICE._serialized_start=171
-  _DATABASESERVERSERVICE._serialized_end=318
+  _ENC_QUERY_RESULT._serialized_start=134
+  _ENC_QUERY_RESULT._serialized_end=172
+  _DATABASESERVERSERVICE._serialized_start=175
+  _DATABASESERVERSERVICE._serialized_end=330
 # @@protoc_insertion_point(module_scope)
