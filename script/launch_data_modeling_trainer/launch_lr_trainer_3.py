@@ -3,6 +3,7 @@ from conf import args_parser
 from data_modeling.trainer import LRTrainer
 import torch
 
+
 def run(arg):
     lr_trainer = LRTrainer(arg)
     x = torch.randint(low=1,high=100,size=(10,10)).float()
@@ -20,6 +21,7 @@ def run(arg):
 
 if __name__ == '__main__':
     args = args_parser()
+    args.rank = 2
     processes = []
     # for rank in range(2):
     #     p = Process(target=run, args=args)

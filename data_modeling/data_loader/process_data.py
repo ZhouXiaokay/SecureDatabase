@@ -46,7 +46,7 @@ if __name__ == '__main__':
     white_wine_path = 'data/winequality-white.csv'
     save_path = 'data/wine_quality.csv'
     # process_wine_data(red_wine_path, white_wine_path, save_path)
-    readFile_to_sql('database_test', save_path)
+    # readFile_to_sql('database_1', save_path)
     # wine_df = pd.read_csv(save_path, encoding="utf8", sep=',', dtype={'code': str})
     # # split_iid_data(wine_df, 3)
     # for i in range(3):
@@ -58,7 +58,7 @@ if __name__ == '__main__':
     # df = pd.DataFrame(query_data, columns=name)
     # df.to_csv('data/table.csv', index=False)
     # readFile_to_sql('database_test', 'data/table.csv')
-    # df = pd.read_csv('data/table.csv')
-    # split_iid_data(df, 3)
-    # for i in range(3):
-    #     readFile_to_sql('database_{0}'.format(i+1), 'data/table_{0}.csv'.format(i+1))
+    df = pd.read_csv('data/table.csv')
+    split_iid_data(df, 3)
+    for i in range(3):
+        readFile_to_sql('database_{0}'.format(i+1), 'data/table_{0}.csv'.format(i+1))

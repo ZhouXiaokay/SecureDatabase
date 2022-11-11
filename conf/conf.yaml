@@ -38,7 +38,7 @@ clients:
 
 database:
   host: ${defs.host}
-  port: '3306'
+  port: '3336'
   user: 'root'
   password: '9966'
   database: 'mysql'

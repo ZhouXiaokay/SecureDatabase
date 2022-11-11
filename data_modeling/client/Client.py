@@ -11,10 +11,10 @@ from transmission.utils import flatten_tensors, unflatten_tensors
 
 class Client:
 
-    def __init__(self, server_address, client_rank, ctx_file):
+    def __init__(self, server_address, client_rank, sample_num, ctx_file):
         self.server_address = server_address
         self.client_rank = client_rank
-
+        self.sample_num = sample_num
         context_bytes = open(ctx_file, "rb").read()
         self.ctx = ts.context_from(context_bytes)
 
@@ -36,8 +36,9 @@ class Client:
 
         # create request
         request_start = time.time()
-        request = tenseal_aggregate_server_pb2.aggr_params(
+        request = tenseal_aggregate_server_pb2.local_params(
             client_rank=self.client_rank,
+            sample_num=self.sample_num,
             params_msg=enc_vector.serialize()
         )
         request_time = time.time() - request_start
@@ -66,19 +67,31 @@ class Client:
 
         return summed_plain_vector
 
+    def __is_update(self):
+        request = tenseal_aggregate_server_pb2.update_request(client_rank=self.client_rank,
+                                                              sample_num=self.sample_num)
+        response = self.stub.boolean_is_update(request)
+        update_flag = response.flag
+        enc_init_params = ts.ckks_vector_from(self.ctx,response.params_msg)
+        dec_init_params = enc_init_params.decrypt()
+        return update_flag, dec_init_params
+
     def transmit(self, params_list, operator="sum"):
 
         trans_start = time.time()
         # received:list, received tensors convert received to tensors
-        received = self.__sum_encrypted(params_list) if operator == "sum" else None
+        received = None
         # print(">>> client transmission cost {:.2f} s".format(time.time() - trans_start))
+        if operator == "sum":
+            received = self.__sum_encrypted(params_list)
+        elif operator == "update_flag":
+            received = self.__is_update()
         return received
 
 
 if __name__ == '__main__':
     serv_address = "127.0.0.1:59000"
-    ctx_file = "../../transmission/ts_ckks.config"
-    client_rank = 0
-
-    client = Client(serv_address, client_rank, ctx_file)
-
+    # ctx_file = "../../transmission/ts_ckks.config"
+    # client_rank = 0
+    #
+    # client = Client(serv_address, client_rank, ctx_file)

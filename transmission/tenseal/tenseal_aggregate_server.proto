@@ -2,17 +2,32 @@ syntax = "proto3";
 
 
 // client send it to requestServer
+message local_params{
+    int32 client_rank = 1;
+    int32 sample_num = 2;
+    bytes params_msg = 3;
+}
+
 message aggr_params{
     int32 client_rank = 1;
     bytes params_msg = 2;
 }
-
 //message aggr_params{
 //    bytes params_msg = 1;
 //}
 
+message update_request{
+  int32 client_rank = 1;
+  int32 sample_num = 2;
+}
+
+message update_response{
+  bool flag = 1;
+  bytes params_msg = 2;
+}
+
 service AggregationServerService {
   //  AggregateServer provides the interface, client remotes the call
-  rpc sum_encrypted(aggr_params) returns (aggr_params);
-
+  rpc sum_encrypted(local_params) returns (aggr_params);
+  rpc boolean_is_update(update_request) returns(update_response);
 }

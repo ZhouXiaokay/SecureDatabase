@@ -14,11 +14,21 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1etenseal_aggregate_server.proto\"6\n\x0b\x61ggr_params\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nparams_msg\x18\x02 \x01(\x0c\x32G\n\x18\x41ggregationServerService\x12+\n\rsum_encrypted\x12\x0c.aggr_params\x1a\x0c.aggr_paramsb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1etenseal_aggregate_server.proto\"K\n\x0clocal_params\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nsample_num\x18\x02 \x01(\x05\x12\x12\n\nparams_msg\x18\x03 \x01(\x0c\"6\n\x0b\x61ggr_params\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nparams_msg\x18\x02 \x01(\x0c\"9\n\x0eupdate_request\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nsample_num\x18\x02 \x01(\x05\"3\n\x0fupdate_response\x12\x0c\n\x04\x66lag\x18\x01 \x01(\x08\x12\x12\n\nparams_msg\x18\x02 \x01(\x0c\x32\x80\x01\n\x18\x41ggregationServerService\x12,\n\rsum_encrypted\x12\r.local_params\x1a\x0c.aggr_params\x12\x36\n\x11\x62oolean_is_update\x12\x0f.update_request\x1a\x10.update_responseb\x06proto3')
 
 
 
+_LOCAL_PARAMS = DESCRIPTOR.message_types_by_name['local_params']
 _AGGR_PARAMS = DESCRIPTOR.message_types_by_name['aggr_params']
+_UPDATE_REQUEST = DESCRIPTOR.message_types_by_name['update_request']
+_UPDATE_RESPONSE = DESCRIPTOR.message_types_by_name['update_response']
+local_params = _reflection.GeneratedProtocolMessageType('local_params', (_message.Message,), {
+  'DESCRIPTOR' : _LOCAL_PARAMS,
+  '__module__' : 'tenseal_aggregate_server_pb2'
+  # @@protoc_insertion_point(class_scope:local_params)
+  })
+_sym_db.RegisterMessage(local_params)
+
 aggr_params = _reflection.GeneratedProtocolMessageType('aggr_params', (_message.Message,), {
   'DESCRIPTOR' : _AGGR_PARAMS,
   '__module__' : 'tenseal_aggregate_server_pb2'
@@ -26,12 +36,32 @@ aggr_params = _reflection.GeneratedProtocolMessageType('aggr_params', (_message.
   })
 _sym_db.RegisterMessage(aggr_params)
 
+update_request = _reflection.GeneratedProtocolMessageType('update_request', (_message.Message,), {
+  'DESCRIPTOR' : _UPDATE_REQUEST,
+  '__module__' : 'tenseal_aggregate_server_pb2'
+  # @@protoc_insertion_point(class_scope:update_request)
+  })
+_sym_db.RegisterMessage(update_request)
+
+update_response = _reflection.GeneratedProtocolMessageType('update_response', (_message.Message,), {
+  'DESCRIPTOR' : _UPDATE_RESPONSE,
+  '__module__' : 'tenseal_aggregate_server_pb2'
+  # @@protoc_insertion_point(class_scope:update_response)
+  })
+_sym_db.RegisterMessage(update_response)
+
 _AGGREGATIONSERVERSERVICE = DESCRIPTOR.services_by_name['AggregationServerService']
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
-  _AGGR_PARAMS._serialized_start=34
-  _AGGR_PARAMS._serialized_end=88
-  _AGGREGATIONSERVERSERVICE._serialized_start=90
-  _AGGREGATIONSERVERSERVICE._serialized_end=161
+  _LOCAL_PARAMS._serialized_start=34
+  _LOCAL_PARAMS._serialized_end=109
+  _AGGR_PARAMS._serialized_start=111
+  _AGGR_PARAMS._serialized_end=165
+  _UPDATE_REQUEST._serialized_start=167
+  _UPDATE_REQUEST._serialized_end=224
+  _UPDATE_RESPONSE._serialized_start=226
+  _UPDATE_RESPONSE._serialized_end=277
+  _AGGREGATIONSERVERSERVICE._serialized_start=280
+  _AGGREGATIONSERVERSERVICE._serialized_end=408
 # @@protoc_insertion_point(module_scope)

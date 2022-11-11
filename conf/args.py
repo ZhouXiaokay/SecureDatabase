@@ -35,16 +35,16 @@ def args_parser():
                         default='127.0.0.1:50090',
                         type=str,
                         help='init method')
-    parser.add_argument('--ratio',
-                        default=1,
+    parser.add_argument('--sample_num',
+                        default=3,
                         type=float,
                         help='local_count/sum_count')
     parser.add_argument('--n_features',
-                        default=2,
+                        default=10,
                         type=int,
                         help='the number of features')
     parser.add_argument('--ctx_file',
-                        default='/Users/zhou/Documents/code/SecureDatabase/transmission/ts_ckks.config',
+                        default='../../transmission/ts_ckks.config',
                         type=str,
                         help='the number of features')
     args = parser.parse_args()

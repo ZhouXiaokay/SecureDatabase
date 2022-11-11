@@ -6,11 +6,7 @@ import transmission.tenseal.tenseal_aggregate_server_pb2 as tenseal__aggregate__
 
 
 class AggregationServerServiceStub(object):
-    """message aggr_params{
-    bytes params_msg = 1;
-    }
-
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
         """Constructor.
@@ -20,21 +16,28 @@ class AggregationServerServiceStub(object):
         """
         self.sum_encrypted = channel.unary_unary(
                 '/AggregationServerService/sum_encrypted',
-                request_serializer=tenseal__aggregate__server__pb2.aggr_params.SerializeToString,
+                request_serializer=tenseal__aggregate__server__pb2.local_params.SerializeToString,
                 response_deserializer=tenseal__aggregate__server__pb2.aggr_params.FromString,
+                )
+        self.boolean_is_update = channel.unary_unary(
+                '/AggregationServerService/boolean_is_update',
+                request_serializer=tenseal__aggregate__server__pb2.update_request.SerializeToString,
+                response_deserializer=tenseal__aggregate__server__pb2.update_response.FromString,
                 )
 
 
 class AggregationServerServiceServicer(object):
-    """message aggr_params{
-    bytes params_msg = 1;
-    }
-
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def sum_encrypted(self, request, context):
         """AggregateServer provides the interface, client remotes the call
         """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def boolean_is_update(self, request, context):
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -44,8 +47,13 @@ def add_AggregationServerServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'sum_encrypted': grpc.unary_unary_rpc_method_handler(
                     servicer.sum_encrypted,
-                    request_deserializer=tenseal__aggregate__server__pb2.aggr_params.FromString,
+                    request_deserializer=tenseal__aggregate__server__pb2.local_params.FromString,
                     response_serializer=tenseal__aggregate__server__pb2.aggr_params.SerializeToString,
+            ),
+            'boolean_is_update': grpc.unary_unary_rpc_method_handler(
+                    servicer.boolean_is_update,
+                    request_deserializer=tenseal__aggregate__server__pb2.update_request.FromString,
+                    response_serializer=tenseal__aggregate__server__pb2.update_response.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -55,11 +63,7 @@ def add_AggregationServerServiceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class AggregationServerService(object):
-    """message aggr_params{
-    bytes params_msg = 1;
-    }
-
-    """
+    """Missing associated documentation comment in .proto file."""
 
     @staticmethod
     def sum_encrypted(request,
@@ -73,7 +77,24 @@ class AggregationServerService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/AggregationServerService/sum_encrypted',
-            tenseal__aggregate__server__pb2.aggr_params.SerializeToString,
+            tenseal__aggregate__server__pb2.local_params.SerializeToString,
             tenseal__aggregate__server__pb2.aggr_params.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def boolean_is_update(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/AggregationServerService/boolean_is_update',
+            tenseal__aggregate__server__pb2.update_request.SerializeToString,
+            tenseal__aggregate__server__pb2.update_response.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
