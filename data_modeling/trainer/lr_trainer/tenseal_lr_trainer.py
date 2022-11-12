@@ -7,19 +7,24 @@ import torch.optim as optim
 
 sys.path.append("../../../")
 from data_modeling.client import Client
+from torch.utils.data import DataLoader
+from data_modeling.data_loader import MysqlDataSet
 
 
 class LRTrainer(object):
 
-    def __init__(self, args):
+    def __init__(self, args, dataset):
         self.args = args
 
         # initialize logistic model, optimizer:Adam
         self.sample_num = args.sample_num
         self.n_f = self.args.n_features
+        self.epoch = args.epoch
+        self.batch_size = args.batch_size
         self.model = LRModel(n_f=self.n_f)
-        self.optimizer = optim.Adam(self.model.parameters())
+        self.optimizer = optim.Adam(self.model.parameters(),lr=0.01)
         self.criterion = torch.nn.BCELoss()
+        self.dataset = dataset
 
         # initialize the communication params with server
         self.max_msg_size = 900000000
@@ -69,29 +74,62 @@ class LRTrainer(object):
                 t.set_(f)
 
     # one communication round
-    # def one_round(self, n_epoch, data_loader):
-    #     for epoch in range(n_epoch):
-    #         for batch in data_loader:
-    #             train_x, train_y = batch
-    #             y_pred = self.model(train_x)
-    #             self.optimizer.zero_grad()
-    #             loss = self.criterion(y_pred, train_y)
-    #             loss.backward()
-    #             self.optimizer.step()
-    #     self.average_params()
-
-    def one_round(self,x,y):
+    def one_round(self):
         print("init", self.model.linear.bias)
-        for i in range(10):
-            y_pred = self.model(x)
-            loss_f = torch.nn.BCELoss()
-            loss = loss_f(y_pred, y.unsqueeze(dim=1))
-            self.optimizer.zero_grad()
-            loss.backward()
-            self.optimizer.step()
+        cols_list = ['fixed acidity', 'volatile acidity', 'citric acid',
+                     'residual sugar', 'chlorides', 'free sulfur dioxide',
+                     'total sulfur dioxide', 'density', 'pH', 'sulphates', 'alcohol',
+                     'color']
+        dataset = MysqlDataSet("database_{0}".format(self.args.rank + 1), "wine_quality", cols_list)
+        data_loader = DataLoader(dataset, batch_size=self.batch_size)
+
+        for e in range(self.epoch):
+            accum_loss = 0
+            accum_correct = 0
+            set_size = 0
+
+            for batch in data_loader:
+                train_x, train_y = batch
+                train_y = train_y.unsqueeze(dim=1)
+
+                y_pred = self.model(train_x)
+                loss = self.criterion(y_pred, train_y)
+                accum_loss += loss.item()
+
+                self.optimizer.zero_grad()
+                loss.backward()
+                self.optimizer.step()
+                # print(batch)
+                set_size += train_x.size(0)
+                accum_correct += y_pred.ge(0.5).squeeze().eq(train_y.squeeze()).sum().item()
+                # mask = y_pred.ge(0.5).float().squeeze()
+                # correct = (mask == train_y.squeeze()).sum()
+                # acc = correct.item() / train_y.shape[0]
+                # print("acc: ", acc)
+                # if e % 2==0:
+                #     print(y_pred)
+                #     print(train_y)
+            print("loss: ", accum_loss)
+            # print("acc: ", acc)
+            print("accuracy", accum_correct/set_size)
+
         print("before", self.model.linear.bias)
+
         self.average_params()
-        print("after", self.model.linear.bias, '\n')
+        print("average", self.model.linear.bias)
+
+    # def one_round(self,x,y):
+    #     print("init", self.model.linear.bias)
+    #     for i in range(10):
+    #         y_pred = self.model(x)
+    #         loss_f = torch.nn.BCELoss()
+    #         loss = loss_f(y_pred, y.unsqueeze(dim=1))
+    #         self.optimizer.zero_grad()
+    #         loss.backward()
+    #         self.optimizer.step()
+    #     print("before", self.model.linear.bias)
+    #     self.average_params()
+    #     print("after", self.model.linear.bias, '\n')
 
 
 if __name__ == '__main__':

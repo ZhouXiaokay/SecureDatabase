@@ -58,7 +58,11 @@ if __name__ == '__main__':
     # df = pd.DataFrame(query_data, columns=name)
     # df.to_csv('data/table.csv', index=False)
     # readFile_to_sql('database_test', 'data/table.csv')
-    df = pd.read_csv('data/table.csv')
-    split_iid_data(df, 3)
-    for i in range(3):
-        readFile_to_sql('database_{0}'.format(i+1), 'data/table_{0}.csv'.format(i+1))
+    # df = pd.read_csv('data/table.csv')
+    # split_iid_data(df, 3)
+    # for i in range(3):
+    #     readFile_to_sql('database_{0}'.format(i+1), 'data/table_{0}.csv'.format(i+1))
+    conn = engine(db_name="database_test")
+    conn
+    df = pd.read_sql("SELECT * FROM DATABASE_TEST.WINE_QUALITY", con=conn)
+    print(df.columns)

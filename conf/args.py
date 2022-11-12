@@ -12,7 +12,7 @@ def args_parser():
                         type=int,
                         help='the client rank')
     parser.add_argument('--rounds',
-                        default=10,
+                        default=50,
                         type=int,
                         help='total communication rounds')
     parser.add_argument('--epoch',
@@ -20,7 +20,7 @@ def args_parser():
                         type=int,
                         help='number of local epochs')
     parser.add_argument('--batch_size',
-                        default=4,
+                        default=8,
                         type=int,
                         help='local batch size')
     parser.add_argument('--seed',
@@ -40,7 +40,7 @@ def args_parser():
                         type=float,
                         help='local_count/sum_count')
     parser.add_argument('--n_features',
-                        default=10,
+                        default=11,
                         type=int,
                         help='the number of features')
     parser.add_argument('--ctx_file',

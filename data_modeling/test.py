@@ -71,11 +71,32 @@ import numpy as np
 # print(torch.randint(low=1,high=100,size=(10,2)))
 # print(torch.randint(low=0,high=2,size=(10,)))
 
-sk_ctx_bytes = open('../transmission/ts_ckks_pk.config', 'rb').read()
-ctx = ts.context_from(sk_ctx_bytes)
-vector = [0.5678]
-print(0.5678*0.99)
-enc_1 = ts.ckks_vector(ctx, vector)
-enc_1 = enc_1*0.33
-enc_1 = enc_1 + enc_1*2
-print(enc_1.decrypt())
+# sk_ctx_bytes = open('../transmission/ts_ckks_pk.config', 'rb').read()
+# ctx = ts.context_from(sk_ctx_bytes)
+# vector = [0.5678]
+# print(0.5678*0.99)
+# enc_1 = ts.ckks_vector(ctx, vector)
+# enc_1 = enc_1*0.33
+# enc_1 = enc_1 + enc_1*2
+# print(enc_1.decrypt())
+y_pred = torch.tensor([[0.9130],
+        [0.1159],
+        [0.9951],
+        [0.9990],
+        [0.9172],
+        [0.9973],
+        [0.8889],
+        [0.9983]])
+y = torch.tensor([[1.],
+        [0.],
+        [1.],
+        [1.],
+        [1.],
+        [0.],
+        [1.],
+        [1.]])
+print(y_pred.ge(0.5).squeeze())
+mask = y_pred.ge(0.5).squeeze()
+correct = (mask == y.squeeze()).sum()
+print(correct)
+print(y_pred.ge(0.5).squeeze().eq(y.squeeze()).sum().item())
