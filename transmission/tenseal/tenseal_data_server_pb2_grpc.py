@@ -24,6 +24,21 @@ class DatabaseServerServiceStub(object):
                 request_serializer=tenseal__data__server__pb2.query_msg_parse_server.SerializeToString,
                 response_deserializer=tenseal__data__server__pb2.enc_query_result.FromString,
                 )
+        self.n_th_query_operation = channel.unary_unary(
+                '/DatabaseServerService/n_th_query_operation',
+                request_serializer=tenseal__data__server__pb2.n_th_query_msg.SerializeToString,
+                response_deserializer=tenseal__data__server__pb2.n_th_query_result.FromString,
+                )
+        self.query_from_buffer = channel.unary_unary(
+                '/DatabaseServerService/query_from_buffer',
+                request_serializer=tenseal__data__server__pb2.buffer_query_msg.SerializeToString,
+                response_deserializer=tenseal__data__server__pb2.query_result_result.FromString,
+                )
+        self.query_mode_using_hash = channel.unary_unary(
+                '/DatabaseServerService/query_mode_using_hash',
+                request_serializer=tenseal__data__server__pb2.query_mode_using_hash_msg.SerializeToString,
+                response_deserializer=tenseal__data__server__pb2.query_mode_using_hash_result.FromString,
+                )
 
 
 class DatabaseServerServiceServicer(object):
@@ -41,6 +56,24 @@ class DatabaseServerServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def n_th_query_operation(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def query_from_buffer(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def query_mode_using_hash(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_DatabaseServerServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -53,6 +86,21 @@ def add_DatabaseServerServiceServicer_to_server(servicer, server):
                     servicer.noise_query_operation,
                     request_deserializer=tenseal__data__server__pb2.query_msg_parse_server.FromString,
                     response_serializer=tenseal__data__server__pb2.enc_query_result.SerializeToString,
+            ),
+            'n_th_query_operation': grpc.unary_unary_rpc_method_handler(
+                    servicer.n_th_query_operation,
+                    request_deserializer=tenseal__data__server__pb2.n_th_query_msg.FromString,
+                    response_serializer=tenseal__data__server__pb2.n_th_query_result.SerializeToString,
+            ),
+            'query_from_buffer': grpc.unary_unary_rpc_method_handler(
+                    servicer.query_from_buffer,
+                    request_deserializer=tenseal__data__server__pb2.buffer_query_msg.FromString,
+                    response_serializer=tenseal__data__server__pb2.query_result_result.SerializeToString,
+            ),
+            'query_mode_using_hash': grpc.unary_unary_rpc_method_handler(
+                    servicer.query_mode_using_hash,
+                    request_deserializer=tenseal__data__server__pb2.query_mode_using_hash_msg.FromString,
+                    response_serializer=tenseal__data__server__pb2.query_mode_using_hash_result.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -95,5 +143,56 @@ class DatabaseServerService(object):
         return grpc.experimental.unary_unary(request, target, '/DatabaseServerService/noise_query_operation',
             tenseal__data__server__pb2.query_msg_parse_server.SerializeToString,
             tenseal__data__server__pb2.enc_query_result.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def n_th_query_operation(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/DatabaseServerService/n_th_query_operation',
+            tenseal__data__server__pb2.n_th_query_msg.SerializeToString,
+            tenseal__data__server__pb2.n_th_query_result.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def query_from_buffer(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/DatabaseServerService/query_from_buffer',
+            tenseal__data__server__pb2.buffer_query_msg.SerializeToString,
+            tenseal__data__server__pb2.query_result_result.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def query_mode_using_hash(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/DatabaseServerService/query_mode_using_hash',
+            tenseal__data__server__pb2.query_mode_using_hash_msg.SerializeToString,
+            tenseal__data__server__pb2.query_mode_using_hash_result.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
