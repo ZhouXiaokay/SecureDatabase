@@ -29,7 +29,7 @@ def get_key_server_stub(address_dict, options):
 def get_all_db_stub(address_dict, options):
     stub_list = []
     for key in address_dict:
-        if key.upper() != "KEYSERVER":
+        if "DATA" in key.upper():
             address = address_dict[key]
             channel = grpc.insecure_channel(address, options=options)
             stub = tenseal_data_server_pb2_grpc.DatabaseServerServiceStub(channel)

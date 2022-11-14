@@ -1,3 +1,5 @@
+from typing import Set, Dict, Tuple, List
+
 import transmission.tenseal.tenseal_data_server_pb2_grpc as tenseal_data_server_pb2_grpc
 import transmission.tenseal.tenseal_data_server_pb2 as tenseal_data_server_pb2
 import transmission.tenseal.tenseal_key_server_pb2_grpc as tenseal_key_server_pb2_grpc
@@ -20,6 +22,9 @@ class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer)
         self.sleep_time = 0.01
         self.name = db_name
         self.cfg = cfg
+        self.n_th_cache: Dict[int,Tuple[int,float]] = {}
+        self.hash_cache: Dict[int,Tuple[int,float]] = {}
+
 
     def query_operation(self, request, context):
         sql = generate_sql(request)
@@ -46,3 +51,76 @@ class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer)
         response = tenseal_data_server_pb2.enc_query_result(enc_result=serialize_msg)
 
         return response
+
+    def n_th_query_operation(self, request, context):
+        cid = request.cid
+        qid = request.qid
+        n = request.n
+        mode = request.mode
+        table_name = request.table_name
+        column_name = request.column_name
+        if mode == "clean":
+            self.n_th_cache.clear()
+            self.hash_cache.clear()
+            print("cid: ", cid, " qid: ", qid, " n: ", n, " mode: ", mode)
+            sql = "SELECT {1},COUNT(*) AS i FROM {0} GROUP BY {1} ORDER BY i".format("database_" + self.name + "." +table_name, column_name)
+            print(sql)
+            query_result = get_query_results(self.name, self.cfg, sql)
+            print(query_result)
+            for i in range(len(query_result)):
+                self.n_th_cache[i] = query_result[i]
+                self.hash_cache[hash(query_result[i][0] + 0.01)] = query_result[i]
+
+        print(type(hash(1)))
+
+        available = False
+
+        if n in self.n_th_cache:
+            available = True
+            query_result = [self.n_th_cache[n][1]]
+            hash_value = hash(self.n_th_cache[n][0] + 0.01)
+        else:
+            hash_value = 0
+            query_result = [0]
+
+        plain_vector = ts.plain_tensor(query_result)
+        enc_vector = ts.ckks_vector(self.pk_ctx, plain_vector)
+        serialize_msg = enc_vector.serialize()
+        response = tenseal_data_server_pb2.n_th_query_result(cid=request.cid, qid=request.qid,n = n,hash = hash_value ,result = serialize_msg,available = available)
+        return response
+
+    def query_from_buffer(self, request, context):
+        hash_ = request.hash
+        available = False
+        if hash_ in self.hash_cache:
+            available = True
+            query_result = [self.hash_cache[hash_][1]]
+        else:
+            query_result = [0]
+
+        plain_vector = ts.plain_tensor(query_result)
+        enc_vector = ts.ckks_vector(self.pk_ctx, plain_vector)
+        serialize_msg = enc_vector.serialize()
+
+        response = tenseal_data_server_pb2.query_result_result(result = serialize_msg,available = available)
+
+        return response
+
+    def query_mode_using_hash(self, request, context):
+        hash_ = request.hash
+        available = False
+
+        if hash_ in self.hash_cache:
+            available = True
+            query_result = [self.hash_cache[hash_][0]]
+        else:
+            query_result = [0]
+
+        plain_vector = ts.plain_tensor(query_result)
+        enc_vector = ts.ckks_vector(self.pk_ctx, plain_vector)
+        serialize_msg = enc_vector.serialize()
+
+        return tenseal_data_server_pb2.query_mode_using_hash_result(mode = serialize_msg,available = available)
+
+
+

@@ -1,5 +1,6 @@
 import sys
 import os
+import threading
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from data_query.client_proxy import ClientProxy
@@ -8,7 +9,6 @@ import grpc
 import transmission.tenseal.tenseal_client_proxy_pb2_grpc as tenseal_client_proxy_pb2_grpc
 import hydra
 from omegaconf import DictConfig
-
 
 @hydra.main(version_base=None, config_path="../../conf", config_name="conf")
 def launch_client_proxy(cfg: DictConfig):
@@ -21,8 +21,13 @@ def launch_client_proxy(cfg: DictConfig):
     server.add_insecure_port(cfg.servers.client_proxy.host + ':' + cfg.servers.client_proxy.port)
     server.start()
     print("grpc client_proxy start...")
+    from transmission.supervise import heart_beat_server
+    monitor_server = threading.Thread(target=heart_beat_server, args=(cfg.servers.client_proxy.host, int(cfg.servers.client_proxy.port), cfg.defs.delay))
+    monitor_server.setDaemon(True)
+    monitor_server.start()
+    # print(threading.enumerate())
+    print("monitor server_1 service start... ")
     server.wait_for_termination()
-
 
 if __name__ == '__main__':
     launch_client_proxy()

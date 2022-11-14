@@ -8,7 +8,6 @@ import pickle
 from .utils import *
 import numpy as np
 
-
 class KeyServer(tenseal_key_server_pb2_grpc.KeyServerServiceServicer):
 
     def __init__(self, sk_ctx_file):
