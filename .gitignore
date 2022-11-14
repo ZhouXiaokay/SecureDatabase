@@ -14,6 +14,8 @@ __pycache__/
 .sql
 */.sql
 
+# ignore hydra outputs
+outputs/
 
 
 # C extensions
@@ -141,3 +143,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+[safe]
+    directory = *
