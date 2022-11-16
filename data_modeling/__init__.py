@@ -1,2 +1,2 @@
 from .aggregate_server.AggregateServer import AggregateServer
-from .trainer import LRTrainer
+from .trainer import *

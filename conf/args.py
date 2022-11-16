@@ -12,7 +12,7 @@ def args_parser():
                         type=int,
                         help='the client rank')
     parser.add_argument('--rounds',
-                        default=50,
+                        default=100,
                         type=int,
                         help='total communication rounds')
     parser.add_argument('--epoch',
@@ -23,8 +23,12 @@ def args_parser():
                         default=8,
                         type=int,
                         help='local batch size')
+    parser.add_argument('--lr',
+                        default=0.01,
+                        type=float,
+                        help='learning rate')
     parser.add_argument('--seed',
-                        default=1,
+                        default=1231,
                         type=int,
                         help='random seed')
     parser.add_argument('--trainer_address',
@@ -37,7 +41,7 @@ def args_parser():
                         help='init method')
     parser.add_argument('--sample_num',
                         default=3,
-                        type=float,
+                        type=int,
                         help='local_count/sum_count')
     parser.add_argument('--n_features',
                         default=11,

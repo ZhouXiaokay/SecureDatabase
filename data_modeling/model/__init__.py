@@ -1,1 +1,3 @@
-from .LR import LRModel
+from .Logistic import Logistic
+from .Linear import Linear
+from .DNN import DNN

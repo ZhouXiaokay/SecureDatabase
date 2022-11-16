@@ -8,7 +8,7 @@ from data_modeling import AggregateServer
 import transmission.tenseal.tenseal_aggregate_server_pb2_grpc as tenseal_aggregate_server_pb2_grpc
 import grpc
 from concurrent import futures
-from data_modeling.model import LRModel
+from data_modeling.model import Logistic,Linear,DNN
 from conf import args_parser
 
 
@@ -18,7 +18,7 @@ def launch_aggregate_server(host, port):
     max_msg_size = 1000000000
     pk_ctx_file = "../../transmission/ts_ckks_pk.config"
     options = [('grpc.max_send_message_length', max_msg_size), ('grpc.max_receive_message_length', max_msg_size)]
-    model = LRModel(n_f=args.n_features)
+    model = Linear(n_f=args.n_features)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=5), options=options)
     tenseal_aggregate_server_pb2_grpc.add_AggregationServerServiceServicer_to_server(
         AggregateServer(3, pk_ctx_file, model),

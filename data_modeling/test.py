@@ -1,9 +1,10 @@
-from model import LRModel
+from model import Logistic
 import torch
 import tenseal as ts
 from transmission.utils import flatten_tensors, unflatten_tensors
 import collections
 import numpy as np
+import copy
 
 # torch.manual_seed(1234)
 # x = torch.tensor([[2., 1.], [1., 1.], [1., 1.]])
@@ -71,32 +72,14 @@ import numpy as np
 # print(torch.randint(low=1,high=100,size=(10,2)))
 # print(torch.randint(low=0,high=2,size=(10,)))
 
-# sk_ctx_bytes = open('../transmission/ts_ckks_pk.config', 'rb').read()
-# ctx = ts.context_from(sk_ctx_bytes)
-# vector = [0.5678]
-# print(0.5678*0.99)
-# enc_1 = ts.ckks_vector(ctx, vector)
-# enc_1 = enc_1*0.33
-# enc_1 = enc_1 + enc_1*2
-# print(enc_1.decrypt())
-y_pred = torch.tensor([[0.9130],
-        [0.1159],
-        [0.9951],
-        [0.9990],
-        [0.9172],
-        [0.9973],
-        [0.8889],
-        [0.9983]])
-y = torch.tensor([[1.],
-        [0.],
-        [1.],
-        [1.],
-        [1.],
-        [0.],
-        [1.],
-        [1.]])
-print(y_pred.ge(0.5).squeeze())
-mask = y_pred.ge(0.5).squeeze()
-correct = (mask == y.squeeze()).sum()
-print(correct)
-print(y_pred.ge(0.5).squeeze().eq(y.squeeze()).sum().item())
+y_pred = torch.tensor([[4.3913, -1.4485],
+                       [3.2421, -1.6527],
+                       [-11.3252, -0.7763],
+                       [5.3851, -3.3057],
+                       [-6.7641, -1.0049],
+                       [4.1136, -3.7467],
+                       [-7.7996, -0.6339],
+                       [6.0476, -3.2254]])
+print(torch.softmax(y_pred, dim=1).argmax(dim=1))
+y = torch.tensor([0, 0, 1, 0, 1, 0, 1, 0])
+print(y_pred.argmax(dim=1).eq(y))

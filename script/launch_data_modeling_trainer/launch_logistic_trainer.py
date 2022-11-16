@@ -1,6 +1,6 @@
 from torch.multiprocessing import Process
 from conf import args_parser
-from data_modeling.trainer import LRTrainer
+from data_modeling.trainer.logistic_trainer import LogisticTrainer
 import torch
 from data_modeling.data_loader import MysqlDataSet
 
@@ -11,19 +11,17 @@ def run(arg):
                  'total sulfur dioxide', 'density', 'pH', 'sulphates', 'alcohol',
                  'color']
     mysql_dataset_1 = MysqlDataSet("database_1", "wine_quality", cols_list)
-    lr_trainer = LRTrainer(arg,mysql_dataset_1)
-    x = torch.randint(low=1, high=100, size=(10, 10)).float()
-    y = torch.randint(low=0, high=2, size=(10,)).float()
+    lr_trainer = LogisticTrainer(arg, mysql_dataset_1)
 
     for rnd in range(args.rounds):
         print("round: ", rnd)
         update_flag = lr_trainer.is_update()
         print(update_flag)
         if update_flag:
-            lr_trainer.one_round()
+            lr_trainer.one_local_round()
         else:
             print("not participate in this round")
-        # print(rnd, lr_trainer.model.linear.bias, '\n')
+        # print(rnd, logistic_trainer.model.linear.bias, '\n')
 
 
 if __name__ == '__main__':
@@ -36,3 +34,24 @@ if __name__ == '__main__':
     # for p in processes:
     #     p.join()
     run(args)
+
+# def run(arg, rank):
+#     arg.rank = rank
+#     cols_list = ['fixed acidity', 'volatile acidity', 'citric acid',
+#                  'residual sugar', 'chlorides', 'free sulfur dioxide',
+#                  'total sulfur dioxide', 'density', 'pH', 'sulphates', 'alcohol',
+#                  'color']
+#     mysql_dataset = MysqlDataSet("database_{0}".format(rank+1), "wine_quality", cols_list)
+#     lr_trainer = LogisticTrainer(arg, mysql_dataset)
+#     lr_trainer.launch()
+#
+#
+# if __name__ == '__main__':
+#     args = args_parser()
+#     processes = []
+#     for i in range(3):
+#         p = Process(target=run, args=(args, i))
+#         processes.append(p)
+#         p.start()
+#     for p in processes:
+#         p.join()

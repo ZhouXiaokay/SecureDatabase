@@ -2,7 +2,7 @@ import torch
 from torch import nn
 
 
-class LRModel(nn.Module):
+class Logistic(nn.Module):
     def __init__(self, n_f):
         super().__init__()
         self.linear = nn.Linear(n_f, 1)

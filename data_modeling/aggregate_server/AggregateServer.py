@@ -10,6 +10,7 @@ from transmission.utils import flatten_tensors
 import pickle
 import copy
 
+
 class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregationServerServiceServicer):
 
     def __init__(self, num_clients, pk_ctx_file, model):
@@ -77,18 +78,22 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregationServerService
         return enc_param_vector
 
     def __update_global_model_params(self, latest_params):
-        self.latest_model_params = latest_params
+        self.latest_model_params.data = latest_params.data
 
     def __sum_encrypted_params(self):
         self.pk_ctx.relin_keys()
         self.sum_count = sum(self.count_dict.values())
         self.accum_count = sum(self.accum_count_list)
-        ratio = 1 - self.accum_count / self.sum_count
-        ratio = round(ratio, 4)
+        # ratio = 1 - self.accum_count / self.sum_count
 
         sum_enc_params = sum(self.params_list)
-        latest_enc_params = 1 / self.sum_count * sum_enc_params
-        latest_enc_params += ratio * self.latest_model_params
+        # Bootstrapping
+        # latest_enc_model_params = self.latest_model_params.decrypt()
+        # latest_model_params = ts.ckks_vector(self.pk_ctx, latest_enc_model_params)
+        # latest_enc_params = ratio * self.latest_model_params
+        # latest_enc_params += 1 / self.sum_count * sum_enc_params
+
+        latest_enc_params = 1 / self.accum_count * sum_enc_params
 
         self.sum_enc_params.append(latest_enc_params)
         self.__update_global_model_params(latest_enc_params)

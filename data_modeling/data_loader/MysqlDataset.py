@@ -1,5 +1,5 @@
 import torch
-from torch.utils.data import DataLoader, IterableDataset
+from torch.utils.data import DataLoader, IterableDataset, Dataset
 from data_modeling.data_loader import engine
 import pandas as pd
 import numpy as np
@@ -7,10 +7,10 @@ import time
 import math
 
 
-#
-class MysqlDataSet(IterableDataset):
+
+class MysqlIterableDataSet(IterableDataset):
     def __init__(self, db_name, tb_name, cols):
-        super(MysqlDataSet).__init__()
+        super(MysqlIterableDataSet).__init__()
         self.db_name = db_name
         self.tb_name = tb_name
         self.cols = cols
@@ -22,7 +22,32 @@ class MysqlDataSet(IterableDataset):
         for data in self.data_iter:
             tensor = torch.from_numpy(np.array(data, dtype=np.float32).flatten())
             x, y = tensor[:-1], tensor[-1]
+            # y = y.unsqueeze(dim=0)
+            # one-hot encoding
+            # y = torch.eye(2)[y.long().squeeze(dim=0), :]
             yield x, y
+
+
+class MysqlDataSet(Dataset):
+    def __init__(self, db_name, tb_name, cols):
+        self.db_name = db_name
+        self.tb_name = tb_name
+        self.cols = cols
+        conn = engine(self.db_name)
+        self.data = torch.from_numpy(pd.read_sql(self.tb_name, con=conn, columns=self.cols).values).float()
+
+    def __getitem__(self, index):
+        x = self.data[index][:-1]
+        y = self.data[index][-1]
+        return x,y
+
+
+    def __len__(self):
+        conn = engine(self.db_name)
+        length = self.data_iter = pd.read_sql('SELECT COUNT(*) FROM {0}.{1}'.format(self.db_name, self.tb_name),
+                                              con=conn).values
+        return length.squeeze(axis=0)[0]
+
 
 
 # class MysqlDataSet(IterableDataset):
@@ -83,12 +108,15 @@ if __name__ == "__main__":
                  'total sulfur dioxide', 'density', 'pH', 'sulphates', 'alcohol',
                  'quality', 'color']
     mysql_dataset = MysqlDataSet("database_1", "wine_quality", cols_list)
-    dataloader = DataLoader(mysql_dataset, batch_size=4, num_workers=0)
+    print(len(mysql_dataset))
+    train_size = int(0.7*mysql_dataset.__len__())
+    test_size = mysql_dataset.__len__() - train_size
+    train_sets = torch.utils.data.random_split(mysql_dataset, [train_size, test_size])
+    print(train_sets[0].__len__())
+    dataloader = DataLoader(train_sets[0], batch_size=8)
     start_time = time.time()
     for batch in dataloader:
         x, y = batch
-        print(y.unsqueeze(dim=-1))
-        print(x)
 
     end_time = time.time()
     print(end_time - start_time)
