@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1etenseal_aggregate_server.proto\"K\n\x0clocal_params\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nsample_num\x18\x02 \x01(\x05\x12\x12\n\nparams_msg\x18\x03 \x01(\x0c\"6\n\x0b\x61ggr_params\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nparams_msg\x18\x02 \x01(\x0c\"9\n\x0eupdate_request\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nsample_num\x18\x02 \x01(\x05\"3\n\x0fupdate_response\x12\x0c\n\x04\x66lag\x18\x01 \x01(\x08\x12\x12\n\nparams_msg\x18\x02 \x01(\x0c\x32\x80\x01\n\x18\x41ggregationServerService\x12,\n\rsum_encrypted\x12\r.local_params\x1a\x0c.aggr_params\x12\x36\n\x11\x62oolean_is_update\x12\x0f.update_request\x1a\x10.update_responseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1etenseal_aggregate_server.proto\"K\n\x0clocal_params\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nsample_num\x18\x02 \x01(\x05\x12\x12\n\nparams_msg\x18\x03 \x01(\x0c\"6\n\x0b\x61ggr_params\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nparams_msg\x18\x02 \x01(\x0c\"9\n\x0eupdate_request\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nsample_num\x18\x02 \x01(\x05\"3\n\x0fupdate_response\x12\x0c\n\x04\x66lag\x18\x01 \x01(\x08\x12\x12\n\nparams_msg\x18\x02 \x01(\x0c\x32~\n\x16\x41ggregateServerService\x12,\n\rsum_encrypted\x12\r.local_params\x1a\x0c.aggr_params\x12\x36\n\x11\x62oolean_is_update\x12\x0f.update_request\x1a\x10.update_responseb\x06proto3')
 
 
 
@@ -50,7 +50,7 @@ update_response = _reflection.GeneratedProtocolMessageType('update_response', (_
   })
 _sym_db.RegisterMessage(update_response)
 
-_AGGREGATIONSERVERSERVICE = DESCRIPTOR.services_by_name['AggregationServerService']
+_AGGREGATESERVERSERVICE = DESCRIPTOR.services_by_name['AggregateServerService']
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
@@ -62,6 +62,6 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _UPDATE_REQUEST._serialized_end=224
   _UPDATE_RESPONSE._serialized_start=226
   _UPDATE_RESPONSE._serialized_end=277
-  _AGGREGATIONSERVERSERVICE._serialized_start=280
-  _AGGREGATIONSERVERSERVICE._serialized_end=408
+  _AGGREGATESERVERSERVICE._serialized_start=279
+  _AGGREGATESERVERSERVICE._serialized_end=405
 # @@protoc_insertion_point(module_scope)

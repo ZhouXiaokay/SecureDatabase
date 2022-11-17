@@ -1,6 +1,5 @@
 import sys
 import os
-
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import hydra
 from omegaconf import DictConfig
@@ -18,9 +17,9 @@ def launch_aggregate_server(host, port):
     max_msg_size = 1000000000
     pk_ctx_file = "../../transmission/ts_ckks_pk.config"
     options = [('grpc.max_send_message_length', max_msg_size), ('grpc.max_receive_message_length', max_msg_size)]
-    model = Linear(n_f=args.n_features)
+    model = DNN(n_f=args.n_features)
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=5), options=options)
-    tenseal_aggregate_server_pb2_grpc.add_AggregationServerServiceServicer_to_server(
+    tenseal_aggregate_server_pb2_grpc.add_AggregateServerServiceServicer_to_server(
         AggregateServer(3, pk_ctx_file, model),
         server)
     server.add_insecure_port(aggr_server_address)

@@ -11,7 +11,7 @@ import pickle
 import copy
 
 
-class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregationServerServiceServicer):
+class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceServicer):
 
     def __init__(self, num_clients, pk_ctx_file, model):
         # initial params

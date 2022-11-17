@@ -36,8 +36,6 @@ class DNNTrainer(BaseTrainer):
                 self.optimizer.step()
                 set_size += train_x.size(0)
                 accum_correct += y_pred.argmax(dim=1).eq(train_y).sum().item()
-                print(train_y)
-                print(y_pred)
             if e % 2 == 0:
                 print("loss: ", accum_loss)
                 print("train accuracy: ", accum_correct / set_size)
@@ -49,10 +47,10 @@ class DNNTrainer(BaseTrainer):
         set_size = 0
         for batch in data_loader:
             test_x, test_y = batch
-            test_y = test_y.unsqueeze(dim=1)
+            test_y = test_y.long()
             y_pred = self.model(test_x)
             set_size += test_x.size(0)
-            accum_correct += y_pred.ge(0.5).squeeze().eq(test_y.squeeze()).sum().item()
+            accum_correct += y_pred.argmax(dim=1).eq(test_y).sum().item()
         print("test accuracy: ", accum_correct / set_size)
 
 

@@ -26,7 +26,7 @@ message update_response{
   bytes params_msg = 2;
 }
 
-service AggregationServerService {
+service AggregateServerService {
   //  AggregateServer provides the interface, client remotes the call
   rpc sum_encrypted(local_params) returns (aggr_params);
   rpc boolean_is_update(update_request) returns(update_response);

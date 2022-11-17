@@ -22,7 +22,7 @@ class Client:
         self.options = [('grpc.max_send_message_length', self.max_msg_size),
                         ('grpc.max_receive_message_length', self.max_msg_size)]
         channel = grpc.insecure_channel(self.server_address, options=self.options)
-        self.stub = tenseal_aggregate_server_pb2_grpc.AggregationServerServiceStub(channel)
+        self.stub = tenseal_aggregate_server_pb2_grpc.AggregateServerServiceStub(channel)
 
     def __sum_encrypted(self, plain_vector):
         # print(">>> client sum encrypted start")

@@ -25,7 +25,7 @@ class BaseTrainer(object):
         self.dataset = dataset
         self.train_split = 0.7
         self.shuffle_dataset = True
-        self.random_seed =  self.args.seed
+        self.random_seed = self.args.seed
         self.train_sampler, self.test_sampler = self.split_train_test()
 
         # initialize model and optimizer

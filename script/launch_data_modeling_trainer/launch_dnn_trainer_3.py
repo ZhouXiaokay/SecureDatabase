@@ -17,6 +17,7 @@ def run(arg):
         print(update_flag)
         if update_flag:
             dnn_trainer.one_local_round()
+            dnn_trainer.test()
         else:
             print("not participate in this round")
         # print(rnd, logistic_trainer.model.linear.bias, '\n')

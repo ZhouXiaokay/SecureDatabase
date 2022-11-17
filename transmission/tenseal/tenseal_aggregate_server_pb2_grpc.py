@@ -5,7 +5,7 @@ import grpc
 import transmission.tenseal.tenseal_aggregate_server_pb2 as tenseal__aggregate__server__pb2
 
 
-class AggregationServerServiceStub(object):
+class AggregateServerServiceStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -15,18 +15,18 @@ class AggregationServerServiceStub(object):
             channel: A grpc.Channel.
         """
         self.sum_encrypted = channel.unary_unary(
-                '/AggregationServerService/sum_encrypted',
+                '/AggregateServerService/sum_encrypted',
                 request_serializer=tenseal__aggregate__server__pb2.local_params.SerializeToString,
                 response_deserializer=tenseal__aggregate__server__pb2.aggr_params.FromString,
                 )
         self.boolean_is_update = channel.unary_unary(
-                '/AggregationServerService/boolean_is_update',
+                '/AggregateServerService/boolean_is_update',
                 request_serializer=tenseal__aggregate__server__pb2.update_request.SerializeToString,
                 response_deserializer=tenseal__aggregate__server__pb2.update_response.FromString,
                 )
 
 
-class AggregationServerServiceServicer(object):
+class AggregateServerServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def sum_encrypted(self, request, context):
@@ -43,7 +43,7 @@ class AggregationServerServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_AggregationServerServiceServicer_to_server(servicer, server):
+def add_AggregateServerServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'sum_encrypted': grpc.unary_unary_rpc_method_handler(
                     servicer.sum_encrypted,
@@ -57,12 +57,12 @@ def add_AggregationServerServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'AggregationServerService', rpc_method_handlers)
+            'AggregateServerService', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class AggregationServerService(object):
+class AggregateServerService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -76,7 +76,7 @@ class AggregationServerService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/AggregationServerService/sum_encrypted',
+        return grpc.experimental.unary_unary(request, target, '/AggregateServerService/sum_encrypted',
             tenseal__aggregate__server__pb2.local_params.SerializeToString,
             tenseal__aggregate__server__pb2.aggr_params.FromString,
             options, channel_credentials,
@@ -93,7 +93,7 @@ class AggregationServerService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/AggregationServerService/boolean_is_update',
+        return grpc.experimental.unary_unary(request, target, '/AggregateServerService/boolean_is_update',
             tenseal__aggregate__server__pb2.update_request.SerializeToString,
             tenseal__aggregate__server__pb2.update_response.FromString,
             options, channel_credentials,
