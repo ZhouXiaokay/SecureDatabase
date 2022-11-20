@@ -3,8 +3,12 @@ parsing.py responses to parse the request from clients,
 and return results
 """
 import pickle
+
+import hydra
 from numpy import *
 import tenseal as ts
+from omegaconf import DictConfig
+
 from .utils import *
 
 
@@ -156,21 +160,45 @@ def get_total_var_mode(request, db_stub_list, pk_ctx, key_stub):
     highest_hash = get_the_highest_hash(set_once,key_stub,db_stub_list,pk_ctx)
 
     return ts.ckks_vector_from(pk_ctx,get_enc_using_hash(highest_hash,db_stub_list))
-        # for enc_vector in total_list:
-        #     serialize_msg = enc_vector.serialize()
-        #     request = tenseal_key_server_pb2.vector(vector_msg=serialize_msg)
-        #     response = key_stub.mode(request)
-        #     res_list.append(response.mode_list)
-        # for i in range(len(res_list[0])):
-        #     set_tmp: Set[int] = set()
-        #     for j in range(len(res_list)):
-        #         set_tmp.add(res_list[j][i][0])
-        #     if len(set_tmp) == 1:
-        #         set_all.add(res_list[0][i][0])
-        #     else:
-        #         break
-        # res_list = []
-    pass
+
+
+
+def get_total_var_median(request, db_stub_list, pk_ctx, key_stub):
+    max = get_total_max(request, db_stub_list, pk_ctx, key_stub)
+    min = get_total_min(request, db_stub_list, pk_ctx, key_stub)
+    std_min = 0
+    std_max = 1
+    std_mid = (std_max+std_min)/2
+
+    for i in range(10):
+        std_min = (std_max+std_min)/2
+        temp_mid = std_mid * max + (1 - std_mid) * min
+        le_list = []
+        g_list = []
+        for stub in db_stub_list:
+            query_request = tenseal_data_server_pb2.query_median_posi_msg(cid = request.cid, qid = request.qid, table_name = request.table_name, column_name = request.column_name, median = temp_mid.serialize())
+            response = stub.query_median_posi(query_request)
+            le = ts.ckks_vector_from(pk_ctx, response.less_e)
+            g = ts.ckks_vector_from(pk_ctx, response.greater)
+            le_list.append(le)
+            g_list.append(g)
+
+        le_sum = sum(le_list)
+        g_sum = sum(g_list)
+
+        sub_diff = le_sum - g_sum
+        sub_serialize_msg = sub_diff.serialize()
+        requests = tenseal_key_server_pb2.vector(vector_msg=sub_serialize_msg)
+        response = key_stub.boolean_positive(requests)
+        comparison_flag = response.bool_msg
+        if comparison_flag:
+            std_max = std_mid
+        else:
+            std_min = std_mid
+
+    std_mid = (std_max + std_min) / 2
+    return std_mid * max + (1 - std_mid) * min
+
 
 
 def process_total_request(request, pk_ctx, address_dict, options):
@@ -222,6 +250,10 @@ def process_total_request(request, pk_ctx, address_dict, options):
         key_stub = get_key_server_stub(address_dict, options)
         var_mode_enc_vector = get_total_var_mode(request, db_stub_list, pk_ctx, key_stub)
         return var_mode_enc_vector
+    elif op == "VAR_MEDIAN":
+        key_stub = get_key_server_stub(address_dict, options)
+        var_median_enc_vector = get_total_var_median(request, db_stub_list, pk_ctx, key_stub)
+        return var_median_enc_vector
     else:
         sum_enc_vector = get_total_sum(request, db_stub_list, pk_ctx)
         return sum_enc_vector

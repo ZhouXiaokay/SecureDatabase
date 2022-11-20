@@ -48,10 +48,24 @@ message query_mode_using_hash_result {
   bool available = 2;
 }
 
+message query_median_posi_msg {
+  int32 cid = 1;
+  int32 qid = 2;
+  string table_name = 3;
+  string column_name = 4;
+  bytes median = 5;
+}
+
+message query_median_posi_result {
+  bytes greater = 3;
+  bytes less_e = 4;
+}
+
 service DatabaseServerService {
   rpc query_operation(query_msg_parse_server) returns(enc_query_result);
   rpc noise_query_operation(query_msg_parse_server) returns(enc_query_result);
-  rpc n_th_query_operation(n_th_query_msg) returns(n_th_query_result);
   rpc query_from_buffer(buffer_query_msg) returns(query_result_result);
+  rpc n_th_query_operation(n_th_query_msg) returns(n_th_query_result);
   rpc query_mode_using_hash(query_mode_using_hash_msg) returns(query_mode_using_hash_result);
+  rpc query_median_posi(query_median_posi_msg) returns(query_median_posi_result);
 }

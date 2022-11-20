@@ -11,10 +11,12 @@ import grpc
 
 class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer):
 
-    def __init__(self, key_server_address, pk_ctx_file, db_name, cfg):
+    def __init__(self, key_server_address, pk_ctx_file, sk_ctx_file, db_name, cfg):
         self.ks_address = key_server_address
         pk_bytes = open(pk_ctx_file, "rb").read()
         self.pk_ctx = ts.context_from(pk_bytes)
+        ctx_byte = open(sk_ctx_file, "rb").read()
+        self.sk_ctx = ts.context_from(ctx_byte)
         self.max_msg_size = 1000000000
         self.options = [('grpc.max_send_message_length', self.max_msg_size),
                         ('grpc.max_receive_message_length', self.max_msg_size)]
@@ -122,5 +124,24 @@ class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer)
 
         return tenseal_data_server_pb2.query_mode_using_hash_result(mode = serialize_msg,available = available)
 
+    def query_median_posi(self, request, context):
+        cid = request.cid
+        qid = request.qid
+        table_name = request.table_name
+        column_name = request.column_name
+        median = request.median
+        enc_vector = ts.ckks_vector_from(self.sk_ctx, median)
+        dec_vector = enc_vector.decrypt()
+        median = dec_vector[0]
 
+        le_sql = "SELECT COUNT(*) FROM {0} WHERE {1} <= {2}".format("database_" + self.name + "." +table_name, column_name, median)
+        le_result = get_query_results(self.name, self.cfg, le_sql)
+        g_sql = "SELECT COUNT(*) FROM {0} WHERE {1} > {2}".format("database_" + self.name + "." +table_name, column_name, median)
+        g_result = get_query_results(self.name, self.cfg, g_sql)
+        le_result = ts.plain_tensor(le_result)
+        g_result = ts.plain_tensor(g_result)
+        le_enc_vector = ts.ckks_vector(self.pk_ctx, le_result)
+        g_enc_vector = ts.ckks_vector(self.pk_ctx, g_result)
 
+        msg = tenseal_data_server_pb2.query_median_posi_result(less_e = le_enc_vector.serialize(), greater = g_enc_vector.serialize())
+        return msg

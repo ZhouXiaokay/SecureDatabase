@@ -3,6 +3,8 @@ defs:
   host: '127.0.0.1'
   delay: 2
   parse_server_delay: 5
+  mid_iteration: 10
+
 dirs:
   base_dir: ~/Documents/code/SecureDatabase
 servers:
