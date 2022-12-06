@@ -24,3 +24,4 @@ class ParseServer(tenseal_parse_server_pb2_grpc.ParseServerServiceServicer):
 
         response = tenseal_parse_server_pb2.google_dot_protobuf_dot_empty__pb2.Empty()
         return response
+

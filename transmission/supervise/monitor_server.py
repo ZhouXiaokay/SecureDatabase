@@ -12,7 +12,7 @@ def heart_beat_server(host, port, delay):
     print(f"Server {host}:{port} online!")
 
     while True:
-        time.sleep(delay)
+        # time.sleep(delay)
         msg, addr = server_sock.recvfrom(MAX_BYTES)
         print(f'{datetime.datetime.now()} >>Receive client message: {msg.decode("ascii")}.')
         server_sock.sendto(("Connection confirmed.".encode('ascii')), addr)

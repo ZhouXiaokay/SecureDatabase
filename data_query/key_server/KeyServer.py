@@ -7,6 +7,7 @@ import tenseal as ts
 import pickle
 from .utils import *
 import numpy as np
+import time
 
 
 class KeyServer(tenseal_key_server_pb2_grpc.KeyServerServiceServicer):
@@ -20,10 +21,24 @@ class KeyServer(tenseal_key_server_pb2_grpc.KeyServerServiceServicer):
                         ('grpc.max_receive_message_length', self.max_msg_size)]
         self.total_noise_list = []
         self.sleep_time = 0.1
+        # ID Psi
+        self.cid_list = []
+        self.max_id_list = []
+        self.min_id_list = []
+        #
+        self.n_sum_request = 0
+        self.n_sum_response = 0
+        self.completed = False
+
+    def reset_status(self):
         self.n_sum_request = 0
         self.n_sum_response = 0
 
-    def reset_sum(self):
+    def reset_id_psi_status(self):
+        self.cid_list = []
+        self.max_id_list = []
+        self.min_id_list = []
+        self.completed = False
         self.n_sum_request = 0
         self.n_sum_response = 0
 
@@ -111,5 +126,37 @@ class KeyServer(tenseal_key_server_pb2_grpc.KeyServerServiceServicer):
         div_enc_vector = ts.ckks_vector(self.sk_ctx, div_plain_vector)
         sqrt_serialized_msg = div_enc_vector.serialize()
         response = tenseal_key_server_pb2.vector(vector_msg=sqrt_serialized_msg)
+
+        return response
+
+    def get_global_max_min_id(self, request, context):
+        cid = request.cid
+        qid = request.qid
+
+        if cid not in self.cid_list:
+            self.cid_list.append(cid)
+            self.max_id_list.append(request.max_id)
+            self.min_id_list.append(request.min_id)
+            self.n_sum_request += 1
+
+        while (self.n_sum_request % self.db_num != 0):
+            time.sleep(self.sleep_time)
+
+        global_max_id = max(self.max_id_list)
+        global_min_id = min(self.min_id_list)
+
+        response = tenseal_key_server_pb2.max_min_ids(
+            cid=cid,
+            qid=qid,
+            global_max_id=global_max_id,
+            global_min_id=global_min_id
+        )
+        self.n_sum_response += 1
+
+        while (self.n_sum_response % self.db_num != 0):
+            time.sleep(self.sleep_time)
+
+        if cid == self.db_num:
+            self.reset_id_psi_status()
 
         return response

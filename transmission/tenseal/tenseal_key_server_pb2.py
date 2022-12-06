@@ -3,7 +3,6 @@
 # source: tenseal_key_server.proto
 """Generated protocol buffer code."""
 from google.protobuf import descriptor as _descriptor
-from google.protobuf import descriptor_pool as _descriptor_pool
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
@@ -15,17 +14,415 @@ _sym_db = _symbol_database.Default()
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x18tenseal_key_server.proto\x1a\x1bgoogle/protobuf/empty.proto\"]\n\x19query_result_parse_server\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x12\n\nip_address\x18\x03 \x01(\t\x12\x12\n\nenc_result\x18\x04 \x01(\x0c\"\x1c\n\x06vector\x12\x12\n\nvector_msg\x18\x01 \x01(\x0c\"8\n\x0b\x64iv_vectors\x12\x14\n\x0c\x64ividend_msg\x18\x01 \x01(\x0c\x12\x13\n\x0b\x64ivisor_msg\x18\x02 \x01(\x0c\"\"\n\x0e\x62oolean_result\x12\x10\n\x08\x62ool_msg\x18\x01 \x01(\x08\"@\n\x16generate_noise_request\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x0c\n\x04type\x18\x03 \x01(\t\">\n\x11get_noise_request\x12\x0f\n\x07\x64\x62_name\x18\x01 \x01(\x05\x12\x0b\n\x03\x63id\x18\x02 \x01(\x05\x12\x0b\n\x03qid\x18\x03 \x01(\x05\"\x1a\n\x05noise\x12\x11\n\tnoise_msg\x18\x01 \x01(\x0c\x32\xc9\x02\n\x10KeyServerService\x12M\n\x17return_enc_query_result\x12\x1a.query_result_parse_server\x1a\x16.google.protobuf.Empty\x12\x41\n\x0egenerate_noise\x12\x17.generate_noise_request\x1a\x16.google.protobuf.Empty\x12\'\n\tget_noise\x12\x12.get_noise_request\x1a\x06.noise\x12,\n\x10\x62oolean_positive\x12\x07.vector\x1a\x0f.boolean_result\x12#\n\x0fsqrt_enc_vector\x12\x07.vector\x1a\x07.vector\x12\'\n\x0e\x64iv_enc_vector\x12\x0c.div_vectors\x1a\x07.vectorb\x06proto3')
+DESCRIPTOR = _descriptor.FileDescriptor(
+  name='tenseal_key_server.proto',
+  package='',
+  syntax='proto3',
+  serialized_options=None,
+  create_key=_descriptor._internal_create_key,
+  serialized_pb=b'\n\x18tenseal_key_server.proto\x1a\x1bgoogle/protobuf/empty.proto\"]\n\x19query_result_parse_server\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x12\n\nip_address\x18\x03 \x01(\t\x12\x12\n\nenc_result\x18\x04 \x01(\x0c\"\x1c\n\x06vector\x12\x12\n\nvector_msg\x18\x01 \x01(\x0c\"8\n\x0b\x64iv_vectors\x12\x14\n\x0c\x64ividend_msg\x18\x01 \x01(\x0c\x12\x13\n\x0b\x64ivisor_msg\x18\x02 \x01(\x0c\"\"\n\x0e\x62oolean_result\x12\x10\n\x08\x62ool_msg\x18\x01 \x01(\x08\"@\n\x16generate_noise_request\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x0c\n\x04type\x18\x03 \x01(\t\">\n\x11get_noise_request\x12\x0f\n\x07\x64\x62_name\x18\x01 \x01(\x05\x12\x0b\n\x03\x63id\x18\x02 \x01(\x05\x12\x0b\n\x03qid\x18\x03 \x01(\x05\"\x1a\n\x05noise\x12\x11\n\tnoise_msg\x18\x01 \x01(\x0c\"S\n\x17get_max_min_ids_request\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x0e\n\x06max_id\x18\x03 \x01(\x05\x12\x0e\n\x06min_id\x18\x04 \x01(\x05\"U\n\x0bmax_min_ids\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x15\n\rglobal_max_id\x18\x03 \x01(\x05\x12\x15\n\rglobal_min_id\x18\x04 \x01(\x05\x32\x8a\x03\n\x10KeyServerService\x12M\n\x17return_enc_query_result\x12\x1a.query_result_parse_server\x1a\x16.google.protobuf.Empty\x12\x41\n\x0egenerate_noise\x12\x17.generate_noise_request\x1a\x16.google.protobuf.Empty\x12\'\n\tget_noise\x12\x12.get_noise_request\x1a\x06.noise\x12,\n\x10\x62oolean_positive\x12\x07.vector\x1a\x0f.boolean_result\x12#\n\x0fsqrt_enc_vector\x12\x07.vector\x1a\x07.vector\x12\'\n\x0e\x64iv_enc_vector\x12\x0c.div_vectors\x1a\x07.vector\x12?\n\x15get_global_max_min_id\x12\x18.get_max_min_ids_request\x1a\x0c.max_min_idsb\x06proto3'
+  ,
+  dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
 
 
-_QUERY_RESULT_PARSE_SERVER = DESCRIPTOR.message_types_by_name['query_result_parse_server']
-_VECTOR = DESCRIPTOR.message_types_by_name['vector']
-_DIV_VECTORS = DESCRIPTOR.message_types_by_name['div_vectors']
-_BOOLEAN_RESULT = DESCRIPTOR.message_types_by_name['boolean_result']
-_GENERATE_NOISE_REQUEST = DESCRIPTOR.message_types_by_name['generate_noise_request']
-_GET_NOISE_REQUEST = DESCRIPTOR.message_types_by_name['get_noise_request']
-_NOISE = DESCRIPTOR.message_types_by_name['noise']
+
+_QUERY_RESULT_PARSE_SERVER = _descriptor.Descriptor(
+  name='query_result_parse_server',
+  full_name='query_result_parse_server',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='cid', full_name='query_result_parse_server.cid', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='qid', full_name='query_result_parse_server.qid', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='ip_address', full_name='query_result_parse_server.ip_address', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='enc_result', full_name='query_result_parse_server.enc_result', index=3,
+      number=4, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=57,
+  serialized_end=150,
+)
+
+
+_VECTOR = _descriptor.Descriptor(
+  name='vector',
+  full_name='vector',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='vector_msg', full_name='vector.vector_msg', index=0,
+      number=1, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=152,
+  serialized_end=180,
+)
+
+
+_DIV_VECTORS = _descriptor.Descriptor(
+  name='div_vectors',
+  full_name='div_vectors',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='dividend_msg', full_name='div_vectors.dividend_msg', index=0,
+      number=1, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='divisor_msg', full_name='div_vectors.divisor_msg', index=1,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=182,
+  serialized_end=238,
+)
+
+
+_BOOLEAN_RESULT = _descriptor.Descriptor(
+  name='boolean_result',
+  full_name='boolean_result',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='bool_msg', full_name='boolean_result.bool_msg', index=0,
+      number=1, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=240,
+  serialized_end=274,
+)
+
+
+_GENERATE_NOISE_REQUEST = _descriptor.Descriptor(
+  name='generate_noise_request',
+  full_name='generate_noise_request',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='cid', full_name='generate_noise_request.cid', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='qid', full_name='generate_noise_request.qid', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='type', full_name='generate_noise_request.type', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=276,
+  serialized_end=340,
+)
+
+
+_GET_NOISE_REQUEST = _descriptor.Descriptor(
+  name='get_noise_request',
+  full_name='get_noise_request',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='db_name', full_name='get_noise_request.db_name', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='cid', full_name='get_noise_request.cid', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='qid', full_name='get_noise_request.qid', index=2,
+      number=3, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=342,
+  serialized_end=404,
+)
+
+
+_NOISE = _descriptor.Descriptor(
+  name='noise',
+  full_name='noise',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='noise_msg', full_name='noise.noise_msg', index=0,
+      number=1, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=406,
+  serialized_end=432,
+)
+
+
+_GET_MAX_MIN_IDS_REQUEST = _descriptor.Descriptor(
+  name='get_max_min_ids_request',
+  full_name='get_max_min_ids_request',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='cid', full_name='get_max_min_ids_request.cid', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='qid', full_name='get_max_min_ids_request.qid', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='max_id', full_name='get_max_min_ids_request.max_id', index=2,
+      number=3, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='min_id', full_name='get_max_min_ids_request.min_id', index=3,
+      number=4, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=434,
+  serialized_end=517,
+)
+
+
+_MAX_MIN_IDS = _descriptor.Descriptor(
+  name='max_min_ids',
+  full_name='max_min_ids',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='cid', full_name='max_min_ids.cid', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='qid', full_name='max_min_ids.qid', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='global_max_id', full_name='max_min_ids.global_max_id', index=2,
+      number=3, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='global_min_id', full_name='max_min_ids.global_min_id', index=3,
+      number=4, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=519,
+  serialized_end=604,
+)
+
+DESCRIPTOR.message_types_by_name['query_result_parse_server'] = _QUERY_RESULT_PARSE_SERVER
+DESCRIPTOR.message_types_by_name['vector'] = _VECTOR
+DESCRIPTOR.message_types_by_name['div_vectors'] = _DIV_VECTORS
+DESCRIPTOR.message_types_by_name['boolean_result'] = _BOOLEAN_RESULT
+DESCRIPTOR.message_types_by_name['generate_noise_request'] = _GENERATE_NOISE_REQUEST
+DESCRIPTOR.message_types_by_name['get_noise_request'] = _GET_NOISE_REQUEST
+DESCRIPTOR.message_types_by_name['noise'] = _NOISE
+DESCRIPTOR.message_types_by_name['get_max_min_ids_request'] = _GET_MAX_MIN_IDS_REQUEST
+DESCRIPTOR.message_types_by_name['max_min_ids'] = _MAX_MIN_IDS
+_sym_db.RegisterFileDescriptor(DESCRIPTOR)
+
 query_result_parse_server = _reflection.GeneratedProtocolMessageType('query_result_parse_server', (_message.Message,), {
   'DESCRIPTOR' : _QUERY_RESULT_PARSE_SERVER,
   '__module__' : 'tenseal_key_server_pb2'
@@ -75,24 +472,105 @@ noise = _reflection.GeneratedProtocolMessageType('noise', (_message.Message,), {
   })
 _sym_db.RegisterMessage(noise)
 
-_KEYSERVERSERVICE = DESCRIPTOR.services_by_name['KeyServerService']
-if _descriptor._USE_C_DESCRIPTORS == False:
+get_max_min_ids_request = _reflection.GeneratedProtocolMessageType('get_max_min_ids_request', (_message.Message,), {
+  'DESCRIPTOR' : _GET_MAX_MIN_IDS_REQUEST,
+  '__module__' : 'tenseal_key_server_pb2'
+  # @@protoc_insertion_point(class_scope:get_max_min_ids_request)
+  })
+_sym_db.RegisterMessage(get_max_min_ids_request)
 
-  DESCRIPTOR._options = None
-  _QUERY_RESULT_PARSE_SERVER._serialized_start=57
-  _QUERY_RESULT_PARSE_SERVER._serialized_end=150
-  _VECTOR._serialized_start=152
-  _VECTOR._serialized_end=180
-  _DIV_VECTORS._serialized_start=182
-  _DIV_VECTORS._serialized_end=238
-  _BOOLEAN_RESULT._serialized_start=240
-  _BOOLEAN_RESULT._serialized_end=274
-  _GENERATE_NOISE_REQUEST._serialized_start=276
-  _GENERATE_NOISE_REQUEST._serialized_end=340
-  _GET_NOISE_REQUEST._serialized_start=342
-  _GET_NOISE_REQUEST._serialized_end=404
-  _NOISE._serialized_start=406
-  _NOISE._serialized_end=432
-  _KEYSERVERSERVICE._serialized_start=435
-  _KEYSERVERSERVICE._serialized_end=764
+max_min_ids = _reflection.GeneratedProtocolMessageType('max_min_ids', (_message.Message,), {
+  'DESCRIPTOR' : _MAX_MIN_IDS,
+  '__module__' : 'tenseal_key_server_pb2'
+  # @@protoc_insertion_point(class_scope:max_min_ids)
+  })
+_sym_db.RegisterMessage(max_min_ids)
+
+
+
+_KEYSERVERSERVICE = _descriptor.ServiceDescriptor(
+  name='KeyServerService',
+  full_name='KeyServerService',
+  file=DESCRIPTOR,
+  index=0,
+  serialized_options=None,
+  create_key=_descriptor._internal_create_key,
+  serialized_start=607,
+  serialized_end=1001,
+  methods=[
+  _descriptor.MethodDescriptor(
+    name='return_enc_query_result',
+    full_name='KeyServerService.return_enc_query_result',
+    index=0,
+    containing_service=None,
+    input_type=_QUERY_RESULT_PARSE_SERVER,
+    output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='generate_noise',
+    full_name='KeyServerService.generate_noise',
+    index=1,
+    containing_service=None,
+    input_type=_GENERATE_NOISE_REQUEST,
+    output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='get_noise',
+    full_name='KeyServerService.get_noise',
+    index=2,
+    containing_service=None,
+    input_type=_GET_NOISE_REQUEST,
+    output_type=_NOISE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='boolean_positive',
+    full_name='KeyServerService.boolean_positive',
+    index=3,
+    containing_service=None,
+    input_type=_VECTOR,
+    output_type=_BOOLEAN_RESULT,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='sqrt_enc_vector',
+    full_name='KeyServerService.sqrt_enc_vector',
+    index=4,
+    containing_service=None,
+    input_type=_VECTOR,
+    output_type=_VECTOR,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='div_enc_vector',
+    full_name='KeyServerService.div_enc_vector',
+    index=5,
+    containing_service=None,
+    input_type=_DIV_VECTORS,
+    output_type=_VECTOR,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='get_global_max_min_id',
+    full_name='KeyServerService.get_global_max_min_id',
+    index=6,
+    containing_service=None,
+    input_type=_GET_MAX_MIN_IDS_REQUEST,
+    output_type=_MAX_MIN_IDS,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+])
+_sym_db.RegisterServiceDescriptor(_KEYSERVERSERVICE)
+
+DESCRIPTOR.services_by_name['KeyServerService'] = _KEYSERVERSERVICE
+
 # @@protoc_insertion_point(module_scope)

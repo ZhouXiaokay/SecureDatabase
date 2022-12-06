@@ -39,6 +39,20 @@ message noise{
   bytes noise_msg= 1;
 }
 
+message get_max_min_ids_request{
+  int32 cid = 1;
+  int32 qid = 2;
+  int32 max_id = 3;
+  int32 min_id = 4;
+}
+
+message max_min_ids{
+  int32 cid = 1;
+  int32 qid = 2;
+  int32 global_max_id = 3;
+  int32 global_min_id = 4;
+}
+
 service KeyServerService {
   // requestServer remotes the call and keyServer send decrypted result to clientProxy
   rpc return_enc_query_result (query_result_parse_server) returns(google.protobuf.Empty);
@@ -50,5 +64,5 @@ service KeyServerService {
   rpc boolean_positive(vector) returns(boolean_result);
   rpc sqrt_enc_vector(vector) returns(vector);
   rpc div_enc_vector(div_vectors) returns(vector);
-
+  rpc get_global_max_min_id(get_max_min_ids_request) returns(max_min_ids);
 }

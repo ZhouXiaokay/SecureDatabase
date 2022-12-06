@@ -45,6 +45,11 @@ class KeyServerServiceStub(object):
                 request_serializer=tenseal__key__server__pb2.div_vectors.SerializeToString,
                 response_deserializer=tenseal__key__server__pb2.vector.FromString,
                 )
+        self.get_global_max_min_id = channel.unary_unary(
+                '/KeyServerService/get_global_max_min_id',
+                request_serializer=tenseal__key__server__pb2.get_max_min_ids_request.SerializeToString,
+                response_deserializer=tenseal__key__server__pb2.max_min_ids.FromString,
+                )
 
 
 class KeyServerServiceServicer(object):
@@ -90,6 +95,12 @@ class KeyServerServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def get_global_max_min_id(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_KeyServerServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -122,6 +133,11 @@ def add_KeyServerServiceServicer_to_server(servicer, server):
                     servicer.div_enc_vector,
                     request_deserializer=tenseal__key__server__pb2.div_vectors.FromString,
                     response_serializer=tenseal__key__server__pb2.vector.SerializeToString,
+            ),
+            'get_global_max_min_id': grpc.unary_unary_rpc_method_handler(
+                    servicer.get_global_max_min_id,
+                    request_deserializer=tenseal__key__server__pb2.get_max_min_ids_request.FromString,
+                    response_serializer=tenseal__key__server__pb2.max_min_ids.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -232,5 +248,22 @@ class KeyServerService(object):
         return grpc.experimental.unary_unary(request, target, '/KeyServerService/div_enc_vector',
             tenseal__key__server__pb2.div_vectors.SerializeToString,
             tenseal__key__server__pb2.vector.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def get_global_max_min_id(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/KeyServerService/get_global_max_min_id',
+            tenseal__key__server__pb2.get_max_min_ids_request.SerializeToString,
+            tenseal__key__server__pb2.max_min_ids.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
