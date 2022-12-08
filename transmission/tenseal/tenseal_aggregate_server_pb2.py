@@ -3,7 +3,6 @@
 # source: tenseal_aggregate_server.proto
 """Generated protocol buffer code."""
 from google.protobuf import descriptor as _descriptor
-from google.protobuf import descriptor_pool as _descriptor_pool
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
@@ -14,14 +13,280 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1etenseal_aggregate_server.proto\"K\n\x0clocal_params\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nsample_num\x18\x02 \x01(\x05\x12\x12\n\nparams_msg\x18\x03 \x01(\x0c\"6\n\x0b\x61ggr_params\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nparams_msg\x18\x02 \x01(\x0c\"9\n\x0eupdate_request\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nsample_num\x18\x02 \x01(\x05\"3\n\x0fupdate_response\x12\x0c\n\x04\x66lag\x18\x01 \x01(\x08\x12\x12\n\nparams_msg\x18\x02 \x01(\x0c\x32~\n\x16\x41ggregateServerService\x12,\n\rsum_encrypted\x12\r.local_params\x1a\x0c.aggr_params\x12\x36\n\x11\x62oolean_is_update\x12\x0f.update_request\x1a\x10.update_responseb\x06proto3')
+DESCRIPTOR = _descriptor.FileDescriptor(
+  name='tenseal_aggregate_server.proto',
+  package='',
+  syntax='proto3',
+  serialized_options=None,
+  create_key=_descriptor._internal_create_key,
+  serialized_pb=b'\n\x1etenseal_aggregate_server.proto\"K\n\x0clocal_params\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nsample_num\x18\x02 \x01(\x05\x12\x12\n\nparams_msg\x18\x03 \x01(\x0c\"6\n\x0b\x61ggr_params\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nparams_msg\x18\x02 \x01(\x0c\"9\n\x0eupdate_request\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nsample_num\x18\x02 \x01(\x05\"3\n\x0fupdate_response\x12\x0c\n\x04\x66lag\x18\x01 \x01(\x08\x12\x12\n\nparams_msg\x18\x02 \x01(\x0c\"E\n\x14intersection_request\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x13\n\x0brequest_msg\x18\x03 \x03(\x05\"G\n\x15intersection_response\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x14\n\x0cresponse_msg\x18\x03 \x03(\x05\x32\xc1\x01\n\x16\x41ggregateServerService\x12,\n\rsum_encrypted\x12\r.local_params\x1a\x0c.aggr_params\x12\x36\n\x11\x62oolean_is_update\x12\x0f.update_request\x1a\x10.update_response\x12\x41\n\x10get_intersection\x12\x15.intersection_request\x1a\x16.intersection_responseb\x06proto3'
+)
 
 
 
-_LOCAL_PARAMS = DESCRIPTOR.message_types_by_name['local_params']
-_AGGR_PARAMS = DESCRIPTOR.message_types_by_name['aggr_params']
-_UPDATE_REQUEST = DESCRIPTOR.message_types_by_name['update_request']
-_UPDATE_RESPONSE = DESCRIPTOR.message_types_by_name['update_response']
+
+_LOCAL_PARAMS = _descriptor.Descriptor(
+  name='local_params',
+  full_name='local_params',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='client_rank', full_name='local_params.client_rank', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='sample_num', full_name='local_params.sample_num', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='params_msg', full_name='local_params.params_msg', index=2,
+      number=3, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=34,
+  serialized_end=109,
+)
+
+
+_AGGR_PARAMS = _descriptor.Descriptor(
+  name='aggr_params',
+  full_name='aggr_params',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='client_rank', full_name='aggr_params.client_rank', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='params_msg', full_name='aggr_params.params_msg', index=1,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=111,
+  serialized_end=165,
+)
+
+
+_UPDATE_REQUEST = _descriptor.Descriptor(
+  name='update_request',
+  full_name='update_request',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='client_rank', full_name='update_request.client_rank', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='sample_num', full_name='update_request.sample_num', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=167,
+  serialized_end=224,
+)
+
+
+_UPDATE_RESPONSE = _descriptor.Descriptor(
+  name='update_response',
+  full_name='update_response',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='flag', full_name='update_response.flag', index=0,
+      number=1, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='params_msg', full_name='update_response.params_msg', index=1,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=226,
+  serialized_end=277,
+)
+
+
+_INTERSECTION_REQUEST = _descriptor.Descriptor(
+  name='intersection_request',
+  full_name='intersection_request',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='cid', full_name='intersection_request.cid', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='qid', full_name='intersection_request.qid', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='request_msg', full_name='intersection_request.request_msg', index=2,
+      number=3, type=5, cpp_type=1, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=279,
+  serialized_end=348,
+)
+
+
+_INTERSECTION_RESPONSE = _descriptor.Descriptor(
+  name='intersection_response',
+  full_name='intersection_response',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='cid', full_name='intersection_response.cid', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='qid', full_name='intersection_response.qid', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='response_msg', full_name='intersection_response.response_msg', index=2,
+      number=3, type=5, cpp_type=1, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=350,
+  serialized_end=421,
+)
+
+DESCRIPTOR.message_types_by_name['local_params'] = _LOCAL_PARAMS
+DESCRIPTOR.message_types_by_name['aggr_params'] = _AGGR_PARAMS
+DESCRIPTOR.message_types_by_name['update_request'] = _UPDATE_REQUEST
+DESCRIPTOR.message_types_by_name['update_response'] = _UPDATE_RESPONSE
+DESCRIPTOR.message_types_by_name['intersection_request'] = _INTERSECTION_REQUEST
+DESCRIPTOR.message_types_by_name['intersection_response'] = _INTERSECTION_RESPONSE
+_sym_db.RegisterFileDescriptor(DESCRIPTOR)
+
 local_params = _reflection.GeneratedProtocolMessageType('local_params', (_message.Message,), {
   'DESCRIPTOR' : _LOCAL_PARAMS,
   '__module__' : 'tenseal_aggregate_server_pb2'
@@ -50,18 +315,65 @@ update_response = _reflection.GeneratedProtocolMessageType('update_response', (_
   })
 _sym_db.RegisterMessage(update_response)
 
-_AGGREGATESERVERSERVICE = DESCRIPTOR.services_by_name['AggregateServerService']
-if _descriptor._USE_C_DESCRIPTORS == False:
+intersection_request = _reflection.GeneratedProtocolMessageType('intersection_request', (_message.Message,), {
+  'DESCRIPTOR' : _INTERSECTION_REQUEST,
+  '__module__' : 'tenseal_aggregate_server_pb2'
+  # @@protoc_insertion_point(class_scope:intersection_request)
+  })
+_sym_db.RegisterMessage(intersection_request)
 
-  DESCRIPTOR._options = None
-  _LOCAL_PARAMS._serialized_start=34
-  _LOCAL_PARAMS._serialized_end=109
-  _AGGR_PARAMS._serialized_start=111
-  _AGGR_PARAMS._serialized_end=165
-  _UPDATE_REQUEST._serialized_start=167
-  _UPDATE_REQUEST._serialized_end=224
-  _UPDATE_RESPONSE._serialized_start=226
-  _UPDATE_RESPONSE._serialized_end=277
-  _AGGREGATESERVERSERVICE._serialized_start=279
-  _AGGREGATESERVERSERVICE._serialized_end=405
+intersection_response = _reflection.GeneratedProtocolMessageType('intersection_response', (_message.Message,), {
+  'DESCRIPTOR' : _INTERSECTION_RESPONSE,
+  '__module__' : 'tenseal_aggregate_server_pb2'
+  # @@protoc_insertion_point(class_scope:intersection_response)
+  })
+_sym_db.RegisterMessage(intersection_response)
+
+
+
+_AGGREGATESERVERSERVICE = _descriptor.ServiceDescriptor(
+  name='AggregateServerService',
+  full_name='AggregateServerService',
+  file=DESCRIPTOR,
+  index=0,
+  serialized_options=None,
+  create_key=_descriptor._internal_create_key,
+  serialized_start=424,
+  serialized_end=617,
+  methods=[
+  _descriptor.MethodDescriptor(
+    name='sum_encrypted',
+    full_name='AggregateServerService.sum_encrypted',
+    index=0,
+    containing_service=None,
+    input_type=_LOCAL_PARAMS,
+    output_type=_AGGR_PARAMS,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='boolean_is_update',
+    full_name='AggregateServerService.boolean_is_update',
+    index=1,
+    containing_service=None,
+    input_type=_UPDATE_REQUEST,
+    output_type=_UPDATE_RESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='get_intersection',
+    full_name='AggregateServerService.get_intersection',
+    index=2,
+    containing_service=None,
+    input_type=_INTERSECTION_REQUEST,
+    output_type=_INTERSECTION_RESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+])
+_sym_db.RegisterServiceDescriptor(_AGGREGATESERVERSERVICE)
+
+DESCRIPTOR.services_by_name['AggregateServerService'] = _AGGREGATESERVERSERVICE
+
 # @@protoc_insertion_point(module_scope)

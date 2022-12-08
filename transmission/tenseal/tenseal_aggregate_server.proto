@@ -26,8 +26,21 @@ message update_response{
   bytes params_msg = 2;
 }
 
+message intersection_request{
+  int32 cid = 1;
+  int32 qid = 2;
+  repeated int32 request_msg = 3;
+}
+
+message intersection_response{
+  int32 cid = 1;
+  int32 qid = 2;
+  repeated int32 response_msg = 3;
+}
+
 service AggregateServerService {
   //  AggregateServer provides the interface, client remotes the call
   rpc sum_encrypted(local_params) returns (aggr_params);
   rpc boolean_is_update(update_request) returns(update_response);
+  rpc get_intersection(intersection_request) returns(intersection_response);
 }

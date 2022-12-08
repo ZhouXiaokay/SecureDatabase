@@ -138,6 +138,8 @@ class KeyServer(tenseal_key_server_pb2_grpc.KeyServerServiceServicer):
             self.max_id_list.append(request.max_id)
             self.min_id_list.append(request.min_id)
             self.n_sum_request += 1
+        else:
+            raise ValueError("Already requested.")
 
         while (self.n_sum_request % self.db_num != 0):
             time.sleep(self.sleep_time)
@@ -156,7 +158,6 @@ class KeyServer(tenseal_key_server_pb2_grpc.KeyServerServiceServicer):
         while (self.n_sum_response % self.db_num != 0):
             time.sleep(self.sleep_time)
 
-        if cid == self.db_num:
-            self.reset_id_psi_status()
+        self.reset_id_psi_status()
 
         return response

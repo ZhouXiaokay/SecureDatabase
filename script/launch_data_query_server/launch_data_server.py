@@ -10,8 +10,7 @@ from transmission.supervise import heart_beat_server
 from concurrent import futures
 import hydra
 from omegaconf import DictConfig
-import transmission.tenseal.tenseal_key_server_pb2 as tenseal_key_server_pb2
-import transmission.tenseal.tenseal_key_server_pb2_grpc as tenseal_key_server_pb2_grpc
+from transmission.psi import id_psi_unencrypted
 
 
 def launch_data_server(host, port, delay, name, cfg):
@@ -41,30 +40,12 @@ def launch_data_server(host, port, delay, name, cfg):
     # print(threading.enumerate())
     print("monitor server_1 service start... ")
 
-    #ID Psi Debug
-    id_list = [2, 3, 4, 5, 10000]
-    local_max_id, local_min_id = database_server.get_local_max_min_ids(id_list)
+    # ID Psi Debug
+    id_list = [2, 3, 4, 5, 15, 12]
+    intersection_id_list = id_psi_unencrypted(id_list, database_server, options, 1, 1999, 19999)
+    print(intersection_id_list)
 
-    channel = grpc.insecure_channel('127.0.0.1:50070', options=options)
-    stub = tenseal_key_server_pb2_grpc.KeyServerServiceStub(channel)
-    request = tenseal_key_server_pb2.get_max_min_ids_request(
-        cid = 1,
-        qid = 1999,
-        max_id = local_max_id,
-        min_id = local_min_id
-    )
-    print("make request.")
 
-    response = stub.get_global_max_min_id(request)
-    print("receive")
-
-    global_max_id, global_min_id = response.global_max_id, response.global_min_id
-    print(global_max_id, global_min_id)
-
-    database_server.global_max_id = global_max_id
-    database_server.global_min_id = global_min_id
-    origin_id_list, mapping_id_list = database_server.get_shuffled_id_list(id_list)
-    print(mapping_id_list)
     #####
 
     server.wait_for_termination()

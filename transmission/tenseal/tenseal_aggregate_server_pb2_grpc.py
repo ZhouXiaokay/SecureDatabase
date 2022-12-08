@@ -24,6 +24,11 @@ class AggregateServerServiceStub(object):
                 request_serializer=tenseal__aggregate__server__pb2.update_request.SerializeToString,
                 response_deserializer=tenseal__aggregate__server__pb2.update_response.FromString,
                 )
+        self.get_intersection = channel.unary_unary(
+                '/AggregateServerService/get_intersection',
+                request_serializer=tenseal__aggregate__server__pb2.intersection_request.SerializeToString,
+                response_deserializer=tenseal__aggregate__server__pb2.intersection_response.FromString,
+                )
 
 
 class AggregateServerServiceServicer(object):
@@ -42,6 +47,12 @@ class AggregateServerServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def get_intersection(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_AggregateServerServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -54,6 +65,11 @@ def add_AggregateServerServiceServicer_to_server(servicer, server):
                     servicer.boolean_is_update,
                     request_deserializer=tenseal__aggregate__server__pb2.update_request.FromString,
                     response_serializer=tenseal__aggregate__server__pb2.update_response.SerializeToString,
+            ),
+            'get_intersection': grpc.unary_unary_rpc_method_handler(
+                    servicer.get_intersection,
+                    request_deserializer=tenseal__aggregate__server__pb2.intersection_request.FromString,
+                    response_serializer=tenseal__aggregate__server__pb2.intersection_response.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -96,5 +112,22 @@ class AggregateServerService(object):
         return grpc.experimental.unary_unary(request, target, '/AggregateServerService/boolean_is_update',
             tenseal__aggregate__server__pb2.update_request.SerializeToString,
             tenseal__aggregate__server__pb2.update_response.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def get_intersection(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/AggregateServerService/get_intersection',
+            tenseal__aggregate__server__pb2.intersection_request.SerializeToString,
+            tenseal__aggregate__server__pb2.intersection_response.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -15,6 +15,7 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
 
     def __init__(self, num_clients, pk_ctx_file, model):
         # initial params
+        self.db_num = 3
         self.num_clients = num_clients
         self.update_size = 2
         pk_ctx_bytes = open(pk_ctx_file, "rb").read()
@@ -47,6 +48,13 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         self.n_update_round = 0
         self.get_update_clients_completed = False
 
+        # ID Psi
+        self.all_client_ids = []
+        self.cid_list = []
+        self.final_intersection = set()
+        self.set_completed = False
+        self.intersect_completed = False
+
     def __reset_sum(self):
         self.sum_completed = False
         self.sum_enc_params.clear()
@@ -63,8 +71,16 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         self.get_update_clients_completed = False
         self.n_update_request = 0
         self.n_update_response = 0
-
         self.n_sum_round = 0
+
+    def __reset_intersection(self):
+        self.n_sum_response = 0
+        self.n_sum_request = 0
+        self.all_client_ids = []
+        self.cid_list = []
+        self.final_intersection = set()
+        self.set_completed = False
+        self.intersect_completed = False
 
     def __get_init_params(self):
         param_list = []
@@ -176,5 +192,57 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         self.n_sum_round = self.n_sum_round + 1
         while self.n_sum_round % self.update_size != 0:
             time.sleep(self.sleep_time)
+
+        return response
+
+    def get_intersection(self, request, context):
+        cid = request.cid
+        qid = request.qid
+        client_ids = request.request_msg
+
+        if cid not in self.cid_list:
+            self.cid_list.append(cid)
+            self.all_client_ids.append(client_ids)
+            self.n_sum_request += 1
+        else:
+            raise ValueError('Already requested.')
+
+        while (self.n_sum_request % self.db_num != 0):
+            time.sleep(self.sleep_time)
+
+        if cid == self.cid_list[-1]:
+            for index, value in enumerate(self.all_client_ids):
+                value_set = set(value)
+                self.all_client_ids[index] = value_set
+            self.set_completed = True
+
+        while (not self.set_completed):
+            time.sleep(self.sleep_time)
+
+        if cid == self.cid_list[-1]:
+            for index, value in enumerate(self.all_client_ids):
+                if index == len(self.all_client_ids) - 1:
+                    break
+                if index == 0:
+                    self.final_intersection = self.all_client_ids[index].intersection(self.all_client_ids[index + 1])
+                else:
+                    self.final_intersection = self.final_intersection.intersection(self.all_client_ids[index + 1])
+
+            self.intersect_completed = True
+
+        while (not self.intersect_completed):
+            time.sleep(self.sleep_time)
+
+        response = tenseal_aggregate_server_pb2.intersection_response(
+            cid=cid,
+            qid=qid,
+            response_msg=list(self.final_intersection)
+        )
+        self.n_sum_response += 1
+
+        while (self.n_sum_response % self.db_num != 0):
+            time.sleep(self.sleep_time)
+
+        self.__reset_intersection()
 
         return response
