@@ -42,7 +42,7 @@ def launch_data_server(host, port, delay, name, cfg):
 
     # ID Psi Debug
     id_list = [2, 3, 4, 5, 15, 12]
-    intersection_id_list = id_psi_unencrypted(id_list, database_server, options, 1, 1999, 19999)
+    intersection_id_list = id_psi_unencrypted(id_list, database_server, options, 1, 1999, 19999, cfg)
     print(intersection_id_list)
 
 
