@@ -48,12 +48,17 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         self.n_update_round = 0
         self.get_update_clients_completed = False
 
-        # ID Psi
+        # for ID Psi
         self.all_client_ids = []
         self.cid_list = []
         self.final_intersection = set()
         self.set_completed = False
         self.intersect_completed = False
+
+        #for rsa psi
+        self.waiting_status = False
+        self.index_completed = False
+        self.num_participators = 0
 
     def __reset_sum(self):
         self.sum_completed = False
@@ -73,7 +78,7 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         self.n_update_response = 0
         self.n_sum_round = 0
 
-    def __reset_intersection(self):
+    def __reset_id_intersection(self):
         self.n_sum_response = 0
         self.n_sum_request = 0
         self.all_client_ids = []
@@ -81,6 +86,14 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         self.final_intersection = set()
         self.set_completed = False
         self.intersect_completed = False
+
+    def __reset_rsa_intersection(self):
+        self.n_sum_response = 0
+        self.waiting_status = False
+        self.index_completed = False
+        self.cid_list = []
+        self.num_participators = 0
+
 
     def __get_init_params(self):
         param_list = []
@@ -196,6 +209,13 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         return response
 
     def get_intersection(self, request, context):
+        """
+
+        :param request: request
+        :param context: context
+        :return: id_intersection result
+        """
+
         cid = request.cid
         qid = request.qid
         client_ids = request.request_msg
@@ -243,6 +263,57 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         while (self.n_sum_response % self.db_num != 0):
             time.sleep(self.sleep_time)
 
-        self.__reset_intersection()
+        self.__reset_id_intersection()
 
         return response
+
+
+    def get_intersection_sequence_index(self, request, context):
+        """
+
+        :param request: request
+        :param context: response
+        :return: participator index and total-participator number
+        """
+        first_requested = None
+        cid = request.cid
+        qid = request.qid
+
+        if len(self.cid_list) == 0:
+            first_requested = cid
+
+        if cid not in self.cid_list:
+            self.cid_list.append(cid)
+        else:
+            raise ValueError('Already requested.')
+
+        #Waiting for all participators
+        if cid == first_requested:
+            time.sleep(10)
+            self.waiting_status = True
+        while(not self.waiting_status):
+            time.sleep(self.sleep_time)
+
+        print("All participator collected.")
+        if cid == self.cid_list[0]:
+            self.cid_list.sort()
+            self.index_completed = True
+
+        while(not self.index_completed):
+            time.sleep(self.sleep_time)
+
+        num_participators = len(self.cid_list)
+
+        response = tenseal_aggregate_server_pb2.intersection_sequence_index(
+            cid = cid,
+            qid = qid,
+            sequence_index = self.cid_list.index(cid),
+            total_participator = num_participators
+        )
+        self.n_sum_response += 1
+        while(self.n_sum_response % num_participators != 0):
+            time.sleep(self.sleep_time)
+
+        self.__reset_rsa_intersection()
+        return response
+

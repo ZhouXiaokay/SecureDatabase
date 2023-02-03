@@ -10,7 +10,7 @@ from transmission.supervise import heart_beat_server
 from concurrent import futures
 import hydra
 from omegaconf import DictConfig
-from transmission.psi import id_psi_unencrypted
+from transmission.psi import id_psi_unencrypted, rsa_psi_encrypted
 
 
 def launch_data_server(host, port, delay, name, cfg):
@@ -42,9 +42,11 @@ def launch_data_server(host, port, delay, name, cfg):
 
     # ID Psi Debug
     id_list = [5, 7, 9, 10, 12, 10000, 12, 15]
-    intersection_id_list = id_psi_unencrypted(id_list, database_server, options, 2, 2999, 29999, cfg)
-    print(intersection_id_list)
+    # intersection_id_list = id_psi_unencrypted(id_list, database_server, options, 2, 2999, 29999, cfg)
+    # print(intersection_id_list)
 
+    #RSA Psi Debug
+    rsa_psi_encrypted(id_list, database_server, options, 2, 2999, 29999, cfg)
 
     #####
 

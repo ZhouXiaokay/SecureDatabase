@@ -47,3 +47,21 @@ def id_psi_unencrypted(id_list, database_server, options, cid, key_server_qid, a
         intersection_list[index] = elem + global_min_id
 
     return intersection_list
+
+
+def rsa_psi_encrypted(id_list, database_server, options, cid, key_server_qid, agg_server_qid, cfg):
+    aggregate_server_channel = cfg.servers.aggregate_server.host + ":" + cfg.servers.aggregate_server.port
+    aggregate_server_channel = grpc.insecure_channel(aggregate_server_channel, options=options)
+    aggregate_server_stub = tenseal_aggregate_server_pb2_grpc.AggregateServerServiceStub(aggregate_server_channel)
+
+    request = tenseal_aggregate_server_pb2.identification_verify(
+        cid = cid,
+        qid = agg_server_qid,
+    )
+    print("make request to aggregate server.")
+
+    response = aggregate_server_stub.get_intersection_sequence_index(request)
+    print("receive from aggregate server.")
+
+    sequence_index, total_participator = response.sequence_index, response.total_participator
+    print(sequence_index, total_participator)
