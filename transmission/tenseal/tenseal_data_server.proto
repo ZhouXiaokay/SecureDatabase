@@ -12,9 +12,36 @@ message enc_query_result {
   bytes enc_result= 1;
 }
 
+message rsa_public_key_request{
+  int32 cid = 1;
+  int32 qid = 2;
+  string pk_N = 3;
+  int32 pk_e = 4;
+}
+
+message rsa_public_key_response{
+  int32 cid = 1;
+  int32 qid = 2;
+  bool recv_status = 3;
+}
+
+message send_client_enc_ids_request{
+  int32 cid = 1;
+  int32 qid = 2;
+  repeated string client_enc_ids_pk_str = 3;
+}
+
+message send_client_enc_ids_response{
+  int32 cid = 1;
+  int32 qid = 2;
+  bool recv_status = 3;
+//  repeated string client_dec_ids_sk = 3;
+//  repeated string server_enc_ids_sk = 4;
+}
 
 service DatabaseServerService {
   rpc query_operation(query_msg_parse_server) returns(enc_query_result);
   rpc noise_query_operation(query_msg_parse_server) returns(enc_query_result);
-
+  rpc send_rsa_public_key(rsa_public_key_request) returns(rsa_public_key_response);
+  rpc send_client_enc_ids(send_client_enc_ids_request) returns(send_client_enc_ids_response);
 }

@@ -1,5 +1,6 @@
 import sys
 import os
+import time
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import transmission.tenseal.tenseal_data_server_pb2_grpc as tenseal_data_server_pb2_grpc
@@ -45,8 +46,11 @@ def launch_data_server(host, port, delay, name, cfg):
     # intersection_id_list = id_psi_unencrypted(id_list, database_server, options, 2, 2999, 29999, cfg)
     # print(intersection_id_list)
 
-    #RSA Psi Debug
-    rsa_psi_encrypted(id_list, database_server, options, 2, 2999, 29999, cfg)
+    # RSA Psi Debug
+    # rsa_psi_encrypted(id_list, database_server, options, 1, 1999, 19999, cfg)
+    status_agg_server = [0, 0, 0, 0, 0, False, '127.0.0.1:50051']
+    status_data_server = [0, 0, 0]
+    rsa_psi_encrypted(id_list, database_server, options, 1, 1999, status_agg_server, status_data_server, cfg)
 
     #####
 

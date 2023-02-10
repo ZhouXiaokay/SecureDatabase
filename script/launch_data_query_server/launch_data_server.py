@@ -3,6 +3,7 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import transmission.tenseal.tenseal_data_server_pb2_grpc as tenseal_data_server_pb2_grpc
+import transmission.tenseal.tenseal_data_server_pb2 as tenseal_data_server_pb2
 from data_query.data_server import DatabaseServer
 import grpc
 import threading
@@ -46,7 +47,10 @@ def launch_data_server(host, port, delay, name, cfg):
     # print(intersection_id_list)
 
     #RSA Psi Debug
-    rsa_psi_encrypted(id_list, database_server, options, 1, 1999, 19999, cfg)
+    # rsa_psi_encrypted(id_list, database_server, options, 1, 1999, 19999, cfg)
+    status_agg_server = [0, 0, 0, 0, 0, True, '127.0.0.1:50052']
+    status_data_server = [0, 0, 0]
+    rsa_psi_encrypted(id_list, database_server, options, 1, 1999, status_agg_server, status_data_server, cfg)
 
     #####
 

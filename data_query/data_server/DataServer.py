@@ -7,6 +7,7 @@ import pickle
 import grpc
 import random
 import copy
+from transmission.psi import decode_ids_from_client, encode_and_hash_local_id_use_sk
 
 
 class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer):
@@ -28,6 +29,14 @@ class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer)
 
         self.name = db_name
         self.cfg = cfg
+
+        #RSA psi
+        self.rsa_pk = None
+        self.rsa_sk = None
+        self.rsa_pk_comm_status = False
+        self.client_enc_ids_comm_status = False
+        self.client_enc_ids_pk = []
+        self.client_ra_list = []
 
     def query_operation(self, request, context):
         sql = generate_sql(request)
@@ -80,3 +89,52 @@ class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer)
             intersection_result.append(self.global_min_id+elem)
 
         return intersection_result
+
+    def send_rsa_public_key(self, request, context):
+        """
+        :param request:
+        :param context:
+        :return: Process status
+        """
+        cid = request.cid
+        qid = request.qid
+        pk_N = request.pk_N
+        pk_e = request.pk_e
+        # recv_status = False
+
+        if pk_N and pk_e:
+            self.rsa_pk = (int(pk_N), pk_e)
+            self.rsa_pk_comm_status = True
+            print("Public Key received.")
+            # print(self.rsa_pk)
+
+        response = tenseal_data_server_pb2.rsa_public_key_response(
+            cid = cid,
+            qid = qid,
+            recv_status = self.rsa_pk_comm_status
+        )
+
+        return response
+
+    def send_client_enc_ids(self, request, context):
+        """
+
+        :param request:
+        :param context:
+        :return:
+        """
+        cid = request.cid
+        qid = request.qid
+        client_enc_ids_pk_str = request.client_enc_ids_pk_str
+
+        for enc_id_str in client_enc_ids_pk_str:
+            self.client_enc_ids_pk.append(int(enc_id_str))
+
+        self.client_enc_ids_comm_status = True
+        response = tenseal_data_server_pb2.send_client_enc_ids_response(
+            cid = cid,
+            qid = qid,
+            recv_status = self.client_enc_ids_comm_status
+        )
+
+        return response

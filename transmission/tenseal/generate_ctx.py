@@ -1,9 +1,10 @@
 import time
-
+from Cryptodome.PublicKey import RSA
 import tenseal as ts
+import pickle
 
-if __name__ == '__main__':
 
+def gen_ckks_keys():
     print("====== CKKS =======")
 
     # coefficient modulus size
@@ -106,3 +107,7 @@ if __name__ == '__main__':
         dec_v1 = enc_v1.decrypt()
     dec_end = time.time()
     print("{} decryption of {} items cost {} s".format(n_iter, n_item, dec_end - dec_start))
+
+
+if __name__ == '__main__':
+    gen_ckks_keys()
