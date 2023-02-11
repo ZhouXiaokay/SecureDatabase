@@ -42,13 +42,13 @@ def launch_data_server(host, port, delay, name, cfg):
     print("monitor server_1 service start... ")
 
     # ID Psi Debug
-    id_list = [2, 3, 4, 5, 15, 12]
+    id_list = [x for x in range(1, 30)]
     # intersection_id_list = id_psi_unencrypted(id_list, database_server, options, 1, 1999, 19999, cfg)
     # print(intersection_id_list)
 
     #RSA Psi Debug
     # rsa_psi_encrypted(id_list, database_server, options, 1, 1999, 19999, cfg)
-    status_agg_server = [0, 0, 0, 0, 0, True, '127.0.0.1:50052']
+    status_agg_server = [0, 0, 0, 0, 0, False, '127.0.0.1:50052']
     status_data_server = [0, 0, 0]
     rsa_psi_encrypted(id_list, database_server, options, 1, 1999, status_agg_server, status_data_server, cfg)
 

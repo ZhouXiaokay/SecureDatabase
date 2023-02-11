@@ -3,7 +3,8 @@ import transmission.tenseal.tenseal_key_server_pb2 as tenseal_key_server_pb2
 import transmission.tenseal.tenseal_key_server_pb2_grpc as tenseal_key_server_pb2_grpc
 import transmission.tenseal.tenseal_aggregate_server_pb2 as tenseal_aggregate_server_pb2
 import transmission.tenseal.tenseal_aggregate_server_pb2_grpc as tenseal_aggregate_server_pb2_grpc
-from transmission.psi.utils import send_rsa_pk, send_client_enc_ids_use_pk
+from transmission.psi.utils import send_rsa_pk, send_client_enc_ids_use_pk, \
+    send_server_enc_id_use_sk_and_client_dec_id, get_psi_result
 import time
 
 
@@ -60,23 +61,54 @@ def rsa_psi_encrypted(id_list, database_server, options, cid, qid, status_agg_se
     store_psi_result = status_agg_server[5]
     comm_IP = status_agg_server[6]
 
-    #Stage I
+    # Stage I
     if store_psi_result == False:
         send_rsa_pk(database_server, comm_IP, options, cfg)
 
-    #Waiting for status...
+    # Waiting for status...
     while not (database_server.rsa_pk_comm_status and database_server.rsa_pk):
         time.sleep(0.1)
 
     print("RSA public key exchange success.")
     print("================")
 
-    #Stage II
+    # Stage II
     if store_psi_result == True:
         send_client_enc_ids_use_pk(id_list, database_server, comm_IP, options, cfg)
 
-    while not (database_server.client_enc_ids_comm_status and database_server.client_enc_ids_pk):
+    while not database_server.client_enc_ids_comm_status:
         time.sleep(0.1)
 
-    print("Encode client ids send successfully.")
+    print("Exchange encode client ids success.")
     print("================")
+
+    # Stage III
+    if store_psi_result == False:
+        send_server_enc_id_use_sk_and_client_dec_id(id_list, database_server, comm_IP, options, cfg)
+
+    while not (database_server.client_dec_ids_comm_status and database_server.server_hash_enc_ids_comm_status):
+        time.sleep(0.1)
+
+    print("Exchange encode server ids and decode client ids success.")
+    print("================")
+
+    # Stage IV
+    if store_psi_result == True:
+        psi_result = get_psi_result(id_list, database_server.client_dec_ids, database_server.client_ra_list,
+                                    database_server.rsa_pk, database_server.server_hash_enc_ids)
+        print(psi_result)
+    else:
+        pass
+
+    # print("Double PSI process done.")
+    # print("Public key: ", database_server.rsa_pk)
+    # print("================")
+    # print("Private key: ",database_server.rsa_sk)
+    # print("================")
+    # print("Random number list: ", database_server.client_ra_list)
+    # print("================")
+    # print("Client_enc_ids_pk: ", database_server.client_enc_ids_pk)
+    # print("================")
+    # print("Client_dec_ids: ", database_server.client_dec_ids)
+    # print("================")
+    # print("Server_hash_enc_ids: ", database_server.server_hash_enc_ids)

@@ -53,16 +53,16 @@ def encode_local_id_use_pk(local_ids, pk):
     return enc_ids, ra_list
 
 
-def decode_ids_from_client(enc_ids, sk):
+def decode_ids(enc_ids, sk):
     dec_ids = []
     for enc_id in enc_ids:
         dec_id = gmpy2.powmod(enc_id, sk[1], sk[0])
-        dec_ids.append(dec_id)
+        dec_ids.append(int(dec_id))
 
     return dec_ids
 
 
-def encode_and_hash_local_id_use_sk(local_ids, sk):
+def encode_and_hash_local_ids_use_sk(local_ids, sk):
     hash_enc_ids = []
     for id in local_ids:
         hash_id = hash_number(id)
@@ -70,6 +70,26 @@ def encode_and_hash_local_id_use_sk(local_ids, sk):
         hash_enc_ids.append(hash_number(hash_enc_id))
 
     return hash_enc_ids
+
+
+def invert_and_hash_decode_ids(decode_ids, ra_list, pk):
+    hash_ids = []
+    for dec_id, ra in zip(decode_ids, ra_list):
+        ra_inv = gmpy2.invert(ra, pk[0])
+        hash_ids.append(hash_number((dec_id * ra_inv) % pk[0]))
+
+    return hash_ids
+
+
+def get_psi_index(client_hash_ids, server_hash_ids):
+    psi_index = []
+    for i in range(len(client_hash_ids)):
+        client_hash_id = client_hash_ids[i]
+        for server_hash_id in server_hash_ids:
+            if client_hash_id == server_hash_id:
+                psi_index.append(i)
+
+    return psi_index
 
 
 def send_rsa_pk(database_server, comm_IP, options, cfg):
@@ -114,3 +134,44 @@ def send_client_enc_ids_use_pk(local_ids, database_server, comm_IP, options, cfg
         print("Failed.")
     else:
         database_server.client_enc_ids_comm_status = True
+
+
+def send_server_enc_id_use_sk_and_client_dec_id(local_ids, database_server, comm_IP, options, cfg):
+    client_data_server_channel = grpc.insecure_channel(comm_IP, options=options)
+    client_data_server_stub = tenseal_data_server_pb2_grpc.DatabaseServerServiceStub(client_data_server_channel)
+
+    database_server.client_dec_ids = decode_ids(database_server.client_enc_ids_pk, database_server.rsa_sk)
+    database_server.server_hash_enc_ids = encode_and_hash_local_ids_use_sk(local_ids, database_server.rsa_sk)
+
+    client_dec_ids_str = []
+    for dec_id in database_server.client_dec_ids:
+        client_dec_ids_str.append(str(dec_id))
+
+    server_hash_enc_ids_str = []
+    for hash_enc_id in database_server.server_hash_enc_ids:
+        server_hash_enc_ids_str.append(str(hash_enc_id))
+
+    request = tenseal_data_server_pb2.send_server_enc_ids_and_client_dec_ids_request(
+        cid=1,
+        qid=1,
+        client_dec_ids=client_dec_ids_str,
+        server_hash_enc_ids=server_hash_enc_ids_str
+    )
+    print("Sending encrypted server ids and decrypted client ids...")
+
+    response = client_data_server_stub.send_server_enc_ids_and_client_dec_ids(request)
+    if not (response.client_dec_ids_recv_status and response.server_hash_enc_ids_recv_status):
+        print("Failed.")
+    else:
+        database_server.client_dec_ids_comm_status = True
+        database_server.server_hash_enc_ids_comm_status = True
+
+
+def get_psi_result(local_ids, decode_ids, ra_list, pk, server_hash_ids):
+    client_hash_ids = invert_and_hash_decode_ids(decode_ids, ra_list, pk)
+    psi_index = get_psi_index(client_hash_ids, server_hash_ids)
+    psi_result = []
+    for index in psi_index:
+        psi_result.append(local_ids[index])
+
+    return psi_result

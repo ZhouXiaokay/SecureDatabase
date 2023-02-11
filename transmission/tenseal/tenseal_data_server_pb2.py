@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x19tenseal_data_server.proto\"g\n\x16query_msg_parse_server\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\n\n\x02op\x18\x03 \x01(\t\x12\x12\n\ntable_name\x18\x04 \x01(\t\x12\x13\n\x0b\x63olumn_name\x18\x05 \x01(\t\"&\n\x10\x65nc_query_result\x12\x12\n\nenc_result\x18\x01 \x01(\x0c\"N\n\x16rsa_public_key_request\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x0c\n\x04pk_N\x18\x03 \x01(\t\x12\x0c\n\x04pk_e\x18\x04 \x01(\x05\"H\n\x17rsa_public_key_response\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x13\n\x0brecv_status\x18\x03 \x01(\x08\"V\n\x1bsend_client_enc_ids_request\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x1d\n\x15\x63lient_enc_ids_pk_str\x18\x03 \x03(\t\"M\n\x1csend_client_enc_ids_response\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x13\n\x0brecv_status\x18\x03 \x01(\x08\x32\xb9\x02\n\x15\x44\x61tabaseServerService\x12=\n\x0fquery_operation\x12\x17.query_msg_parse_server\x1a\x11.enc_query_result\x12\x43\n\x15noise_query_operation\x12\x17.query_msg_parse_server\x1a\x11.enc_query_result\x12H\n\x13send_rsa_public_key\x12\x17.rsa_public_key_request\x1a\x18.rsa_public_key_response\x12R\n\x13send_client_enc_ids\x12\x1c.send_client_enc_ids_request\x1a\x1d.send_client_enc_ids_responseb\x06proto3'
+  serialized_pb=b'\n\x19tenseal_data_server.proto\"g\n\x16query_msg_parse_server\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\n\n\x02op\x18\x03 \x01(\t\x12\x12\n\ntable_name\x18\x04 \x01(\t\x12\x13\n\x0b\x63olumn_name\x18\x05 \x01(\t\"&\n\x10\x65nc_query_result\x12\x12\n\nenc_result\x18\x01 \x01(\x0c\"N\n\x16rsa_public_key_request\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x0c\n\x04pk_N\x18\x03 \x01(\t\x12\x0c\n\x04pk_e\x18\x04 \x01(\x05\"H\n\x17rsa_public_key_response\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x13\n\x0brecv_status\x18\x03 \x01(\x08\"V\n\x1bsend_client_enc_ids_request\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x1d\n\x15\x63lient_enc_ids_pk_str\x18\x03 \x03(\t\"M\n\x1csend_client_enc_ids_response\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x13\n\x0brecv_status\x18\x03 \x01(\x08\"\x7f\n.send_server_enc_ids_and_client_dec_ids_request\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x16\n\x0e\x63lient_dec_ids\x18\x03 \x03(\t\x12\x1b\n\x13server_hash_enc_ids\x18\x04 \x03(\t\"\x98\x01\n/send_server_enc_ids_and_client_dec_ids_response\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\"\n\x1a\x63lient_dec_ids_recv_status\x18\x03 \x01(\x08\x12\'\n\x1fserver_hash_enc_ids_recv_status\x18\x04 \x01(\x08\x32\xc7\x03\n\x15\x44\x61tabaseServerService\x12=\n\x0fquery_operation\x12\x17.query_msg_parse_server\x1a\x11.enc_query_result\x12\x43\n\x15noise_query_operation\x12\x17.query_msg_parse_server\x1a\x11.enc_query_result\x12H\n\x13send_rsa_public_key\x12\x17.rsa_public_key_request\x1a\x18.rsa_public_key_response\x12R\n\x13send_client_enc_ids\x12\x1c.send_client_enc_ids_request\x1a\x1d.send_client_enc_ids_response\x12\x8b\x01\n&send_server_enc_ids_and_client_dec_ids\x12/.send_server_enc_ids_and_client_dec_ids_request\x1a\x30.send_server_enc_ids_and_client_dec_ids_responseb\x06proto3'
 )
 
 
@@ -307,12 +307,120 @@ _SEND_CLIENT_ENC_IDS_RESPONSE = _descriptor.Descriptor(
   serialized_end=493,
 )
 
+
+_SEND_SERVER_ENC_IDS_AND_CLIENT_DEC_IDS_REQUEST = _descriptor.Descriptor(
+  name='send_server_enc_ids_and_client_dec_ids_request',
+  full_name='send_server_enc_ids_and_client_dec_ids_request',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='cid', full_name='send_server_enc_ids_and_client_dec_ids_request.cid', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='qid', full_name='send_server_enc_ids_and_client_dec_ids_request.qid', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='client_dec_ids', full_name='send_server_enc_ids_and_client_dec_ids_request.client_dec_ids', index=2,
+      number=3, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='server_hash_enc_ids', full_name='send_server_enc_ids_and_client_dec_ids_request.server_hash_enc_ids', index=3,
+      number=4, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=495,
+  serialized_end=622,
+)
+
+
+_SEND_SERVER_ENC_IDS_AND_CLIENT_DEC_IDS_RESPONSE = _descriptor.Descriptor(
+  name='send_server_enc_ids_and_client_dec_ids_response',
+  full_name='send_server_enc_ids_and_client_dec_ids_response',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='cid', full_name='send_server_enc_ids_and_client_dec_ids_response.cid', index=0,
+      number=1, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='qid', full_name='send_server_enc_ids_and_client_dec_ids_response.qid', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='client_dec_ids_recv_status', full_name='send_server_enc_ids_and_client_dec_ids_response.client_dec_ids_recv_status', index=2,
+      number=3, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='server_hash_enc_ids_recv_status', full_name='send_server_enc_ids_and_client_dec_ids_response.server_hash_enc_ids_recv_status', index=3,
+      number=4, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=625,
+  serialized_end=777,
+)
+
 DESCRIPTOR.message_types_by_name['query_msg_parse_server'] = _QUERY_MSG_PARSE_SERVER
 DESCRIPTOR.message_types_by_name['enc_query_result'] = _ENC_QUERY_RESULT
 DESCRIPTOR.message_types_by_name['rsa_public_key_request'] = _RSA_PUBLIC_KEY_REQUEST
 DESCRIPTOR.message_types_by_name['rsa_public_key_response'] = _RSA_PUBLIC_KEY_RESPONSE
 DESCRIPTOR.message_types_by_name['send_client_enc_ids_request'] = _SEND_CLIENT_ENC_IDS_REQUEST
 DESCRIPTOR.message_types_by_name['send_client_enc_ids_response'] = _SEND_CLIENT_ENC_IDS_RESPONSE
+DESCRIPTOR.message_types_by_name['send_server_enc_ids_and_client_dec_ids_request'] = _SEND_SERVER_ENC_IDS_AND_CLIENT_DEC_IDS_REQUEST
+DESCRIPTOR.message_types_by_name['send_server_enc_ids_and_client_dec_ids_response'] = _SEND_SERVER_ENC_IDS_AND_CLIENT_DEC_IDS_RESPONSE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 query_msg_parse_server = _reflection.GeneratedProtocolMessageType('query_msg_parse_server', (_message.Message,), {
@@ -357,6 +465,20 @@ send_client_enc_ids_response = _reflection.GeneratedProtocolMessageType('send_cl
   })
 _sym_db.RegisterMessage(send_client_enc_ids_response)
 
+send_server_enc_ids_and_client_dec_ids_request = _reflection.GeneratedProtocolMessageType('send_server_enc_ids_and_client_dec_ids_request', (_message.Message,), {
+  'DESCRIPTOR' : _SEND_SERVER_ENC_IDS_AND_CLIENT_DEC_IDS_REQUEST,
+  '__module__' : 'tenseal_data_server_pb2'
+  # @@protoc_insertion_point(class_scope:send_server_enc_ids_and_client_dec_ids_request)
+  })
+_sym_db.RegisterMessage(send_server_enc_ids_and_client_dec_ids_request)
+
+send_server_enc_ids_and_client_dec_ids_response = _reflection.GeneratedProtocolMessageType('send_server_enc_ids_and_client_dec_ids_response', (_message.Message,), {
+  'DESCRIPTOR' : _SEND_SERVER_ENC_IDS_AND_CLIENT_DEC_IDS_RESPONSE,
+  '__module__' : 'tenseal_data_server_pb2'
+  # @@protoc_insertion_point(class_scope:send_server_enc_ids_and_client_dec_ids_response)
+  })
+_sym_db.RegisterMessage(send_server_enc_ids_and_client_dec_ids_response)
+
 
 
 _DATABASESERVERSERVICE = _descriptor.ServiceDescriptor(
@@ -366,8 +488,8 @@ _DATABASESERVERSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=496,
-  serialized_end=809,
+  serialized_start=780,
+  serialized_end=1235,
   methods=[
   _descriptor.MethodDescriptor(
     name='query_operation',
@@ -406,6 +528,16 @@ _DATABASESERVERSERVICE = _descriptor.ServiceDescriptor(
     containing_service=None,
     input_type=_SEND_CLIENT_ENC_IDS_REQUEST,
     output_type=_SEND_CLIENT_ENC_IDS_RESPONSE,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
+  _descriptor.MethodDescriptor(
+    name='send_server_enc_ids_and_client_dec_ids',
+    full_name='DatabaseServerService.send_server_enc_ids_and_client_dec_ids',
+    index=4,
+    containing_service=None,
+    input_type=_SEND_SERVER_ENC_IDS_AND_CLIENT_DEC_IDS_REQUEST,
+    output_type=_SEND_SERVER_ENC_IDS_AND_CLIENT_DEC_IDS_RESPONSE,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
