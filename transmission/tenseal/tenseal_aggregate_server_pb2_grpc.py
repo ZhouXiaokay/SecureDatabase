@@ -34,6 +34,11 @@ class AggregateServerServiceStub(object):
                 request_serializer=tenseal__aggregate__server__pb2.identification_verify.SerializeToString,
                 response_deserializer=tenseal__aggregate__server__pb2.intersection_sequence_index.FromString,
                 )
+        self.get_agg_server_status = channel.unary_unary(
+                '/AggregateServerService/get_agg_server_status',
+                request_serializer=tenseal__aggregate__server__pb2.data_server_status_request.SerializeToString,
+                response_deserializer=tenseal__aggregate__server__pb2.agg_server_status_response.FromString,
+                )
 
 
 class AggregateServerServiceServicer(object):
@@ -64,6 +69,12 @@ class AggregateServerServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def get_agg_server_status(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_AggregateServerServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -86,6 +97,11 @@ def add_AggregateServerServiceServicer_to_server(servicer, server):
                     servicer.get_intersection_sequence_index,
                     request_deserializer=tenseal__aggregate__server__pb2.identification_verify.FromString,
                     response_serializer=tenseal__aggregate__server__pb2.intersection_sequence_index.SerializeToString,
+            ),
+            'get_agg_server_status': grpc.unary_unary_rpc_method_handler(
+                    servicer.get_agg_server_status,
+                    request_deserializer=tenseal__aggregate__server__pb2.data_server_status_request.FromString,
+                    response_serializer=tenseal__aggregate__server__pb2.agg_server_status_response.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -162,5 +178,22 @@ class AggregateServerService(object):
         return grpc.experimental.unary_unary(request, target, '/AggregateServerService/get_intersection_sequence_index',
             tenseal__aggregate__server__pb2.identification_verify.SerializeToString,
             tenseal__aggregate__server__pb2.intersection_sequence_index.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def get_agg_server_status(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/AggregateServerService/get_agg_server_status',
+            tenseal__aggregate__server__pb2.data_server_status_request.SerializeToString,
+            tenseal__aggregate__server__pb2.agg_server_status_response.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

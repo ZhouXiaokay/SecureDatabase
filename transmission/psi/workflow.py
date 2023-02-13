@@ -4,7 +4,7 @@ import transmission.tenseal.tenseal_key_server_pb2_grpc as tenseal_key_server_pb
 import transmission.tenseal.tenseal_aggregate_server_pb2 as tenseal_aggregate_server_pb2
 import transmission.tenseal.tenseal_aggregate_server_pb2_grpc as tenseal_aggregate_server_pb2_grpc
 from transmission.psi.utils import send_rsa_pk, send_client_enc_ids_use_pk, \
-    send_server_enc_id_use_sk_and_client_dec_id, get_psi_result
+    send_server_enc_id_use_sk_and_client_dec_id, get_psi_result, update_data_server_status
 import time
 
 
@@ -52,18 +52,22 @@ def id_psi_unencrypted(id_list, database_server, options, cid, key_server_qid, a
     return intersection_list
 
 
-def rsa_psi_encrypted(id_list, database_server, options, cid, qid, status_agg_server, status_data_server, cfg):
-    psi_participator_num = status_agg_server[0]
-    total_round = status_agg_server[1]
-    current_round = status_agg_server[2]
-    participator_index = status_agg_server[3]
-    group_index = status_agg_server[4]
-    store_psi_result = status_agg_server[5]
-    comm_IP = status_agg_server[6]
+def init_data_server_status(database_server, local_IP):
+    database_server.data_server_status = [local_IP, True, 0]
+
+
+def rsa_psi_encrypted(id_list, database_server, options, cid, qid, agg_server_status, cfg):
+    psi_participator_num = agg_server_status[0]
+    total_round = agg_server_status[1]
+    current_round = agg_server_status[2]
+    participator_index = agg_server_status[3]
+    group_index = agg_server_status[4]
+    store_psi_result = agg_server_status[5]
+    comm_IP = agg_server_status[6]
 
     # Stage I
     if store_psi_result == False:
-        send_rsa_pk(database_server, comm_IP, options, cfg)
+        send_rsa_pk(database_server, cid, qid, comm_IP, options, cfg)
 
     # Waiting for status...
     while not (database_server.rsa_pk_comm_status and database_server.rsa_pk):
@@ -74,7 +78,7 @@ def rsa_psi_encrypted(id_list, database_server, options, cid, qid, status_agg_se
 
     # Stage II
     if store_psi_result == True:
-        send_client_enc_ids_use_pk(id_list, database_server, comm_IP, options, cfg)
+        send_client_enc_ids_use_pk(id_list, database_server, cid, qid, comm_IP, options, cfg)
 
     while not database_server.client_enc_ids_comm_status:
         time.sleep(0.1)
@@ -84,7 +88,7 @@ def rsa_psi_encrypted(id_list, database_server, options, cid, qid, status_agg_se
 
     # Stage III
     if store_psi_result == False:
-        send_server_enc_id_use_sk_and_client_dec_id(id_list, database_server, comm_IP, options, cfg)
+        send_server_enc_id_use_sk_and_client_dec_id(id_list, database_server, cid, qid, comm_IP, options, cfg)
 
     while not (database_server.client_dec_ids_comm_status and database_server.server_hash_enc_ids_comm_status):
         time.sleep(0.1)
@@ -94,9 +98,10 @@ def rsa_psi_encrypted(id_list, database_server, options, cid, qid, status_agg_se
 
     # Stage IV
     if store_psi_result == True:
-        psi_result = get_psi_result(id_list, database_server.client_dec_ids, database_server.client_ra_list,
-                                    database_server.rsa_pk, database_server.server_hash_enc_ids)
-        print(psi_result)
+        database_server.psi_result = get_psi_result(id_list, database_server.client_dec_ids,
+                                                    database_server.client_ra_list,
+                                                    database_server.rsa_pk, database_server.server_hash_enc_ids)
+        print(database_server.psi_result)
     else:
         pass
 
@@ -112,3 +117,8 @@ def rsa_psi_encrypted(id_list, database_server, options, cid, qid, status_agg_se
     # print("Client_dec_ids: ", database_server.client_dec_ids)
     # print("================")
     # print("Server_hash_enc_ids: ", database_server.server_hash_enc_ids)
+    # print("================")
+    # print("PSI_result: ", database_server.psi_result)
+
+    # Update local status
+    update_data_server_status(database_server.data_server_status, store_psi_result, current_round)

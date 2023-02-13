@@ -1,5 +1,4 @@
 import os
-
 import gmpy2
 import grpc
 import hashlib
@@ -7,6 +6,8 @@ import binascii
 from Cryptodome.PublicKey import RSA
 import transmission.tenseal.tenseal_data_server_pb2_grpc as tenseal_data_server_pb2_grpc
 import transmission.tenseal.tenseal_data_server_pb2 as tenseal_data_server_pb2
+import transmission.tenseal.tenseal_aggregate_server_pb2 as tenseal_aggregate_server_pb2
+import transmission.tenseal.tenseal_aggregate_server_pb2_grpc as tenseal_aggregate_server_pb2_grpc
 
 
 def generate_rsa_keys():
@@ -92,13 +93,48 @@ def get_psi_index(client_hash_ids, server_hash_ids):
     return psi_index
 
 
-def send_rsa_pk(database_server, comm_IP, options, cfg):
+def get_psi_result(local_ids, decode_ids, ra_list, pk, server_hash_ids):
+    client_hash_ids = invert_and_hash_decode_ids(decode_ids, ra_list, pk)
+    psi_index = get_psi_index(client_hash_ids, server_hash_ids)
+    psi_result = []
+    for index in psi_index:
+        psi_result.append(local_ids[index])
+
+    return psi_result
+
+
+def update_data_server_status(data_server_status, store_psi_result, current_round):
+    data_server_status[1] = store_psi_result
+    data_server_status[2] = current_round
+
+
+def get_agg_server_status(data_server_status, cid, qid, options, cfg):
+    data_server_status_str = []
+    for item in data_server_status:
+        data_server_status_str.append(str(item))
+
+    agg_server_address = cfg.servers.aggregate_server.host + ":" + cfg.servers.aggregate_server.port
+    agg_server_channel = grpc.insecure_channel(agg_server_address, options=options)
+    agg_server_stub = tenseal_aggregate_server_pb2_grpc.AggregateServerServiceStub(agg_server_channel)
+    request = tenseal_aggregate_server_pb2.data_server_status_request(
+        cid=cid,
+        qid=qid,
+        data_server_status = data_server_status_str
+    )
+    print("Request for AggServer status...")
+
+    response = agg_server_stub.get_agg_server_status(request)
+    print(response.agg_server_status)
+
+
+
+def send_rsa_pk(database_server, cid, qid, comm_IP, options, cfg):
     database_server.rsa_pk, database_server.rsa_sk = generate_rsa_keys()
     client_data_server_channel = grpc.insecure_channel(comm_IP, options=options)
     client_data_server_stub = tenseal_data_server_pb2_grpc.DatabaseServerServiceStub(client_data_server_channel)
     request = tenseal_data_server_pb2.rsa_public_key_request(
-        cid=1,
-        qid=1,
+        cid=cid,
+        qid=qid,
         pk_N=str(database_server.rsa_pk[0]),
         pk_e=database_server.rsa_pk[1]
     )
@@ -111,7 +147,7 @@ def send_rsa_pk(database_server, comm_IP, options, cfg):
         database_server.rsa_pk_comm_status = True
 
 
-def send_client_enc_ids_use_pk(local_ids, database_server, comm_IP, options, cfg):
+def send_client_enc_ids_use_pk(local_ids, database_server, cid, qid, comm_IP, options, cfg):
     server_data_server_channel = grpc.insecure_channel(comm_IP, options=options)
     server_data_server_stub = tenseal_data_server_pb2_grpc.DatabaseServerServiceStub(server_data_server_channel)
 
@@ -123,8 +159,8 @@ def send_client_enc_ids_use_pk(local_ids, database_server, comm_IP, options, cfg
         client_enc_ids_str.append(str(enc_id))
 
     request = tenseal_data_server_pb2.send_client_enc_ids_request(
-        cid=1,
-        qid=1,
+        cid=cid,
+        qid=qid,
         client_enc_ids_pk_str=client_enc_ids_str
     )
     print("Sending encrypted client ids...")
@@ -136,7 +172,7 @@ def send_client_enc_ids_use_pk(local_ids, database_server, comm_IP, options, cfg
         database_server.client_enc_ids_comm_status = True
 
 
-def send_server_enc_id_use_sk_and_client_dec_id(local_ids, database_server, comm_IP, options, cfg):
+def send_server_enc_id_use_sk_and_client_dec_id(local_ids, database_server, cid, qid, comm_IP, options, cfg):
     client_data_server_channel = grpc.insecure_channel(comm_IP, options=options)
     client_data_server_stub = tenseal_data_server_pb2_grpc.DatabaseServerServiceStub(client_data_server_channel)
 
@@ -152,8 +188,8 @@ def send_server_enc_id_use_sk_and_client_dec_id(local_ids, database_server, comm
         server_hash_enc_ids_str.append(str(hash_enc_id))
 
     request = tenseal_data_server_pb2.send_server_enc_ids_and_client_dec_ids_request(
-        cid=1,
-        qid=1,
+        cid=cid,
+        qid=qid,
         client_dec_ids=client_dec_ids_str,
         server_hash_enc_ids=server_hash_enc_ids_str
     )
@@ -165,13 +201,3 @@ def send_server_enc_id_use_sk_and_client_dec_id(local_ids, database_server, comm
     else:
         database_server.client_dec_ids_comm_status = True
         database_server.server_hash_enc_ids_comm_status = True
-
-
-def get_psi_result(local_ids, decode_ids, ra_list, pk, server_hash_ids):
-    client_hash_ids = invert_and_hash_decode_ids(decode_ids, ra_list, pk)
-    psi_index = get_psi_index(client_hash_ids, server_hash_ids)
-    psi_result = []
-    for index in psi_index:
-        psi_result.append(local_ids[index])
-
-    return psi_result

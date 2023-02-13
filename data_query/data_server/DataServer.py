@@ -33,6 +33,7 @@ class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer)
         self.cfg = cfg
 
         # RSA psi
+        self.data_server_status = None
         self.rsa_pk = None
         self.rsa_sk = None
         self.rsa_pk_comm_status = False
@@ -43,6 +44,7 @@ class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer)
         self.server_hash_enc_ids = []
         self.client_dec_ids_comm_status = False
         self.server_hash_enc_ids_comm_status = False
+        self.psi_result = None
 
     def query_operation(self, request, context):
         sql = generate_sql(request)

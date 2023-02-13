@@ -7,8 +7,7 @@ import numpy as np
 import torch.optim as optim
 import torch
 from transmission.utils import flatten_tensors
-import pickle
-import copy
+import math
 
 
 class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceServicer):
@@ -55,10 +54,21 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         self.set_completed = False
         self.intersect_completed = False
 
-        #for rsa psi
-        self.waiting_status = False
-        self.index_completed = False
-        self.num_participators = 0
+        # for rsa psi
+        self.num_psi_request = 0
+        self.num_psi_response = 0
+        self.psi_cid_list = []
+        self.psi_IP_list = []
+        self.psi_store_psi_result_list = []
+        self.num_psi_participators = 0
+        self.total_psi_rounds = 1000000
+        self.current_psi_round = 0
+        self.initial_participators = []
+        self.waiting_for_participators_status = False
+        self.waiting_for_initialize = False
+        self.group_index_list = []
+        self.psi_comm_IP_index = []
+        self.psi_update_status = False
 
     def __reset_sum(self):
         self.sum_completed = False
@@ -92,8 +102,7 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         self.waiting_status = False
         self.index_completed = False
         self.cid_list = []
-        self.num_participators = 0
-
+        self.num_psi_participators = 0
 
     def __get_init_params(self):
         param_list = []
@@ -267,7 +276,6 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
 
         return response
 
-
     def get_intersection_sequence_index(self, request, context):
         """
 
@@ -287,11 +295,11 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         else:
             raise ValueError('Already requested.')
 
-        #Waiting for all participators
+        # Waiting for all participators
         if cid == first_requested:
             time.sleep(10)
             self.waiting_status = True
-        while(not self.waiting_status):
+        while (not self.waiting_status):
             time.sleep(self.sleep_time)
 
         print("All participator collected.")
@@ -299,21 +307,152 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
             self.cid_list.sort()
             self.index_completed = True
 
-        while(not self.index_completed):
+        while (not self.index_completed):
             time.sleep(self.sleep_time)
 
         num_participators = len(self.cid_list)
 
         response = tenseal_aggregate_server_pb2.intersection_sequence_index(
-            cid = cid,
-            qid = qid,
-            sequence_index = self.cid_list.index(cid),
-            total_participator = num_participators
+            cid=cid,
+            qid=qid,
+            sequence_index=self.cid_list.index(cid),
+            total_participator=num_participators
         )
         self.n_sum_response += 1
-        while(self.n_sum_response % num_participators != 0):
+        while (self.n_sum_response % num_participators != 0):
             time.sleep(self.sleep_time)
 
         self.__reset_rsa_intersection()
         return response
 
+    def __total_psi_rounds(self):
+        if self.num_psi_participators <= 1:
+            self.total_psi_rounds = 1
+        else:
+            self.total_psi_rounds = max(int(math.log2(self.num_psi_participators - 1)), 0) + 1
+
+    def __update_group_index_list(self):
+        self.group_index_list.clear()
+        for i in range(len(self.psi_cid_list)):
+            self.group_index_list.append(int((i // math.pow(2, self.current_psi_round))))
+
+    def __get_psi_comm_IP(self):
+        comm_IP_list = [-1 for _ in range(self.num_psi_participators)]
+        i = 0
+        while (i < self.num_psi_participators):
+            j = i + 1
+            if self.psi_store_psi_result_list[i] == True:
+                if i in comm_IP_list:
+                    comm_IP_list[i] = comm_IP_list.index(i)
+                    i = j
+                    continue
+                while (j < self.num_psi_participators):
+                    if self.psi_store_psi_result_list[j] == True:
+                        comm_IP_list[i] = j
+                        break
+                    j += 1
+            i = j
+
+        self.psi_comm_IP_index = comm_IP_list
+
+    def __update_store_psi_result_status(self):
+        self.psi_store_psi_result_list.clear()
+        id_set = set()
+        for group_index in self.group_index_list:
+            if group_index not in id_set:
+                self.psi_store_psi_result_list.append(True)
+                id_set.add(group_index)
+            else:
+                self.psi_store_psi_result_list.append(False)
+
+    def __generate_agg_server_status(self, cid):
+        data_server_index = self.psi_cid_list.index(cid)
+        if self.psi_comm_IP_index[data_server_index] == -1:
+            comm_IP = 0
+        else:
+            comm_IP = self.psi_IP_list[self.psi_comm_IP_index[data_server_index]]
+        agg_server_status = [self.num_psi_participators, self.total_psi_rounds, self.current_psi_round,
+                             data_server_index, self.group_index_list[data_server_index],
+                             self.psi_store_psi_result_list[data_server_index], comm_IP]
+
+        return agg_server_status
+
+    def get_agg_server_status(self, request, context):
+        cid = request.cid
+        qid = request.qid
+        data_server_status = request.data_server_status
+
+        if self.current_psi_round == 0:
+            first_request_cid = None
+            if (int(data_server_status[2]) == 0) and (cid not in self.psi_cid_list):
+                if len(self.psi_cid_list) == 0:
+                    first_request_cid = cid
+                self.psi_cid_list.append(cid)
+                self.psi_IP_list.append(data_server_status[0])
+                self.psi_store_psi_result_list.append(bool(data_server_status[1]))
+            else:
+                raise ValueError(f"DataServer {cid} already requested.")
+
+            # Waiting 10s for other participators to join
+            if cid == first_request_cid:
+                time.sleep(10)
+                self.waiting_for_participators_status = True
+            while not self.waiting_for_participators_status:
+                time.sleep(self.sleep_time)
+            assert len(self.psi_cid_list) == len(self.psi_IP_list) == len(self.psi_store_psi_result_list)
+
+            if cid == first_request_cid:
+                self.num_psi_participators = len(self.psi_cid_list)
+                self.__total_psi_rounds()
+                print("All participator collected.")
+                # print(self.psi_cid_list)
+                # print(self.psi_IP_list)
+                print(f"num_psi_participators : {self.num_psi_participators}")
+                print(f"Total psi rounds: {self.total_psi_rounds}")
+                self.waiting_for_initialize = True
+            while not self.waiting_for_initialize:
+                time.sleep(self.sleep_time)
+
+        if self.current_psi_round == self.total_psi_rounds:
+            pass
+
+        self.num_psi_request += 1
+        waiting_time_count = 0
+        while (self.num_psi_request % self.num_psi_participators != 0):
+            time.sleep(self.sleep_time)
+            waiting_time_count += 1
+            if waiting_time_count >= 100:
+                print("PSI Failed.")
+
+        if cid == self.psi_cid_list[0]:
+            self.current_psi_round += 1
+            self.__update_group_index_list()
+            # print(self.group_index_list)
+            self.__get_psi_comm_IP()
+            # print(self.psi_store_psi_result_list)
+            # print(self.psi_comm_IP_index)
+            # print(f"group_index: {self.group_index_list}")
+            self.__update_store_psi_result_status()
+            # print(self.psi_store_psi_result_list)
+            self.psi_update_status = True
+
+        while not self.psi_update_status:
+            time.sleep(self.sleep_time)
+
+        agg_server_status = self.__generate_agg_server_status(cid)
+        # print(agg_server_status)
+        agg_server_status_str = []
+        for item in agg_server_status:
+            agg_server_status_str.append(str(item))
+
+        response = tenseal_aggregate_server_pb2.agg_server_status_response(
+            cid=cid,
+            qid=qid,
+            agg_server_status=agg_server_status_str
+        )
+
+        self.num_psi_response += 1
+        while(self.num_psi_response % self.num_psi_participators != 0):
+            time.sleep(self.sleep_time)
+
+        return response

@@ -11,7 +11,8 @@ from transmission.supervise import heart_beat_server
 from concurrent import futures
 import hydra
 from omegaconf import DictConfig
-from transmission.psi import id_psi_unencrypted, rsa_psi_encrypted
+from transmission.psi import id_psi_unencrypted, init_data_server_status, rsa_psi_encrypted
+from transmission.psi.utils import get_agg_server_status
 
 
 def launch_data_server(host, port, delay, name, cfg):
@@ -48,9 +49,15 @@ def launch_data_server(host, port, delay, name, cfg):
 
     # RSA Psi Debug
     # rsa_psi_encrypted(id_list, database_server, options, 1, 1999, 19999, cfg)
-    status_agg_server = [0, 0, 0, 0, 0, True, '127.0.0.1:50051']
-    status_data_server = [0, 0, 0]
-    rsa_psi_encrypted(id_list, database_server, options, 1, 1999, status_agg_server, status_data_server, cfg)
+    # status_agg_server = [0, 0, 1, 0, 0, False, '127.0.0.1:50051']
+    # status_data_server = ['127.0.0.1:50052', True, 0]
+    print(database_server.data_server_status)
+    init_data_server_status(database_server, '127.0.0.1:50052')
+    print(database_server.data_server_status)
+    get_agg_server_status(database_server.data_server_status, 2, 2999, options, cfg)
+
+    # rsa_psi_encrypted(id_list, database_server, options, 2, 2999, status_agg_server, cfg)
+    # print(database_server.data_server_status)
 
     #####
 

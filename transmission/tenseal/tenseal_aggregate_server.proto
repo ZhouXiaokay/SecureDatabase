@@ -50,10 +50,23 @@ message intersection_sequence_index{
   int32 total_participator = 4;
 }
 
+message data_server_status_request{
+  int32 cid = 1;
+  int32 qid = 2;
+  repeated string data_server_status = 3;
+}
+
+message agg_server_status_response{
+  int32 cid = 1;
+  int32 qid = 2;
+  repeated string agg_server_status = 3;
+}
+
 service AggregateServerService {
   //  AggregateServer provides the interface, client remotes the call
   rpc sum_encrypted(local_params) returns (aggr_params);
   rpc boolean_is_update(update_request) returns(update_response);
   rpc get_intersection(intersection_request) returns(intersection_response);
   rpc get_intersection_sequence_index(identification_verify) returns (intersection_sequence_index);
+  rpc get_agg_server_status(data_server_status_request) returns (agg_server_status_response);
 }

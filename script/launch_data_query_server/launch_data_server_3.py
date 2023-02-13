@@ -1,5 +1,6 @@
 import sys
 import os
+import time
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 import transmission.tenseal.tenseal_data_server_pb2_grpc as tenseal_data_server_pb2_grpc
@@ -10,7 +11,8 @@ from transmission.supervise import heart_beat_server
 from concurrent import futures
 import hydra
 from omegaconf import DictConfig
-from transmission.psi import id_psi_unencrypted, rsa_psi_encrypted
+from transmission.psi import id_psi_unencrypted, init_data_server_status, rsa_psi_encrypted
+from transmission.psi.utils import get_agg_server_status
 
 
 def launch_data_server(host, port, delay, name, cfg):
@@ -46,7 +48,14 @@ def launch_data_server(host, port, delay, name, cfg):
     # print(intersection_id_list)
 
     #RSA Psi Debug
-    rsa_psi_encrypted(id_list, database_server, options, 3, 3999, 39999, cfg)
+    # rsa_psi_encrypted(id_list, database_server, options, 3, 3999, 39999, cfg)
+    # status_agg_server = [0, 0, 1, 0, 0, False, '127.0.0.1:50051']
+    # status_data_server = ['127.0.0.1:50052', True, 0]
+    print(database_server.data_server_status)
+    init_data_server_status(database_server, '127.0.0.1:50053')
+    print(database_server.data_server_status)
+    get_agg_server_status(database_server.data_server_status, 3, 3999, options, cfg)
+
 
     #####
 
