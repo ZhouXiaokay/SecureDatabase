@@ -1,9 +1,12 @@
 import os
+import time
 import gmpy2
 import grpc
 import hashlib
 import binascii
+import tenseal as ts
 from Cryptodome.PublicKey import RSA
+from distutils.util import strtobool
 import transmission.tenseal.tenseal_data_server_pb2_grpc as tenseal_data_server_pb2_grpc
 import transmission.tenseal.tenseal_data_server_pb2 as tenseal_data_server_pb2
 import transmission.tenseal.tenseal_aggregate_server_pb2 as tenseal_aggregate_server_pb2
@@ -93,7 +96,7 @@ def get_psi_index(client_hash_ids, server_hash_ids):
     return psi_index
 
 
-def get_psi_result(local_ids, decode_ids, ra_list, pk, server_hash_ids):
+def get_double_psi_result(local_ids, decode_ids, ra_list, pk, server_hash_ids):
     client_hash_ids = invert_and_hash_decode_ids(decode_ids, ra_list, pk)
     psi_index = get_psi_index(client_hash_ids, server_hash_ids)
     psi_result = []
@@ -103,29 +106,57 @@ def get_psi_result(local_ids, decode_ids, ra_list, pk, server_hash_ids):
     return psi_result
 
 
+def get_final_psi_result(psi_dec_result):
+    psi_round_result = []
+    for item in psi_dec_result:
+        psi_round_result.append(round(item))
+    psi_result = set(psi_round_result)
+    if len(psi_result) != len(psi_dec_result):
+        return []
+
+    return psi_round_result
+
+
+def init_data_server_status(database_server, local_IP):
+    database_server.data_server_status = [local_IP, True, 0]
+
+
 def update_data_server_status(data_server_status, store_psi_result, current_round):
     data_server_status[1] = store_psi_result
     data_server_status[2] = current_round
 
 
-def get_agg_server_status(data_server_status, cid, qid, options, cfg):
+def get_agg_server_status(data_server_status, cid, qid, psi_result_status, options, cfg):
+    print(data_server_status)
     data_server_status_str = []
+    carry_psi_final_result = psi_result_status[0]
+    psi_final_result = psi_result_status[1].serialize() if carry_psi_final_result \
+        else psi_result_status[1]
+
     for item in data_server_status:
         data_server_status_str.append(str(item))
 
     agg_server_address = cfg.servers.aggregate_server.host + ":" + cfg.servers.aggregate_server.port
     agg_server_channel = grpc.insecure_channel(agg_server_address, options=options)
     agg_server_stub = tenseal_aggregate_server_pb2_grpc.AggregateServerServiceStub(agg_server_channel)
+
     request = tenseal_aggregate_server_pb2.data_server_status_request(
         cid=cid,
         qid=qid,
-        data_server_status = data_server_status_str
+        data_server_status=data_server_status_str,
+        carry_psi_final_result=psi_result_status[0],
+        psi_final_result=psi_final_result
     )
     print("Request for AggServer status...")
 
     response = agg_server_stub.get_agg_server_status(request)
-    print(response.agg_server_status)
+    agg_server_status = response.agg_server_status
+    # print(agg_server_status)
 
+    if response.carry_psi_final_result == True:
+        return [agg_server_status, True, response.psi_final_result]
+    else:
+        return [agg_server_status, False, None]
 
 
 def send_rsa_pk(database_server, cid, qid, comm_IP, options, cfg):
@@ -201,3 +232,88 @@ def send_server_enc_id_use_sk_and_client_dec_id(local_ids, database_server, cid,
     else:
         database_server.client_dec_ids_comm_status = True
         database_server.server_hash_enc_ids_comm_status = True
+
+
+def rsa_double_psi_encrypted(id_list, database_server, cid, qid, agg_server_status,
+                             he_context_path, options, cfg):
+    psi_participator_num = int(agg_server_status[0])
+    total_rounds = int(agg_server_status[1])
+    current_round = int(agg_server_status[2])
+    participator_index = int(agg_server_status[3])
+    group_index = int(agg_server_status[4])
+    store_psi_result = True if strtobool(agg_server_status[5]) else False
+    comm_IP = agg_server_status[6]
+    carry_final_psi_result = False
+    psi_final_result = bytes("None", 'utf-8')
+
+    if comm_IP != '0':
+        # Stage I
+        if store_psi_result == False:
+            send_rsa_pk(database_server, cid, qid, comm_IP, options, cfg)
+
+        # Waiting for status...
+        while not (database_server.rsa_pk_comm_status and database_server.rsa_pk):
+            time.sleep(0.1)
+
+        print("RSA public key exchange success.")
+        print("================")
+
+        # Stage II
+        if store_psi_result == True:
+            send_client_enc_ids_use_pk(id_list, database_server, cid, qid, comm_IP, options, cfg)
+
+        while not database_server.client_enc_ids_comm_status:
+            time.sleep(0.1)
+
+        print("Exchange encode client ids success.")
+        print("================")
+
+        # Stage III
+        if store_psi_result == False:
+            send_server_enc_id_use_sk_and_client_dec_id(id_list, database_server, cid, qid,
+                                                        comm_IP, options, cfg)
+
+        while not (database_server.client_dec_ids_comm_status and database_server.server_hash_enc_ids_comm_status):
+            time.sleep(0.1)
+
+        print("Exchange encode server ids and decode client ids success.")
+        print("================")
+
+        # Stage IV
+        if store_psi_result == True:
+            database_server.psi_result = get_double_psi_result(id_list, database_server.client_dec_ids,
+                                                               database_server.client_ra_list,
+                                                               database_server.rsa_pk,
+                                                               database_server.server_hash_enc_ids)
+            # print(database_server.psi_result)
+            if current_round == total_rounds:
+                he_context_bytes = open(he_context_path, "rb").read()
+                he_context = ts.context_from(he_context_bytes)
+                psi_final_result = ts.ckks_vector(he_context, database_server.psi_result)
+                carry_final_psi_result = True
+        else:
+            pass
+    else:
+        if store_psi_result == True:
+            database_server.psi_result = id_list
+        else:
+            pass
+    # print("Double PSI process done.")
+    # print("Public key: ", database_server.rsa_pk)
+    # print("================")
+    # print("Private key: ",database_server.rsa_sk)
+    # print("================")
+    # print("Random number list: ", database_server.client_ra_list)
+    # print("================")
+    # print("Client_enc_ids_pk: ", database_server.client_enc_ids_pk)
+    # print("================")
+    # print("Client_dec_ids: ", database_server.client_dec_ids)
+    # print("================")
+    # print("Server_hash_enc_ids: ", database_server.server_hash_enc_ids)
+    # print("================")
+    # print("PSI_result: ", database_server.psi_result)
+
+    # Update local status
+    update_data_server_status(database_server.data_server_status, store_psi_result, current_round)
+    database_server.reset_rsa_psi()
+    return database_server.psi_result, [carry_final_psi_result, psi_final_result]

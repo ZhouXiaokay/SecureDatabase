@@ -54,12 +54,16 @@ message data_server_status_request{
   int32 cid = 1;
   int32 qid = 2;
   repeated string data_server_status = 3;
+  bool carry_psi_final_result = 4;
+  bytes psi_final_result = 5;
 }
 
 message agg_server_status_response{
   int32 cid = 1;
   int32 qid = 2;
   repeated string agg_server_status = 3;
+  bool carry_psi_final_result = 4;
+  bytes psi_final_result = 5;
 }
 
 service AggregateServerService {

@@ -11,7 +11,7 @@ from transmission.supervise import heart_beat_server
 from concurrent import futures
 import hydra
 from omegaconf import DictConfig
-from transmission.psi import id_psi_unencrypted, init_data_server_status, rsa_psi_encrypted
+from transmission.psi import id_psi_unencrypted, rsa_psi
 from transmission.psi.utils import get_agg_server_status
 
 
@@ -43,7 +43,7 @@ def launch_data_server(host, port, delay, name, cfg):
     print("monitor server_1 service start... ")
 
     # ID Psi Debug
-    id_list = [x for x in range(10, 20)]
+    id_list = [x for x in range(19, 20)]
     # intersection_id_list = id_psi_unencrypted(id_list, database_server, options, 1, 1999, 19999, cfg)
     # print(intersection_id_list)
 
@@ -51,10 +51,12 @@ def launch_data_server(host, port, delay, name, cfg):
     # rsa_psi_encrypted(id_list, database_server, options, 1, 1999, 19999, cfg)
     # status_agg_server = [0, 0, 1, 0, 0, True, '127.0.0.1:50052']
     # status_data_server = ['127.0.0.1:50051', True, 0]
-    print(database_server.data_server_status)
-    init_data_server_status(database_server, '127.0.0.1:50051')
-    print(database_server.data_server_status)
-    get_agg_server_status(database_server.data_server_status, 1, 1999, options, cfg)
+    # print(database_server.data_server_status)
+    # init_data_server_status(database_server, '127.0.0.1:50051')
+    # print(database_server.data_server_status)
+    # get_agg_server_status(database_server.data_server_status, 1, 1999, options, cfg)
+    psi_result = rsa_psi(database_server, id_list, '127.0.0.1:50051', 1, 1999, '../../transmission/ts_ckks.config', options, cfg)
+    print(psi_result)
 
     # rsa_psi_encrypted(id_list, database_server, options, 1, 1999, status_agg_server, cfg)
     # print(database_server.data_server_status)

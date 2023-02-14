@@ -8,6 +8,7 @@ import torch.optim as optim
 import torch
 from transmission.utils import flatten_tensors
 import math
+from distutils.util import strtobool
 
 
 class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceServicer):
@@ -68,6 +69,15 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         self.waiting_for_initialize = False
         self.group_index_list = []
         self.psi_comm_IP_index = []
+        self.psi_update_status = False
+        self.psi_check_result_count = 0
+        self.psi_final_result_status = False
+        self.psi_final_result = None
+
+    def __psi_reset_per_round(self):
+        self.num_psi_request = 0
+        self.num_psi_response = 0
+        self.psi_check_result_count = 0
         self.psi_update_status = False
 
     def __reset_sum(self):
@@ -381,7 +391,11 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         cid = request.cid
         qid = request.qid
         data_server_status = request.data_server_status
+        carry_psi_final_result = request.carry_psi_final_result
+        psi_final_result = request.psi_final_result
+        time.sleep(1.5)
 
+        assert self.current_psi_round == int(data_server_status[2])
         if self.current_psi_round == 0:
             first_request_cid = None
             if (int(data_server_status[2]) == 0) and (cid not in self.psi_cid_list):
@@ -393,9 +407,9 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
             else:
                 raise ValueError(f"DataServer {cid} already requested.")
 
-            # Waiting 10s for other participators to join
+            # Waiting 5s for other participators to join
             if cid == first_request_cid:
-                time.sleep(10)
+                time.sleep(5)
                 self.waiting_for_participators_status = True
             while not self.waiting_for_participators_status:
                 time.sleep(self.sleep_time)
@@ -413,16 +427,35 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
             while not self.waiting_for_initialize:
                 time.sleep(self.sleep_time)
 
-        if self.current_psi_round == self.total_psi_rounds:
-            pass
-
         self.num_psi_request += 1
-        waiting_time_count = 0
+        # waiting_time_count = 0
         while (self.num_psi_request % self.num_psi_participators != 0):
             time.sleep(self.sleep_time)
-            waiting_time_count += 1
-            if waiting_time_count >= 100:
-                print("PSI Failed.")
+
+        if carry_psi_final_result == True:
+            self.psi_final_result = psi_final_result
+            self.psi_final_result_status = True
+        self.psi_check_result_count += 1
+
+        # print(carry_psi_final_result)
+        while (self.psi_check_result_count % self.num_psi_participators != 0):
+            time.sleep(self.sleep_time)
+        print(self.psi_final_result_status)
+
+        if (self.current_psi_round == self.total_psi_rounds == int(data_server_status[2])) and \
+                (self.psi_final_result_status == True):
+            response = tenseal_aggregate_server_pb2.agg_server_status_response(
+                cid=cid,
+                qid=qid,
+                agg_server_status=[],
+                carry_psi_final_result=self.psi_final_result_status,
+                psi_final_result=self.psi_final_result
+            )
+            self.num_psi_response += 1
+            while (self.num_psi_response % self.num_psi_participators != 0):
+                time.sleep(self.sleep_time)
+
+            return response
 
         if cid == self.psi_cid_list[0]:
             self.current_psi_round += 1
@@ -448,11 +481,15 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         response = tenseal_aggregate_server_pb2.agg_server_status_response(
             cid=cid,
             qid=qid,
-            agg_server_status=agg_server_status_str
+            agg_server_status=agg_server_status_str,
+            carry_psi_final_result=carry_psi_final_result,
+            psi_final_result=psi_final_result
         )
 
         self.num_psi_response += 1
-        while(self.num_psi_response % self.num_psi_participators != 0):
+        while (self.num_psi_response % self.num_psi_participators != 0):
             time.sleep(self.sleep_time)
 
+
+        self.__psi_reset_per_round()
         return response
