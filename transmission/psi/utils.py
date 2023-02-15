@@ -1,5 +1,6 @@
 import os
 import time
+import random
 import gmpy2
 import grpc
 import hashlib
@@ -104,6 +105,12 @@ def get_double_psi_result(local_ids, decode_ids, ra_list, pk, server_hash_ids):
         psi_result.append(local_ids[index])
 
     return psi_result
+
+
+def encode_empty_psi_result():
+    value = random.randint(1, 10)
+    length = random.randint(2, 10)
+    return [value for _ in range(length)]
 
 
 def get_final_psi_result(psi_dec_result):
@@ -289,6 +296,8 @@ def rsa_double_psi_encrypted(id_list, database_server, cid, qid, agg_server_stat
             if current_round == total_rounds:
                 he_context_bytes = open(he_context_path, "rb").read()
                 he_context = ts.context_from(he_context_bytes)
+                if len(database_server.psi_result) == 0:
+                    database_server.psi_result = encode_empty_psi_result()
                 psi_final_result = ts.ckks_vector(he_context, database_server.psi_result)
                 carry_final_psi_result = True
         else:

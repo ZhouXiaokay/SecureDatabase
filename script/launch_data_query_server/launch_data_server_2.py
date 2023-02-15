@@ -12,7 +12,6 @@ from concurrent import futures
 import hydra
 from omegaconf import DictConfig
 from transmission.psi import id_psi_unencrypted, rsa_psi
-from transmission.psi.utils import get_agg_server_status
 
 
 def launch_data_server(host, port, delay, name, cfg):
@@ -55,7 +54,8 @@ def launch_data_server(host, port, delay, name, cfg):
     # init_data_server_status(database_server, '127.0.0.1:50052')
     # print(database_server.data_server_status)
     # get_agg_server_status(database_server.data_server_status, 2, 2999, options, cfg)
-    psi_result = rsa_psi(database_server, id_list, '127.0.0.1:50052', 2, 2999, '../../transmission/ts_ckks.config', options, cfg)
+    psi_result = rsa_psi(database_server, id_list, '127.0.0.1:50052', 2, 2999,
+                         '../../transmission/ts_ckks.config', options, cfg)
     print(psi_result)
 
     # rsa_psi_encrypted(id_list, database_server, options, 2, 2999, status_agg_server, cfg)

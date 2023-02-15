@@ -1,3 +1,5 @@
+import time
+
 import grpc
 import tenseal as ts
 import transmission.tenseal.tenseal_key_server_pb2 as tenseal_key_server_pb2
@@ -55,6 +57,7 @@ def id_psi_unencrypted(id_list, database_server, options, cid, key_server_qid, a
 
 
 def rsa_psi(database_server, id_list, local_IP, cid, qid, he_context_path, options, cfg):
+    start_time = time.time()
     psi_id_list = id_list
     psi_result_status = [False, bytes("None", 'utf-8')]
     init_data_server_status(database_server, local_IP)
@@ -68,6 +71,8 @@ def rsa_psi(database_server, id_list, local_IP, cid, qid, he_context_path, optio
             psi_dec_result = psi_enc_result.decrypt()
             psi_result = get_final_psi_result(psi_dec_result)
             print("RSA-PSI Finished.")
+            end_time = time.time()
+            print(f"Total time: {end_time - start_time}")
             return psi_result
 
         psi_id_list, psi_result_status = rsa_double_psi_encrypted(psi_id_list, database_server, cid, qid,
