@@ -5,7 +5,7 @@ from transmission.utils import flatten_tensors, unflatten_tensors
 import collections
 import numpy as np
 import copy
-
+import pickle
 # torch.manual_seed(1234)
 # x = torch.tensor([[2., 1.], [1., 1.], [1., 1.]])
 # y = torch.tensor([1, 0, 1]).to(torch.float)
@@ -80,6 +80,20 @@ y_pred = torch.tensor([[4.3913, -1.4485],
                        [4.1136, -3.7467],
                        [-7.7996, -0.6339],
                        [6.0476, -3.2254]])
-print(torch.softmax(y_pred, dim=1).argmax(dim=1))
-y = torch.tensor([0, 0, 1, 0, 1, 0, 1, 0])
-print(y_pred.argmax(dim=1).eq(y))
+# print(torch.softmax(y_pred, dim=1).argmax(dim=1))
+# y = torch.tensor([0, 0, 1, 0, 1, 0, 1, 0])
+# print(y_pred.argmax(dim=1).eq(y))
+x = [1, 2, 31, 2, 3]
+ctx_file = "../transmission/ts_ckks.config"
+context_bytes = open(ctx_file, "rb").read()
+ctx = ts.context_from(context_bytes)
+
+
+# x_1 = [ts.ckks_vector(ctx, x).serialize(),ts.ckks_vector(ctx, x).serialize()]
+# bytes_msg = pickle.dumps(x_1)
+# msg = pickle.loads(bytes_msg)
+# print(msg)
+print(np.array(y_pred).tolist())
+x_2 = np.array(y_pred)
+
+print([ts.ckks_vector(ctx, x.tolist()) for x in x_2])

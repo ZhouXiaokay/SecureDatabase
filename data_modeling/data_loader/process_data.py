@@ -18,7 +18,7 @@ def process_wine_data(rpath, wpath, spath):
 
 
 def engine(db_name):
-    engine = create_engine('mysql+pymysql://root:9966@127.0.0.1:3336/{}'.format(db_name), encoding='utf-8')
+    engine = create_engine('mysql+pymysql://root:9966@127.0.0.1:3306/{}'.format(db_name), encoding='utf-8')
     return engine
 
 
@@ -63,6 +63,6 @@ if __name__ == '__main__':
     # for i in range(3):
     #     readFile_to_sql('database_{0}'.format(i+1), 'data/table_{0}.csv'.format(i+1))
     conn = engine(db_name="database_test")
-    conn
+
     df = pd.read_sql("SELECT * FROM DATABASE_TEST.WINE_QUALITY", con=conn)
     print(df.columns)

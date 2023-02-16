@@ -18,6 +18,7 @@ class DNNTrainer(BaseTrainer):
 
     def one_local_round(self):
         data_loader = DataLoader(self.dataset, batch_size=self.batch_size, sampler=self.train_sampler)
+        print("init: ",self.model.dense_1.bias)
         for e in range(self.epoch):
             accum_loss = 0
             accum_correct = 0
@@ -39,7 +40,9 @@ class DNNTrainer(BaseTrainer):
             if e % 2 == 0:
                 print("loss: ", accum_loss)
                 print("train accuracy: ", accum_correct / set_size)
+        print("before: ", self.model.dense_1.bias)
         self.average_params()
+        print("after: ", self.model.dense_1.bias)
 
     def test(self):
         data_loader = DataLoader(self.dataset, batch_size=self.batch_size, sampler=self.test_sampler)
