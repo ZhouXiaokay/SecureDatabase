@@ -54,6 +54,8 @@ message query_median_posi_msg {
   string table_name = 3;
   string column_name = 4;
   bytes median = 5;
+  bytes avg = 6;
+  bytes std = 7;
 }
 
 message query_median_posi_result {

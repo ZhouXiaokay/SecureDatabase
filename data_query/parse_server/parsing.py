@@ -136,20 +136,24 @@ def get_enc_using_hash(hash_code,db_stub_list):
         if response.available:
             return response.mode
 
-
 def get_total_var_mode(request, db_stub_list, pk_ctx, key_stub):
     from typing import Set
     set_all: Set[int] = set()
     set_once: Set[int] = set()
     res_list: List[List[Tuple[int,object]]] = []
     i = 0
-    while len(set_all) != 1 and i < 100:  # 100 is the max iteration times
+    while len(set_all) != 1:
         if i == 0:
             request.op = "VAR_MODE_CLEAN"
         else:
             request.op = "VAR_MODE"
         i+= 1
         n_th_list = get_n_th_list(request, db_stub_list, pk_ctx, i-1)
+
+        if n_th_list is None:
+            # in case of the data is not enough
+            highest_hash = get_the_highest_hash(set_once,key_stub,db_stub_list,pk_ctx)
+            return ts.ckks_vector_from(pk_ctx,get_enc_using_hash(highest_hash,db_stub_list))
 
         res_list.append(n_th_list)
 
@@ -170,13 +174,16 @@ def get_total_var_median(request, db_stub_list, pk_ctx, key_stub):
     std_max = 1
     std_mid = (std_max+std_min)/2
 
+    std = get_total_std(request, db_stub_list, pk_ctx, key_stub)
+    avg = get_total_avg(request, db_stub_list, pk_ctx, key_stub)
+
     for i in range(10):
         std_min = (std_max+std_min)/2
         temp_mid = std_mid * max + (1 - std_mid) * min
         le_list = []
         g_list = []
         for stub in db_stub_list:
-            query_request = tenseal_data_server_pb2.query_median_posi_msg(cid = request.cid, qid = request.qid, table_name = request.table_name, column_name = request.column_name, median = temp_mid.serialize())
+            query_request = tenseal_data_server_pb2.query_median_posi_msg(cid = request.cid, qid = request.qid, table_name = request.table_name, column_name = request.column_name, median = temp_mid.serialize(), std = std.serialize(), avg = avg.serialize())
             response = stub.query_median_posi(query_request)
             le = ts.ckks_vector_from(pk_ctx, response.less_e)
             g = ts.ckks_vector_from(pk_ctx, response.greater)

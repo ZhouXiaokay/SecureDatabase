@@ -133,10 +133,21 @@ class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer)
         enc_vector = ts.ckks_vector_from(self.sk_ctx, median)
         dec_vector = enc_vector.decrypt()
         median = dec_vector[0]
+        avg = request.avg
+        enc_vector = ts.ckks_vector_from(self.sk_ctx, avg)
+        dec_vector = enc_vector.decrypt()
+        avg = dec_vector[0]
+        std = request.std
+        enc_vector = ts.ckks_vector_from(self.sk_ctx, std)
+        dec_vector = enc_vector.decrypt()
+        std = dec_vector[0]
+        sigma3_left = avg - 3 * std
+        sigma3_right = avg + 3 * std
 
-        le_sql = "SELECT COUNT(*) FROM {0} WHERE {1} <= {2}".format("database_" + self.name + "." +table_name, column_name, median)
+        le_sql = "SELECT COUNT(*) FROM {0} WHERE {1} <= {2} AND {1} > {3}".format("database_" + self.name + "." +table_name, column_name, median, sigma3_left)
         le_result = get_query_results(self.name, self.cfg, le_sql)
-        g_sql = "SELECT COUNT(*) FROM {0} WHERE {1} > {2}".format("database_" + self.name + "." +table_name, column_name, median)
+
+        g_sql = "SELECT COUNT(*) FROM {0} WHERE {1} > {2} AND {1} <= {3}".format("database_" + self.name + "." +table_name, column_name, median, sigma3_right)
         g_result = get_query_results(self.name, self.cfg, g_sql)
         le_result = ts.plain_tensor(le_result)
         g_result = ts.plain_tensor(g_result)
