@@ -43,7 +43,8 @@ def main(cfg: DictConfig):
     address_dict = {"DATABASE_1": cfg.servers.data_server_1.host + ':' + cfg.servers.data_server_1.port,
                     "DATABASE_2": cfg.servers.data_server_2.host + ':' + cfg.servers.data_server_2.port,
                     "DATABASE_3": cfg.servers.data_server_3.host + ':' + cfg.servers.data_server_3.port,
-                    "KEYSERVER": cfg.servers.key_server.host + ':' + cfg.servers.key_server.port, }
+                    "KEYSERVER": cfg.servers.key_server.host + ':' + cfg.servers.key_server.port,
+                    "CLIENTPROXY": cfg.servers.client_proxy.host + ':' + cfg.servers.client_proxy.port}
     launch_parse_server(host, port, delay, address_dict)
 
 

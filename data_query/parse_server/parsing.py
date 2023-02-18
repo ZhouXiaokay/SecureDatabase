@@ -3,8 +3,12 @@ parsing.py responses to parse the request from clients,
 and return results
 """
 import pickle
+
+import hydra
 from numpy import *
 import tenseal as ts
+from omegaconf import DictConfig
+
 from .utils import *
 
 
@@ -23,6 +27,14 @@ def request_parsing(request, pk_ctx, address_dict, options):
 
 
 # process the request in which query data_modeling is only from local database
+def get_local_count(request, db_stub,n):
+    mode = "encypted"
+    if "CLEAN" in request.op:
+        mode = "clean"
+    n_th_query_msg = tenseal_data_server_pb2.n_th_query_msg(cid=request.cid, qid=request.qid, n = n,mode = mode, table_name=request.table_name,column_name=request.column_name)
+    n_th_query_response = db_stub.n_th_query_operation(n_th_query_msg)
+    return n_th_query_response
+
 def process_local_request(request, pk_ctx, db_stub):
     query_request = tenseal_data_server_pb2.query_msg_parse_server(cid=request.cid, qid=request.qid, op=request.op,
                                                                    column_name=request.column_name,
@@ -45,6 +57,150 @@ def process_noise_local_request(request, db_stub):
 
 
 # process the request which needs all dataServer participates
+def get_n_th_list(request, db_stub_list, pk_ctx, n):
+    n_th_list = []
+    for stub in db_stub_list:
+        n_th_query_response = get_local_count(request, stub, n)
+        enc_vector = ts.ckks_vector_from(pk_ctx, n_th_query_response.result)
+        hash_code = n_th_query_response.hash
+        available = n_th_query_response.available
+        if available:
+            n_th_list.append((hash_code,enc_vector))
+        else:
+            n_th_list.append(None)
+    return n_th_list
+
+from typing import Tuple, Set
+from typing import List
+
+def is_n_th_enough(res_list: List[List[Tuple[int,object]]]):
+    set_all: List[Set[int]] = []
+
+    for res in range(len(res_list)):
+        set_all.append(set())
+        for item in res_list[res]:
+            if item is not None:
+                set_all[res].add(item[0])
+
+    temp_and = set_all[0]
+    temp_or = set_all[0]
+
+    for set_ in set_all:
+        temp_and = temp_and & set_
+        temp_or = temp_or | set_
+
+    return temp_and, temp_or
+
+
+def get_encryped_total_frequency(hash_code, db_stub_list,pk_ctx):
+    temp = None
+    for stub in db_stub_list:
+        query_request = tenseal_data_server_pb2.buffer_query_msg(hash=hash_code)
+        response = stub.query_from_buffer(query_request)
+        if response.available:
+            enc_vector = ts.ckks_vector_from(pk_ctx, response.result)
+            if temp is None:
+                temp = enc_vector
+            else:
+                temp = temp + enc_vector
+
+    return temp
+
+
+def get_the_highest_hash(set_once: Set[int],key_stub,db_stub_list,pk_ctx):
+    encryped_value: List[object] = []
+    orderd_hash: List[int] = []
+    for hash_code in set_once:
+        orderd_hash.append(hash_code)
+        encryped_value.append(get_encryped_total_frequency(hash_code,db_stub_list,pk_ctx))
+
+    max_enc_vector = encryped_value[0]
+    for enc_vector in encryped_value[1:]:
+        sub_diff = max_enc_vector - enc_vector
+        sub_serialize_msg = sub_diff.serialize()
+        request = tenseal_key_server_pb2.vector(vector_msg=sub_serialize_msg)
+        response = key_stub.boolean_positive(request)
+        comparison_flag = response.bool_msg
+        if not comparison_flag:
+            max_enc_vector = enc_vector
+
+    for i in range(len(encryped_value)):
+        if max_enc_vector == encryped_value[i]:
+            return orderd_hash[i]
+
+def get_enc_using_hash(hash_code,db_stub_list):
+
+    for stub in db_stub_list:
+        query_request = tenseal_data_server_pb2.query_mode_using_hash_msg(hash=hash_code)
+        response = stub.query_mode_using_hash(query_request)
+        if response.available:
+            return response.mode
+
+
+def get_total_var_mode(request, db_stub_list, pk_ctx, key_stub):
+    from typing import Set
+    set_all: Set[int] = set()
+    set_once: Set[int] = set()
+    res_list: List[List[Tuple[int,object]]] = []
+    i = 0
+    while len(set_all) != 1 and i < 100:  # 100 is the max iteration times
+        if i == 0:
+            request.op = "VAR_MODE_CLEAN"
+        else:
+            request.op = "VAR_MODE"
+        i+= 1
+        n_th_list = get_n_th_list(request, db_stub_list, pk_ctx, i-1)
+
+        res_list.append(n_th_list)
+
+        set_all,set_once = is_n_th_enough(res_list)
+
+    print(set_all,set_once)
+
+    highest_hash = get_the_highest_hash(set_once,key_stub,db_stub_list,pk_ctx)
+
+    return ts.ckks_vector_from(pk_ctx,get_enc_using_hash(highest_hash,db_stub_list))
+
+
+
+def get_total_var_median(request, db_stub_list, pk_ctx, key_stub):
+    max = get_total_max(request, db_stub_list, pk_ctx, key_stub)
+    min = get_total_min(request, db_stub_list, pk_ctx, key_stub)
+    std_min = 0
+    std_max = 1
+    std_mid = (std_max+std_min)/2
+
+    for i in range(10):
+        std_min = (std_max+std_min)/2
+        temp_mid = std_mid * max + (1 - std_mid) * min
+        le_list = []
+        g_list = []
+        for stub in db_stub_list:
+            query_request = tenseal_data_server_pb2.query_median_posi_msg(cid = request.cid, qid = request.qid, table_name = request.table_name, column_name = request.column_name, median = temp_mid.serialize())
+            response = stub.query_median_posi(query_request)
+            le = ts.ckks_vector_from(pk_ctx, response.less_e)
+            g = ts.ckks_vector_from(pk_ctx, response.greater)
+            le_list.append(le)
+            g_list.append(g)
+
+        le_sum = sum(le_list)
+        g_sum = sum(g_list)
+
+        sub_diff = le_sum - g_sum
+        sub_serialize_msg = sub_diff.serialize()
+        requests = tenseal_key_server_pb2.vector(vector_msg=sub_serialize_msg)
+        response = key_stub.boolean_positive(requests)
+        comparison_flag = response.bool_msg
+        if comparison_flag:
+            std_max = std_mid
+        else:
+            std_min = std_mid
+
+    std_mid = (std_max + std_min) / 2
+    return std_mid * max + (1 - std_mid) * min
+
+
+
 def process_total_request(request, pk_ctx, address_dict, options):
     db_stub_list = get_all_db_stub(address_dict, options)
     op = request.op.upper()
@@ -90,6 +246,14 @@ def process_total_request(request, pk_ctx, address_dict, options):
         key_stub = get_key_server_stub(address_dict, options)
         std_samp_enc_vector = get_total_std_samp(request, db_stub_list, pk_ctx, key_stub)
         return std_samp_enc_vector
+    elif op == "VAR_MODE":
+        key_stub = get_key_server_stub(address_dict, options)
+        var_mode_enc_vector = get_total_var_mode(request, db_stub_list, pk_ctx, key_stub)
+        return var_mode_enc_vector
+    elif op == "VAR_MEDIAN":
+        key_stub = get_key_server_stub(address_dict, options)
+        var_median_enc_vector = get_total_var_median(request, db_stub_list, pk_ctx, key_stub)
+        return var_median_enc_vector
     else:
         sum_enc_vector = get_total_sum(request, db_stub_list, pk_ctx)
         return sum_enc_vector
@@ -143,7 +307,7 @@ def get_total_count_dp(request, db_stub_list, key_stub):
 
 
 # get the max encrypted vector over the total query result list
-def get_total_max(request, db_stub_list, pk_ctx, key_stub):
+def get_total_max(request, db_stub_list, pk_ctx, key_stub): # TODO： 有可能出现两个一样的情况
     request.op = "max"
     total_list = get_total_list(request, db_stub_list, pk_ctx)
 

@@ -72,8 +72,8 @@ def parse_op(op, column_name):
 
 # generate sql from request
 def generate_sql(request):
-    table_name = request.table_name.upper()
-    column_name = request.column_name.upper()
+    table_name = request.table_name
+    column_name = request.column_name
     op = request.op.upper()
     op_sql = parse_op(op, column_name)
     sql = "SELECT " + op_sql + " FROM {0}".format(table_name)
@@ -87,6 +87,13 @@ def get_query_results(db_name, cfg, sql):
     db = conn(db_name, cfg)
     cursor = db.cursor()
     cursor.execute(sql)
+    if "GROUP BY" in sql:
+        results = cursor.fetchall()
+        for row in results:
+            result_list.append((row[0],float(row[1])))
+        db.close()
+        return result_list
+
     results = cursor.fetchone()
     # close conn
     db.close()

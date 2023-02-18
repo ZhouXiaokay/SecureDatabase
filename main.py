@@ -11,6 +11,12 @@ def print_hi(name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+    i = 1
+    b = 1
+    print(hash(float(i+0.01)),
+    hash(float(b+0.01)))
+
+
     print_hi('PyCharm')
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

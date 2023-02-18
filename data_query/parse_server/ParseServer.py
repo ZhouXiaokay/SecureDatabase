@@ -3,7 +3,6 @@ import transmission.tenseal.tenseal_parse_server_pb2_grpc as tenseal_parse_serve
 from .utils import *
 from .parsing import *
 
-
 class ParseServer(tenseal_parse_server_pb2_grpc.ParseServerServiceServicer):
 
     def __init__(self, address_dict, pk_ctx_file):

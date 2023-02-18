@@ -17,10 +17,11 @@ def launch_data_server(host, port, delay, name, cfg):
     dataServer_address = host + ":" + str(port)
     max_msg_size = 1000000000
     pk_file = "../../transmission/ts_ckks_pk.config"
+    ctx_file = "../../transmission/ts_ckks.config"
     options = [('grpc.max_send_message_length', max_msg_size), ('grpc.max_receive_message_length', max_msg_size)]
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=5), options=options)
     tenseal_data_server_pb2_grpc.add_DatabaseServerServiceServicer_to_server(
-        DatabaseServer(dataServer_address, pk_file, name, cfg),
+        DatabaseServer(dataServer_address, pk_file, ctx_file, name, cfg),
         server)
     server.add_insecure_port(dataServer_address)
     server.start()
