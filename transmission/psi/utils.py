@@ -324,5 +324,5 @@ def rsa_double_psi_encrypted(id_list, database_server, cid, qid, agg_server_stat
 
     # Update local status
     update_data_server_status(database_server.data_server_status, store_psi_result, current_round)
-    database_server.reset_rsa_psi()
+    database_server.reset_rsa_psi_status_per_round()
     return database_server.psi_result, [carry_final_psi_result, psi_final_result]

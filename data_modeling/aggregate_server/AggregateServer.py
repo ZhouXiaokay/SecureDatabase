@@ -74,7 +74,7 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         self.psi_final_result_status = False
         self.psi_final_result = None
 
-    def __psi_reset_per_round(self):
+    def __reset_psi_status_per_round(self):
         self.num_psi_request = 0
         self.num_psi_response = 0
         self.psi_check_result_count = 0
@@ -384,7 +384,7 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
 
         self.psi_comm_IP_index = comm_IP_list
 
-    def __update_store_psi_result_status(self):
+    def __update_store_psi_result_status_regular(self):
         self.psi_store_psi_result_list.clear()
         id_set = set()
         for group_index in self.group_index_list:
@@ -486,7 +486,7 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
             # print(self.psi_store_psi_result_list)
             # print(self.psi_comm_IP_index)
             # print(f"group_index: {self.group_index_list}")
-            self.__update_store_psi_result_status()
+            self.__update_store_psi_result_status_regular()
             # print(self.psi_store_psi_result_list)
             self.psi_update_status = True
 
@@ -511,5 +511,5 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         while (self.num_psi_response % self.num_psi_participators != 0):
             time.sleep(self.sleep_time)
 
-        self.__psi_reset_per_round()
+        self.__reset_psi_status_per_round()
         return response

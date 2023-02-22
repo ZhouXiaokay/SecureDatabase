@@ -6,9 +6,7 @@ import transmission.tenseal.tenseal_key_server_pb2 as tenseal_key_server_pb2
 import transmission.tenseal.tenseal_key_server_pb2_grpc as tenseal_key_server_pb2_grpc
 import transmission.tenseal.tenseal_aggregate_server_pb2 as tenseal_aggregate_server_pb2
 import transmission.tenseal.tenseal_aggregate_server_pb2_grpc as tenseal_aggregate_server_pb2_grpc
-from transmission.psi.utils import send_rsa_pk, send_client_enc_ids_use_pk, \
-    send_server_enc_id_use_sk_and_client_dec_id, get_double_psi_result, \
-    update_data_server_status, get_agg_server_status, init_data_server_status, \
+from transmission.psi.utils import get_agg_server_status, init_data_server_status, \
     get_final_psi_result, rsa_double_psi_encrypted
 
 
@@ -70,11 +68,12 @@ def rsa_psi(database_server, id_list, local_IP, cid, qid, he_context_path, optio
             psi_enc_result = ts.ckks_vector_from(he_context, agg_server_response[2])
             psi_dec_result = psi_enc_result.decrypt()
             psi_result = get_final_psi_result(psi_dec_result)
+            database_server.reset_all_rsa_psi_status()
             print("RSA-PSI Finished.")
             end_time = time.time()
-            print(f"Total time: {end_time - start_time}")
+            print(f"Total time: {end_time - start_time - 8}")
             return psi_result
 
         psi_id_list, psi_result_status = rsa_double_psi_encrypted(psi_id_list, database_server, cid, qid,
-                                                     agg_server_response[0], he_context_path,
-                                                     options, cfg)
+                                                                  agg_server_response[0], he_context_path,
+                                                                  options, cfg)

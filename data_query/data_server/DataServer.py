@@ -46,7 +46,7 @@ class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer)
         self.server_hash_enc_ids_comm_status = False
         self.psi_result = None
 
-    def reset_rsa_psi(self):
+    def reset_rsa_psi_status_per_round(self):
         self.rsa_pk = None
         self.rsa_sk = None
         self.rsa_pk_comm_status = False
@@ -57,6 +57,20 @@ class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer)
         self.server_hash_enc_ids = []
         self.client_dec_ids_comm_status = False
         self.server_hash_enc_ids_comm_status = False
+
+    def reset_all_rsa_psi_status(self):
+        self.data_server_status = None
+        self.rsa_pk = None
+        self.rsa_sk = None
+        self.rsa_pk_comm_status = False
+        self.client_enc_ids_pk = []
+        self.client_ra_list = []
+        self.client_enc_ids_comm_status = False
+        self.client_dec_ids = []
+        self.server_hash_enc_ids = []
+        self.client_dec_ids_comm_status = False
+        self.server_hash_enc_ids_comm_status = False
+        self.psi_result = None
 
     def query_operation(self, request, context):
         sql = generate_sql(request)
