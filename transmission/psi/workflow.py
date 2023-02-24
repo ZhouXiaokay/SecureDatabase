@@ -60,7 +60,11 @@ def rsa_psi(database_server, id_list, local_IP, cid, qid, he_context_path, optio
     psi_result_status = [False, bytes("None", 'utf-8')]
     init_data_server_status(database_server, local_IP)
     while True:
-        agg_server_response = get_agg_server_status(database_server.data_server_status,
+        if psi_id_list != None:
+            num_of_ids = len(psi_id_list)
+        else:
+            num_of_ids = 0
+        agg_server_response = get_agg_server_status(database_server.data_server_status, num_of_ids,
                                                     cid, qid, psi_result_status, options, cfg)
         if agg_server_response[1] == True:
             he_context_bytes = open(he_context_path, "rb").read()

@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x1etenseal_aggregate_server.proto\"K\n\x0clocal_params\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nsample_num\x18\x02 \x01(\x05\x12\x12\n\nparams_msg\x18\x03 \x01(\x0c\"6\n\x0b\x61ggr_params\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nparams_msg\x18\x02 \x01(\x0c\"9\n\x0eupdate_request\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nsample_num\x18\x02 \x01(\x05\"3\n\x0fupdate_response\x12\x0c\n\x04\x66lag\x18\x01 \x01(\x08\x12\x12\n\nparams_msg\x18\x02 \x01(\x0c\"E\n\x14intersection_request\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x13\n\x0brequest_msg\x18\x03 \x03(\x05\"G\n\x15intersection_response\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x14\n\x0cresponse_msg\x18\x03 \x03(\x05\"1\n\x15identification_verify\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\"k\n\x1bintersection_sequence_index\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x16\n\x0esequence_index\x18\x03 \x01(\x05\x12\x1a\n\x12total_participator\x18\x04 \x01(\x05\"\x8c\x01\n\x1a\x64\x61ta_server_status_request\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x1a\n\x12\x64\x61ta_server_status\x18\x03 \x03(\t\x12\x1e\n\x16\x63\x61rry_psi_final_result\x18\x04 \x01(\x08\x12\x18\n\x10psi_final_result\x18\x05 \x01(\x0c\"\x8b\x01\n\x1a\x61gg_server_status_response\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x19\n\x11\x61gg_server_status\x18\x03 \x03(\t\x12\x1e\n\x16\x63\x61rry_psi_final_result\x18\x04 \x01(\x08\x12\x18\n\x10psi_final_result\x18\x05 \x01(\x0c\x32\xed\x02\n\x16\x41ggregateServerService\x12,\n\rsum_encrypted\x12\r.local_params\x1a\x0c.aggr_params\x12\x36\n\x11\x62oolean_is_update\x12\x0f.update_request\x1a\x10.update_response\x12\x41\n\x10get_intersection\x12\x15.intersection_request\x1a\x16.intersection_response\x12W\n\x1fget_intersection_sequence_index\x12\x16.identification_verify\x1a\x1c.intersection_sequence_index\x12Q\n\x15get_agg_server_status\x12\x1b.data_server_status_request\x1a\x1b.agg_server_status_responseb\x06proto3'
+  serialized_pb=b'\n\x1etenseal_aggregate_server.proto\"K\n\x0clocal_params\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nsample_num\x18\x02 \x01(\x05\x12\x12\n\nparams_msg\x18\x03 \x01(\x0c\"6\n\x0b\x61ggr_params\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nparams_msg\x18\x02 \x01(\x0c\"9\n\x0eupdate_request\x12\x13\n\x0b\x63lient_rank\x18\x01 \x01(\x05\x12\x12\n\nsample_num\x18\x02 \x01(\x05\"3\n\x0fupdate_response\x12\x0c\n\x04\x66lag\x18\x01 \x01(\x08\x12\x12\n\nparams_msg\x18\x02 \x01(\x0c\"E\n\x14intersection_request\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x13\n\x0brequest_msg\x18\x03 \x03(\x05\"G\n\x15intersection_response\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x14\n\x0cresponse_msg\x18\x03 \x03(\x05\"1\n\x15identification_verify\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\"k\n\x1bintersection_sequence_index\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x16\n\x0esequence_index\x18\x03 \x01(\x05\x12\x1a\n\x12total_participator\x18\x04 \x01(\x05\"\xa1\x01\n\x1a\x64\x61ta_server_status_request\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x1a\n\x12\x64\x61ta_server_status\x18\x03 \x03(\t\x12\x13\n\x0b\x64\x61ta_length\x18\x04 \x01(\x05\x12\x1e\n\x16\x63\x61rry_psi_final_result\x18\x05 \x01(\x08\x12\x18\n\x10psi_final_result\x18\x06 \x01(\x0c\"\x8b\x01\n\x1a\x61gg_server_status_response\x12\x0b\n\x03\x63id\x18\x01 \x01(\x05\x12\x0b\n\x03qid\x18\x02 \x01(\x05\x12\x19\n\x11\x61gg_server_status\x18\x03 \x03(\t\x12\x1e\n\x16\x63\x61rry_psi_final_result\x18\x04 \x01(\x08\x12\x18\n\x10psi_final_result\x18\x05 \x01(\x0c\x32\xed\x02\n\x16\x41ggregateServerService\x12,\n\rsum_encrypted\x12\r.local_params\x1a\x0c.aggr_params\x12\x36\n\x11\x62oolean_is_update\x12\x0f.update_request\x1a\x10.update_response\x12\x41\n\x10get_intersection\x12\x15.intersection_request\x1a\x16.intersection_response\x12W\n\x1fget_intersection_sequence_index\x12\x16.identification_verify\x1a\x1c.intersection_sequence_index\x12Q\n\x15get_agg_server_status\x12\x1b.data_server_status_request\x1a\x1b.agg_server_status_responseb\x06proto3'
 )
 
 
@@ -402,15 +402,22 @@ _DATA_SERVER_STATUS_REQUEST = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='carry_psi_final_result', full_name='data_server_status_request.carry_psi_final_result', index=3,
-      number=4, type=8, cpp_type=7, label=1,
+      name='data_length', full_name='data_server_status_request.data_length', index=3,
+      number=4, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='carry_psi_final_result', full_name='data_server_status_request.carry_psi_final_result', index=4,
+      number=5, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='psi_final_result', full_name='data_server_status_request.psi_final_result', index=4,
-      number=5, type=12, cpp_type=9, label=1,
+      name='psi_final_result', full_name='data_server_status_request.psi_final_result', index=5,
+      number=6, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=b"",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -428,7 +435,7 @@ _DATA_SERVER_STATUS_REQUEST = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=584,
-  serialized_end=724,
+  serialized_end=745,
 )
 
 
@@ -487,8 +494,8 @@ _AGG_SERVER_STATUS_RESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=727,
-  serialized_end=866,
+  serialized_start=748,
+  serialized_end=887,
 )
 
 DESCRIPTOR.message_types_by_name['local_params'] = _LOCAL_PARAMS
@@ -582,8 +589,8 @@ _AGGREGATESERVERSERVICE = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=869,
-  serialized_end=1234,
+  serialized_start=890,
+  serialized_end=1255,
   methods=[
   _descriptor.MethodDescriptor(
     name='sum_encrypted',
