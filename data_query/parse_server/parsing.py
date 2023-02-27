@@ -108,28 +108,40 @@ def get_encryped_total_frequency(hash_code, db_stub_list,pk_ctx):
 
 
 def get_the_highest_hash(set_once: Set[int],key_stub,db_stub_list,pk_ctx):
+
     encryped_value: List[object] = []
     orderd_hash: List[int] = []
     for hash_code in set_once:
         orderd_hash.append(hash_code)
         encryped_value.append(get_encryped_total_frequency(hash_code,db_stub_list,pk_ctx))
 
-    max_enc_vector = encryped_value[0]
+    max_enc_vector = [encryped_value[0]]
     for enc_vector in encryped_value[1:]:
-        sub_diff = max_enc_vector - enc_vector
+        sub_diff = max_enc_vector[0] - enc_vector
+        nege_sub_diff = enc_vector - max_enc_vector[0]
         sub_serialize_msg = sub_diff.serialize()
+        nege_sub_serialize_msg = nege_sub_diff.serialize()
         request = tenseal_key_server_pb2.vector(vector_msg=sub_serialize_msg)
+        nege_request = tenseal_key_server_pb2.vector(vector_msg=nege_sub_serialize_msg)
         response = key_stub.boolean_positive(request)
+        nege_response = key_stub.boolean_positive(nege_request)
         comparison_flag = response.bool_msg
-        if not comparison_flag:
+        nege_comparison_flag = nege_response.bool_msg
+        if not comparison_flag and nege_comparison_flag:
             max_enc_vector = enc_vector
+        elif not comparison_flag and not nege_comparison_flag:
+            max_enc_vector.append(enc_vector)
 
-    for i in range(len(encryped_value)):
-        if max_enc_vector == encryped_value[i]:
-            return orderd_hash[i]
+    list_hash = []
+
+    for j in range(len(max_enc_vector)):
+        for i in range(len(encryped_value)):
+            if max_enc_vector[j] == encryped_value[i]:
+                list_hash.append(orderd_hash[i])
+
+    return list_hash
 
 def get_enc_using_hash(hash_code,db_stub_list):
-
     for stub in db_stub_list:
         query_request = tenseal_data_server_pb2.query_mode_using_hash_msg(hash=hash_code)
         response = stub.query_mode_using_hash(query_request)
@@ -161,11 +173,14 @@ def get_total_var_mode(request, db_stub_list, pk_ctx, key_stub):
 
     print(set_all,set_once)
 
-    highest_hash = get_the_highest_hash(set_once,key_stub,db_stub_list,pk_ctx)
+    highest_hash_list = get_the_highest_hash(set_once,key_stub,db_stub_list,pk_ctx)
 
-    return ts.ckks_vector_from(pk_ctx,get_enc_using_hash(highest_hash,db_stub_list))
+    encryped_vector_list = []
 
+    for hash_code in highest_hash_list:
+        encryped_vector_list.append(ts.ckks_vector_from(pk_ctx,get_enc_using_hash(hash_code,db_stub_list)))
 
+    return encryped_vector_list
 
 def get_total_var_median(request, db_stub_list, pk_ctx, key_stub):
     max = get_total_max(request, db_stub_list, pk_ctx, key_stub)
