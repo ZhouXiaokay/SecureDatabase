@@ -68,7 +68,7 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         self.total_psi_rounds = 1000000
         self.current_psi_round = 0
         self.initial_participators = []
-        self.waiting_for_participators_status = False
+        self.waiting_for_initial_participators_status = False
         self.waiting_for_initialize = False
         self.group_index_list = []
         self.psi_cid_length_dict = {}
@@ -98,7 +98,7 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         self.total_psi_rounds = 1000000
         self.current_psi_round = 0
         self.initial_participators = []
-        self.waiting_for_participators_status = False
+        self.waiting_for_initial_participators_status = False
         self.waiting_for_initialize = False
         self.group_index_list = []
         self.psi_cid_length_dict = {}
@@ -459,16 +459,20 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         cid = request.cid
         qid = request.qid
         data_server_status = request.data_server_status
+        data_server_psi_round = int(data_server_status[2])
         data_length = request.data_length
         # print(cid, data_length)
         carry_psi_final_result = request.carry_psi_final_result
         psi_final_result = request.psi_final_result
         time.sleep(0.1)
 
-        assert self.current_psi_round == int(data_server_status[2])
+        assert self.current_psi_round == data_server_psi_round
+        if (data_server_psi_round == 0) and self.waiting_for_initial_participators_status:
+            raise RuntimeError(f"PSI service already in use. (Client-ID {cid}).")
+
         if self.current_psi_round == 0:
             first_request_cid = None
-            if (int(data_server_status[2]) == 0) and (cid not in self.psi_cid_list):
+            if (data_server_psi_round == 0) and (cid not in self.psi_cid_list):
                 if len(self.psi_cid_list) == 0:
                     first_request_cid = cid
 
@@ -480,13 +484,15 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
                 self.psi_store_psi_result_list.append(bool(data_server_status[1]))
                 self.psi_add_info_queue.pop(0)
             else:
-                raise ValueError(f"DataServer {cid} already requested.")
+                raise RuntimeError(f"DataServer {cid} already requested.")
 
             # Waiting 8s for other participators to join
             if cid == first_request_cid:
                 time.sleep(8)
-                self.waiting_for_participators_status = True
-            while not self.waiting_for_participators_status:
+                self.waiting_for_initial_participators_status = True
+            while not self.waiting_for_initial_participators_status:
+                time.sleep(self.sleep_time)
+            while self.waiting_for_initial_participators_status and len(self.psi_add_info_queue) != 0:
                 time.sleep(self.sleep_time)
 
             assert len(self.psi_cid_list) == len(self.psi_IP_list) == len(self.psi_store_psi_result_list)
