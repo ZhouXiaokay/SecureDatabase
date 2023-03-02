@@ -8,8 +8,8 @@ import torch.optim as optim
 import torch
 from transmission.utils import flatten_tensors
 import math
-from distutils.util import strtobool
-
+from array import array
+from collections import deque
 
 class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceServicer):
 
@@ -57,11 +57,11 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
 
         # for rsa psi
         # self.regular_mode = True
-        self.optim_mode = False
+        self.optim_mode = True
         self.num_psi_request = 0
         self.num_psi_response = 0
-        self.psi_add_info_queue = []
-        self.psi_cid_list = []
+        self.psi_add_info_queue = deque()
+        self.psi_cid_list = array('I')
         self.psi_IP_list = []
         self.psi_store_psi_result_list = []
         self.num_psi_participators = 0
@@ -70,9 +70,9 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         self.initial_participators = []
         self.waiting_for_initial_participators_status = False
         self.waiting_for_initialize = False
-        self.group_index_list = []
+        self.group_index_list = array('i')
         self.psi_cid_length_dict = {}
-        self.psi_comm_IP_index = []
+        self.psi_comm_IP_index = array('i')
         self.psi_update_status = False
         self.psi_check_result_count = 0
         self.psi_final_result_status = False
@@ -87,11 +87,11 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
 
     def __reset_all_psi_status(self):
         # self.regular_mode = True
-        self.optim_mode = False
+        # self.optim_mode = False
         self.num_psi_request = 0
         self.num_psi_response = 0
-        self.psi_add_info_queue = []
-        self.psi_cid_list = []
+        self.psi_add_info_queue = deque()
+        self.psi_cid_list = array('I')
         self.psi_IP_list = []
         self.psi_store_psi_result_list = []
         self.num_psi_participators = 0
@@ -100,9 +100,9 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         self.initial_participators = []
         self.waiting_for_initial_participators_status = False
         self.waiting_for_initialize = False
-        self.group_index_list = []
+        self.group_index_list = array('i')
         self.psi_cid_length_dict = {}
-        self.psi_comm_IP_index = []
+        self.psi_comm_IP_index = array('i')
         self.psi_update_status = False
         self.psi_check_result_count = 0
         self.psi_final_result_status = False
@@ -370,15 +370,15 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
             self.total_psi_rounds = max(int(math.log2(self.num_psi_participators - 1)), 0) + 1
 
     def __update_group_index_list_regular(self):
-        self.group_index_list.clear()
+        self.group_index_list = array('i')
         for i in range(len(self.psi_cid_list)):
             self.group_index_list.append(int((i // math.pow(2, self.current_psi_round))))
 
     def __update_group_index_list_and_store_psi_result_status_and_psi_comm_IP_optim(self):
         # self.group_index_list.clear()
-        self.group_index_list = [-1 for _ in range(self.num_psi_participators)]
+        self.group_index_list = array('i', (-1 for _ in range(self.num_psi_participators)))
         self.psi_store_psi_result_list = [False for _ in range(self.num_psi_participators)]
-        comm_IP_index_list = [-1 for _ in range(self.num_psi_participators)]
+        comm_IP_index_list = array('i', (-1 for _ in range(self.num_psi_participators)))
 
         sorted_list_base_on_length = sorted(self.psi_cid_length_dict.items(),
                                             key=lambda x: x[1], reverse=True)
@@ -415,7 +415,7 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         self.psi_comm_IP_index = comm_IP_index_list
 
     def __get_psi_comm_IP(self):
-        comm_IP_index_list = [-1 for _ in range(self.num_psi_participators)]
+        comm_IP_index_list = array('i', (-1 for _ in range(self.num_psi_participators)))
         i = 0
         while (i < self.num_psi_participators):
             j = i + 1
@@ -482,7 +482,7 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
                 self.psi_cid_list.append(cid)
                 self.psi_IP_list.append(data_server_status[0])
                 self.psi_store_psi_result_list.append(bool(data_server_status[1]))
-                self.psi_add_info_queue.pop(0)
+                self.psi_add_info_queue.popleft()
             else:
                 raise RuntimeError(f"DataServer {cid} already requested.")
 
