@@ -30,6 +30,14 @@ servers:
     host: ${defs.host}
     name: '3'
     port: '50053'
+  data_server_4:
+    host: ${defs.host}
+    name: '4'
+    port: '50054'
+  data_server_5:
+    host: ${defs.host}
+    name: '5'
+    port: '50055'
 
 clients:
   client_1:

@@ -24,6 +24,21 @@ class DatabaseServerServiceStub(object):
                 request_serializer=tenseal__data__server__pb2.query_msg_parse_server.SerializeToString,
                 response_deserializer=tenseal__data__server__pb2.enc_query_result.FromString,
                 )
+        self.send_rsa_public_key = channel.unary_unary(
+                '/DatabaseServerService/send_rsa_public_key',
+                request_serializer=tenseal__data__server__pb2.rsa_public_key_request.SerializeToString,
+                response_deserializer=tenseal__data__server__pb2.rsa_public_key_response.FromString,
+                )
+        self.send_client_enc_ids = channel.unary_unary(
+                '/DatabaseServerService/send_client_enc_ids',
+                request_serializer=tenseal__data__server__pb2.send_client_enc_ids_request.SerializeToString,
+                response_deserializer=tenseal__data__server__pb2.send_client_enc_ids_response.FromString,
+                )
+        self.send_server_enc_ids_and_client_dec_ids = channel.unary_unary(
+                '/DatabaseServerService/send_server_enc_ids_and_client_dec_ids',
+                request_serializer=tenseal__data__server__pb2.send_server_enc_ids_and_client_dec_ids_request.SerializeToString,
+                response_deserializer=tenseal__data__server__pb2.send_server_enc_ids_and_client_dec_ids_response.FromString,
+                )
 
 
 class DatabaseServerServiceServicer(object):
@@ -41,6 +56,24 @@ class DatabaseServerServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def send_rsa_public_key(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def send_client_enc_ids(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def send_server_enc_ids_and_client_dec_ids(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_DatabaseServerServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -53,6 +86,21 @@ def add_DatabaseServerServiceServicer_to_server(servicer, server):
                     servicer.noise_query_operation,
                     request_deserializer=tenseal__data__server__pb2.query_msg_parse_server.FromString,
                     response_serializer=tenseal__data__server__pb2.enc_query_result.SerializeToString,
+            ),
+            'send_rsa_public_key': grpc.unary_unary_rpc_method_handler(
+                    servicer.send_rsa_public_key,
+                    request_deserializer=tenseal__data__server__pb2.rsa_public_key_request.FromString,
+                    response_serializer=tenseal__data__server__pb2.rsa_public_key_response.SerializeToString,
+            ),
+            'send_client_enc_ids': grpc.unary_unary_rpc_method_handler(
+                    servicer.send_client_enc_ids,
+                    request_deserializer=tenseal__data__server__pb2.send_client_enc_ids_request.FromString,
+                    response_serializer=tenseal__data__server__pb2.send_client_enc_ids_response.SerializeToString,
+            ),
+            'send_server_enc_ids_and_client_dec_ids': grpc.unary_unary_rpc_method_handler(
+                    servicer.send_server_enc_ids_and_client_dec_ids,
+                    request_deserializer=tenseal__data__server__pb2.send_server_enc_ids_and_client_dec_ids_request.FromString,
+                    response_serializer=tenseal__data__server__pb2.send_server_enc_ids_and_client_dec_ids_response.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -95,5 +143,56 @@ class DatabaseServerService(object):
         return grpc.experimental.unary_unary(request, target, '/DatabaseServerService/noise_query_operation',
             tenseal__data__server__pb2.query_msg_parse_server.SerializeToString,
             tenseal__data__server__pb2.enc_query_result.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def send_rsa_public_key(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/DatabaseServerService/send_rsa_public_key',
+            tenseal__data__server__pb2.rsa_public_key_request.SerializeToString,
+            tenseal__data__server__pb2.rsa_public_key_response.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def send_client_enc_ids(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/DatabaseServerService/send_client_enc_ids',
+            tenseal__data__server__pb2.send_client_enc_ids_request.SerializeToString,
+            tenseal__data__server__pb2.send_client_enc_ids_response.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def send_server_enc_ids_and_client_dec_ids(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/DatabaseServerService/send_server_enc_ids_and_client_dec_ids',
+            tenseal__data__server__pb2.send_server_enc_ids_and_client_dec_ids_request.SerializeToString,
+            tenseal__data__server__pb2.send_server_enc_ids_and_client_dec_ids_response.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
