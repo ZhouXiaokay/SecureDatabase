@@ -42,6 +42,6 @@ database:
   host: ${defs.host}
   port: '3306'
   user: 'root'
-  password: '12345678'
+  password: '1'
   database: 'mysql'
   charset: utf8mb4

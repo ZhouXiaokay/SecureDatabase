@@ -183,8 +183,7 @@ def get_total_var_mode(request, db_stub_list, pk_ctx, key_stub):
     return encryped_vector_list
 
 def get_total_var_median(request, db_stub_list, pk_ctx, key_stub):
-    max = get_total_max(request, db_stub_list, pk_ctx, key_stub)
-    min = get_total_min(request, db_stub_list, pk_ctx, key_stub)
+
     std_min = 0
     std_max = 1
     std_mid = (std_max+std_min)/2
@@ -192,13 +191,16 @@ def get_total_var_median(request, db_stub_list, pk_ctx, key_stub):
     std = get_total_std(request, db_stub_list, pk_ctx, key_stub)
     avg = get_total_avg(request, db_stub_list, pk_ctx, key_stub)
 
+    max_3sigma = avg + 3 * std
+    min_3sigma = avg - 3 * std
+
     for i in range(10):
         std_min = (std_max+std_min)/2
         temp_mid = std_mid * max + (1 - std_mid) * min
         le_list = []
         g_list = []
         for stub in db_stub_list:
-            query_request = tenseal_data_server_pb2.query_median_posi_msg(cid = request.cid, qid = request.qid, table_name = request.table_name, column_name = request.column_name, median = temp_mid.serialize(), std = std.serialize(), avg = avg.serialize())
+            query_request = tenseal_data_server_pb2.query_median_posi_msg(cid = request.cid, qid = request.qid, table_name = request.table_name, column_name = request.column_name, median = temp_mid.serialize(), avg = avg.serialize(), std = std.serialize())
             response = stub.query_median_posi(query_request)
             le = ts.ckks_vector_from(pk_ctx, response.less_e)
             g = ts.ckks_vector_from(pk_ctx, response.greater)
@@ -219,9 +221,7 @@ def get_total_var_median(request, db_stub_list, pk_ctx, key_stub):
             std_min = std_mid
 
     std_mid = (std_max + std_min) / 2
-    return std_mid * max + (1 - std_mid) * min
-
-
+    return std_mid * min_3sigma + (1 - std_mid) * min_3sigma
 
 def process_total_request(request, pk_ctx, address_dict, options):
     db_stub_list = get_all_db_stub(address_dict, options)
