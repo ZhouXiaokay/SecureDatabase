@@ -1,6 +1,6 @@
-drop database database_1;
-drop database database_2;
-drop database database_3;
+drop database if exists database_1;
+drop database if exists database_2;
+drop database if exists database_3;
 
 create database database_1;
 create database database_2;
