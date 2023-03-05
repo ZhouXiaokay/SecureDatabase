@@ -466,7 +466,8 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         psi_final_result = request.psi_final_result
         time.sleep(0.1)
 
-        assert self.current_psi_round == data_server_psi_round
+        assert self.current_psi_round == data_server_psi_round, \
+            "PSI current round don't match."
         if (data_server_psi_round == 0) and self.waiting_for_initial_participators_status:
             raise RuntimeError(f"PSI service already in use. (Client-ID {cid}).")
 
@@ -492,10 +493,11 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
                 self.waiting_for_initial_participators_status = True
             while not self.waiting_for_initial_participators_status:
                 time.sleep(self.sleep_time)
-            while self.waiting_for_initial_participators_status and len(self.psi_add_info_queue) != 0:
+            while len(self.psi_add_info_queue) != 0 and self.waiting_for_initial_participators_status:
                 time.sleep(self.sleep_time)
 
-            assert len(self.psi_cid_list) == len(self.psi_IP_list) == len(self.psi_store_psi_result_list)
+            assert len(self.psi_cid_list) == len(self.psi_IP_list) == len(self.psi_store_psi_result_list), \
+                "PSI initialization failed."
 
             if cid == first_request_cid:
                 self.num_psi_participators = len(self.psi_cid_list)
