@@ -132,6 +132,20 @@ def update_data_server_status(data_server_status, store_psi_result, current_roun
     data_server_status[1] = store_psi_result
     data_server_status[2] = current_round
 
+def get_he_context(he_context_path):
+    with open(he_context_path, "rb") as f:
+        he_context_bytes = f.read()
+        he_context = ts.context_from(he_context_bytes)
+
+    return he_context
+
+def generate_final_psi_result(database_server, he_context_path):
+    he_context = get_he_context(he_context_path)
+    if len(database_server.psi_result) == 0:
+        database_server.psi_result = encode_empty_psi_result()
+    psi_final_result = ts.ckks_vector(he_context, database_server.psi_result)
+
+    return psi_final_result
 
 def get_agg_server_status(data_server_status, num_of_ids, cid, qid, psi_result_status, options, cfg):
     print(data_server_status)
@@ -294,26 +308,23 @@ def rsa_double_psi_encrypted(id_list, database_server, cid, qid, agg_server_stat
                                                                database_server.rsa_pk,
                                                                database_server.server_hash_enc_ids)
             # print(database_server.psi_result)
-            if current_round == total_rounds:
-                he_context_bytes = open(he_context_path, "rb").read()
-                he_context = ts.context_from(he_context_bytes)
-                if len(database_server.psi_result) == 0:
-                    database_server.psi_result = encode_empty_psi_result()
-                psi_final_result = ts.ckks_vector(he_context, database_server.psi_result)
+            if (current_round == total_rounds) or \
+                    ((len(database_server.psi_result) == 0) and (carry_final_psi_result == False)):
+                psi_final_result = generate_final_psi_result(database_server, he_context_path)
                 carry_final_psi_result = True
 
-            if (len(database_server.psi_result) == 0) and (carry_final_psi_result == False):
-                he_context_bytes = open(he_context_path, "rb").read()
-                he_context = ts.context_from(he_context_bytes)
-                database_server.psi_result = encode_empty_psi_result()
-                psi_final_result = ts.ckks_vector(he_context, database_server.psi_result)
-                carry_final_psi_result = True
+            # if (len(database_server.psi_result) == 0) and (carry_final_psi_result == False):
+            #     generate_final_psi_result(database_server, he_context_path)
+            #     carry_final_psi_result = True
 
         else:
             database_server.psi_result = None
     else:
         if store_psi_result == True:
             database_server.psi_result = id_list
+            if current_round == total_rounds:
+                psi_final_result = generate_final_psi_result(database_server, he_context_path)
+                carry_final_psi_result = True
         else:
             pass
     # print("Double PSI process done.")

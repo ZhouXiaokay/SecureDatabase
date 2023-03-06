@@ -42,7 +42,7 @@ def launch_data_server(host, port, delay, name, cfg):
     print("monitor server_2 service start... ")
 
     # ID Psi Debug
-    id_list = [x for x in range(1, 2000)]
+    id_list = [x for x in range(7, 20000)]
     # intersection_id_list = id_psi_unencrypted(id_list, database_server, options, 2, 2999, 29999, cfg)
     # print(intersection_id_list)
 
