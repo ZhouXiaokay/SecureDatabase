@@ -73,8 +73,6 @@ class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer)
                 self.n_th_cache[i] = query_result[i]
                 self.hash_cache[hash(query_result[i][0] + 0.01)] = query_result[i]
 
-        print(type(hash(1)))
-
         available = False
 
         if n in self.n_th_cache:
@@ -84,6 +82,9 @@ class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer)
         else:
             hash_value = 0
             query_result = [0]
+
+        if n > len(self.n_th_cache):
+            available = False
 
         plain_vector = ts.plain_tensor(query_result)
         enc_vector = ts.ckks_vector(self.pk_ctx, plain_vector)
@@ -110,19 +111,32 @@ class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer)
 
     def query_mode_using_hash(self, request, context):
         hash_ = request.hash
-        available = False
+        import pickle
+        hash_ = pickle.loads(hash_)
 
-        if hash_ in self.hash_cache:
-            available = True
-            query_result = [self.hash_cache[hash_][0]]
-        else:
-            query_result = [0]
+        # init available_list with False
+        available_list = [False] * len(hash_)
 
-        plain_vector = ts.plain_tensor(query_result)
-        enc_vector = ts.ckks_vector(self.pk_ctx, plain_vector)
-        serialize_msg = enc_vector.serialize()
+        query_result = [0] * len(hash_)
 
-        return tenseal_data_server_pb2.query_mode_using_hash_result(mode = serialize_msg,available = available)
+        print("query_mode_using_hash: ", hash_)
+
+        for i in range(len(hash_)):
+            if hash_[i] in self.hash_cache:
+                available_list[i] = True
+                query_result[i] = self.hash_cache[hash_[i]][0]
+
+        result_list = []
+
+        print("query_mode_using_hash: ", query_result)
+
+        for i in range(len(query_result)):
+            plain_vector = ts.plain_tensor([query_result[i]])
+            enc_vector = ts.ckks_vector(self.pk_ctx, plain_vector)
+            serialize_msg = enc_vector.serialize()
+            result_list.append(serialize_msg)
+
+        return tenseal_data_server_pb2.query_mode_using_hash_result(mode = pickle.dumps(result_list),available = pickle.dumps(available_list))
 
     def query_median_posi(self, request, context):
         cid = request.cid
@@ -149,6 +163,7 @@ class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer)
 
         g_sql = "SELECT COUNT(*) FROM {0} WHERE {1} > {2} AND {1} <= {3}".format("database_" + self.name + "." +table_name, column_name, median, sigma3_right)
         g_result = get_query_results(self.name, self.cfg, g_sql)
+        print("le_result: ", le_result, " g_result: ", g_result,median)
         le_result = ts.plain_tensor(le_result)
         g_result = ts.plain_tensor(g_result)
         le_enc_vector = ts.ckks_vector(self.pk_ctx, le_result)

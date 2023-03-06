@@ -64,10 +64,9 @@ def get_n_th_list(request, db_stub_list, pk_ctx, n):
         enc_vector = ts.ckks_vector_from(pk_ctx, n_th_query_response.result)
         hash_code = n_th_query_response.hash
         available = n_th_query_response.available
+        print("hash_code:", hash_code, "available:", available)
         if available:
             n_th_list.append((hash_code,enc_vector))
-        else:
-            n_th_list.append(None)
     return n_th_list
 
 from typing import Tuple, Set
@@ -76,11 +75,13 @@ from typing import List
 def is_n_th_enough(res_list: List[List[Tuple[int,object]]]):
     set_all: List[Set[int]] = []
 
-    for res in range(len(res_list)):
+    data_server_num = len(res_list[0])
+
+    for index in range(data_server_num):
         set_all.append(set())
-        for item in res_list[res]:
-            if item is not None:
-                set_all[res].add(item[0])
+        for res in res_list:
+            if res[index] is not None:
+                set_all[index].add(res[index][0])
 
     temp_and = set_all[0]
     temp_or = set_all[0]
@@ -115,38 +116,48 @@ def get_the_highest_hash(set_once: Set[int],key_stub,db_stub_list,pk_ctx):
         orderd_hash.append(hash_code)
         encryped_value.append(get_encryped_total_frequency(hash_code,db_stub_list,pk_ctx))
 
-    max_enc_vector = [encryped_value[0]]
+    max_enc_vector_list = [encryped_value[0]]
     for enc_vector in encryped_value[1:]:
-        sub_diff = max_enc_vector[0] - enc_vector
-        nege_sub_diff = enc_vector - max_enc_vector[0]
+        sub_diff = max_enc_vector_list[0] - enc_vector
         sub_serialize_msg = sub_diff.serialize()
-        nege_sub_serialize_msg = nege_sub_diff.serialize()
         request = tenseal_key_server_pb2.vector(vector_msg=sub_serialize_msg)
-        nege_request = tenseal_key_server_pb2.vector(vector_msg=nege_sub_serialize_msg)
-        response = key_stub.boolean_positive(request)
-        nege_response = key_stub.boolean_positive(nege_request)
+        response = key_stub.boolean_positive_proxi(request)
+        equal = key_stub.boolean_equal_proxi(request)
         comparison_flag = response.bool_msg
-        nege_comparison_flag = nege_response.bool_msg
-        if not comparison_flag and nege_comparison_flag:
-            max_enc_vector = enc_vector
-        elif not comparison_flag and not nege_comparison_flag:
-            max_enc_vector.append(enc_vector)
+        equal_flag = equal.bool_msg
+        if not equal_flag:
+            if comparison_flag:
+                pass
+            else:
+                max_enc_vector_list = [enc_vector]
+        else:
+            max_enc_vector_list.append(enc_vector)
 
     list_hash = []
 
-    for j in range(len(max_enc_vector)):
+    for j in range(len(max_enc_vector_list)):
         for i in range(len(encryped_value)):
-            if max_enc_vector[j] == encryped_value[i]:
+            if max_enc_vector_list[j] == encryped_value[i]:
                 list_hash.append(orderd_hash[i])
 
     return list_hash
 
 def get_enc_using_hash(hash_code,db_stub_list):
+    result_set = set()
+    import pickle
+    print("hash_code:", hash_code)
+    hash_code = pickle.dumps(hash_code)
     for stub in db_stub_list:
+        # serialize the vector into bytes
         query_request = tenseal_data_server_pb2.query_mode_using_hash_msg(hash=hash_code)
         response = stub.query_mode_using_hash(query_request)
-        if response.available:
-            return response.mode
+        import pickle
+        available = pickle.loads(response.available)
+        mode = pickle.loads(response.mode)
+        for i in range(len(available)):
+            if available[i]:
+                result_set.add(mode[i])
+    return result_set
 
 def get_total_var_mode(request, db_stub_list, pk_ctx, key_stub):
     from typing import Set
@@ -154,33 +165,47 @@ def get_total_var_mode(request, db_stub_list, pk_ctx, key_stub):
     set_once: Set[int] = set()
     res_list: List[List[Tuple[int,object]]] = []
     i = 0
-    while len(set_all) != 1:
-        if i == 0:
-            request.op = "VAR_MODE_CLEAN"
-        else:
-            request.op = "VAR_MODE"
-        i+= 1
-        n_th_list = get_n_th_list(request, db_stub_list, pk_ctx, i-1)
+    k = 2
+    out = False
+    while True:
+        while len(set_all) < k:
+            if i == 0:
+                request.op = "VAR_MODE_CLEAN"
+            else:
+                request.op = "VAR_MODE"
+            i+= 1
+            n_th_list = get_n_th_list(request, db_stub_list, pk_ctx, i-1)
 
-        if n_th_list is None:
-            # in case of the data is not enough
-            highest_hash = get_the_highest_hash(set_once,key_stub,db_stub_list,pk_ctx)
-            return ts.ckks_vector_from(pk_ctx,get_enc_using_hash(highest_hash,db_stub_list))
+            if len(n_th_list) == 0:
+                out = True
+                break
 
-        res_list.append(n_th_list)
+            res_list.append(n_th_list)
 
-        set_all,set_once = is_n_th_enough(res_list)
+            set_all,set_once = is_n_th_enough(res_list)
+        k+=1
 
-    print(set_all,set_once)
+        print(set_all,set_once)
+        highest_hash_list = get_the_highest_hash(set_once,key_stub,db_stub_list,pk_ctx)
+        if len(highest_hash_list) != k:
+            break
+        if out: break
+    print("highest_hash_list:", highest_hash_list)
+    enc_list = get_enc_using_hash(highest_hash_list,db_stub_list)
+    res_list = []
+    for enc in enc_list:
+        res_list.append(ts.ckks_vector_from(pk_ctx,enc))
+    # change to plain vector
+    print("res_list",res_list)
 
-    highest_hash_list = get_the_highest_hash(set_once,key_stub,db_stub_list,pk_ctx)
+    res_bytes_list = []
+    for res in res_list:
+        res_bytes_list.append(res.serialize())
 
-    encryped_vector_list = []
-
-    for hash_code in highest_hash_list:
-        encryped_vector_list.append(ts.ckks_vector_from(pk_ctx,get_enc_using_hash(hash_code,db_stub_list)))
-
-    return encryped_vector_list
+    request_ = tenseal_key_server_pb2.vector(vector_msg=pickle.dumps(res_bytes_list))
+    response = key_stub.unpack_enc_vector(request_)
+    enc_vector = ts.ckks_vector_from(pk_ctx,response.vector_msg)
+    return enc_vector
 
 def get_total_var_median(request, db_stub_list, pk_ctx, key_stub):
 
@@ -195,8 +220,9 @@ def get_total_var_median(request, db_stub_list, pk_ctx, key_stub):
     min_3sigma = avg - 3 * std
 
     for i in range(10):
-        std_min = (std_max+std_min)/2
-        temp_mid = std_mid * max + (1 - std_mid) * min
+        std_mid = (std_max+std_min)/2
+
+        temp_mid = std_mid * max_3sigma + (1 - std_mid) * min_3sigma
         le_list = []
         g_list = []
         for stub in db_stub_list:
@@ -215,13 +241,16 @@ def get_total_var_median(request, db_stub_list, pk_ctx, key_stub):
         requests = tenseal_key_server_pb2.vector(vector_msg=sub_serialize_msg)
         response = key_stub.boolean_positive(requests)
         comparison_flag = response.bool_msg
+        print("std_min:",std_min,"std_max:",std_max,"std_mid:",std_mid,"comparison_flag:",comparison_flag)
         if comparison_flag:
             std_max = std_mid
         else:
             std_min = std_mid
 
     std_mid = (std_max + std_min) / 2
-    return std_mid * min_3sigma + (1 - std_mid) * min_3sigma
+    print("std_mid:", std_mid)
+    return std_mid * max_3sigma + (1 - std_mid) * min_3sigma
+    # return std_mid * min_3sigma + (1 - std_mid) * max_3sigma
 
 def process_total_request(request, pk_ctx, address_dict, options):
     db_stub_list = get_all_db_stub(address_dict, options)

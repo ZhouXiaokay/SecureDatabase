@@ -40,12 +40,12 @@ message n_th_query_result {
 }
 
 message query_mode_using_hash_msg {
-  int64 hash = 1;
+  bytes hash = 1;
 }
 
 message query_mode_using_hash_result {
   bytes mode = 1;
-  bool available = 2;
+  bytes available = 2;
 }
 
 message query_median_posi_msg {

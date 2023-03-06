@@ -61,6 +61,8 @@ class KeyServer(tenseal_key_server_pb2_grpc.KeyServerServiceServicer):
 
         return response
 
+
+
     def generate_noise(self, request, context):
         qid = request.qid
         cid = request.cid
@@ -110,5 +112,43 @@ class KeyServer(tenseal_key_server_pb2_grpc.KeyServerServiceServicer):
         div_enc_vector = ts.ckks_vector(self.sk_ctx, div_plain_vector)
         sqrt_serialized_msg = div_enc_vector.serialize()
         response = tenseal_key_server_pb2.vector(vector_msg=sqrt_serialized_msg)
+
+        return response
+
+    def unpack_enc_vector(self, request, context):
+        enc_serialize_msg = request.vector_msg
+        import pickle
+        enc_vector = pickle.loads(enc_serialize_msg)
+        unpacked_enc_vector = []
+        for i in range(len(enc_vector)):
+            unpacked_enc_vector.append(ts.ckks_vector_from(self.sk_ctx, enc_vector[i]).decrypt()[0])
+        plain_vector = ts.plain_tensor(unpacked_enc_vector)
+        enc_vector = ts.ckks_vector(self.sk_ctx, plain_vector)
+        sqrt_serialized_msg = enc_vector.serialize()
+        response = tenseal_key_server_pb2.vector(vector_msg=sqrt_serialized_msg)
+        return response
+
+    def boolean_positive_proxi(self, request, context):
+        enc_serialize_msg = request.vector_msg
+        enc_vector = ts.ckks_vector_from(self.sk_ctx, enc_serialize_msg)
+        dec_vector = enc_vector.decrypt()
+        flag = False
+        if dec_vector[0] >= 0 or abs(dec_vector[0]) <= 1e-8: # close to zero
+            flag = True
+
+        response = tenseal_key_server_pb2.boolean_result(bool_msg=flag)
+
+        return response
+
+    def boolean_equal_proxi(self, request, context):
+        enc_serialize_msg = request.vector_msg
+        enc_vector = ts.ckks_vector_from(self.sk_ctx, enc_serialize_msg)
+        dec_vector = enc_vector.decrypt()
+        flag = False
+        print(dec_vector[0])
+        if abs(dec_vector[0]) <= 1e-8:
+            flag = True
+
+        response = tenseal_key_server_pb2.boolean_result(bool_msg=flag)
 
         return response

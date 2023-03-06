@@ -48,7 +48,9 @@ service KeyServerService {
   rpc get_noise(get_noise_request) returns(noise);
   //keyServer provides the following operations: division,sqrt,boolean positive
   rpc boolean_positive(vector) returns(boolean_result);
+  rpc boolean_positive_proxi(vector) returns(boolean_result);
+  rpc boolean_equal_proxi(vector) returns(boolean_result);
   rpc sqrt_enc_vector(vector) returns(vector);
   rpc div_enc_vector(div_vectors) returns(vector);
-
+  rpc unpack_enc_vector(vector) returns(vector);
 }
