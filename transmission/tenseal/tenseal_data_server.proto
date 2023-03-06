@@ -15,7 +15,7 @@ message enc_query_result {
 message rsa_public_key_request{
   int32 cid = 1;
   int32 qid = 2;
-  string pk_N = 3;
+  bytes pk_N = 3;
   int32 pk_e = 4;
 }
 

@@ -189,8 +189,8 @@ class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer)
             self.client_dec_ids.append(int(dec_id))
         self.client_dec_ids_comm_status = True
 
-        for hash_enc_id in server_hash_enc_ids:
-            self.server_hash_enc_ids.append(int(hash_enc_id))
+        # for hash_enc_id in server_hash_enc_ids:
+        self.server_hash_enc_ids = server_hash_enc_ids
         self.server_hash_enc_ids_comm_status = True
 
         response = tenseal_data_server_pb2.send_server_enc_ids_and_client_dec_ids_response(

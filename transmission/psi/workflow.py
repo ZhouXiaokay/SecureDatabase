@@ -6,7 +6,7 @@ import transmission.tenseal.tenseal_key_server_pb2 as tenseal_key_server_pb2
 import transmission.tenseal.tenseal_key_server_pb2_grpc as tenseal_key_server_pb2_grpc
 import transmission.tenseal.tenseal_aggregate_server_pb2 as tenseal_aggregate_server_pb2
 import transmission.tenseal.tenseal_aggregate_server_pb2_grpc as tenseal_aggregate_server_pb2_grpc
-from transmission.psi.utils import get_agg_server_status, init_data_server_status, \
+from transmission.psi.utils import timer, get_agg_server_status, init_data_server_status, \
     get_final_psi_result, rsa_double_psi_encrypted
 
 
@@ -54,10 +54,11 @@ def id_psi_unencrypted(id_list, database_server, options, cid, key_server_qid, a
     return intersection_list
 
 
+@timer
 def rsa_psi(database_server, id_list, local_IP, cid, qid, he_context_path, options, cfg):
-    start_time = time.time()
+    # start_time = time.time()
     psi_id_list = id_list
-    psi_result_status = [False, bytes("None", 'utf-8')]
+    psi_result_status = [False, None]
     init_data_server_status(database_server, local_IP)
     while True:
         if psi_id_list != None:
@@ -74,8 +75,8 @@ def rsa_psi(database_server, id_list, local_IP, cid, qid, he_context_path, optio
             psi_result = get_final_psi_result(psi_dec_result)
             database_server.reset_all_rsa_psi_status()
             print("RSA-PSI Finished.")
-            end_time = time.time()
-            print(f"Total time: {end_time - start_time - 8}")
+            # end_time = time.time()
+            # print(f"Total time: {end_time - start_time - 8}")
             return psi_result
 
         psi_id_list, psi_result_status = rsa_double_psi_encrypted(psi_id_list, database_server, cid, qid,

@@ -14,6 +14,16 @@ import transmission.tenseal.tenseal_aggregate_server_pb2 as tenseal_aggregate_se
 import transmission.tenseal.tenseal_aggregate_server_pb2_grpc as tenseal_aggregate_server_pb2_grpc
 
 
+def timer(func):
+    def wrapper(*args, **kwargs):
+        st = time.time()
+        ret = func(*args, **kwargs)
+        print(f">>>{func.__name__.upper()}'s time-cost: {time.time() - st}")
+        return ret
+
+    return wrapper
+
+
 def generate_rsa_keys():
     """
 
@@ -25,7 +35,7 @@ def generate_rsa_keys():
     return pk, sk
 
 
-def hash_number(number):
+def hash_number(number, ret_type='int'):
     """
 
     :param number: unhashed number
@@ -33,7 +43,10 @@ def hash_number(number):
     """
     hash_obj = hashlib.sha1(str(number).encode('utf-8'))
     digest_hex = hash_obj.hexdigest()
-    return int(digest_hex, 16)
+    if ret_type == 'int':
+        return int(digest_hex, 16)
+    else:
+        return digest_hex
 
 
 def encode_local_id_use_pk(local_ids, pk):
@@ -72,7 +85,7 @@ def encode_and_hash_local_ids_use_sk(local_ids, sk):
     for id in local_ids:
         hash_id = hash_number(id)
         hash_enc_id = gmpy2.powmod(hash_id, sk[1], sk[0])
-        hash_enc_ids.append(hash_number(hash_enc_id))
+        hash_enc_ids.append(hash_number(hash_enc_id, 'str'))
 
     return hash_enc_ids
 
@@ -81,7 +94,7 @@ def invert_and_hash_decode_ids(decode_ids, ra_list, pk):
     hash_ids = []
     for dec_id, ra in zip(decode_ids, ra_list):
         ra_inv = gmpy2.invert(ra, pk[0])
-        hash_ids.append(hash_number((dec_id * ra_inv) % pk[0]))
+        hash_ids.append(hash_number(((dec_id * ra_inv) % pk[0]), 'str'))
 
     return hash_ids
 
@@ -132,12 +145,14 @@ def update_data_server_status(data_server_status, store_psi_result, current_roun
     data_server_status[1] = store_psi_result
     data_server_status[2] = current_round
 
+
 def get_he_context(he_context_path):
     with open(he_context_path, "rb") as f:
         he_context_bytes = f.read()
         he_context = ts.context_from(he_context_bytes)
 
     return he_context
+
 
 def generate_final_psi_result(database_server, he_context_path):
     he_context = get_he_context(he_context_path)
@@ -147,12 +162,14 @@ def generate_final_psi_result(database_server, he_context_path):
 
     return psi_final_result
 
+
+@timer
 def get_agg_server_status(data_server_status, num_of_ids, cid, qid, psi_result_status, options, cfg):
     print(data_server_status)
     data_server_status_str = []
     carry_psi_final_result = psi_result_status[0]
     psi_final_result = psi_result_status[1].serialize() if carry_psi_final_result \
-        else psi_result_status[1]
+        else None
 
     for item in data_server_status:
         data_server_status_str.append(str(item))
@@ -188,7 +205,7 @@ def send_rsa_pk(database_server, cid, qid, comm_IP, options, cfg):
     request = tenseal_data_server_pb2.rsa_public_key_request(
         cid=cid,
         qid=qid,
-        pk_N=str(database_server.rsa_pk[0]),
+        pk_N=bytes(str(database_server.rsa_pk[0]).encode('utf-8')),
         pk_e=database_server.rsa_pk[1]
     )
     print("Sending PSI key...")
@@ -207,14 +224,14 @@ def send_client_enc_ids_use_pk(local_ids, database_server, cid, qid, comm_IP, op
     database_server.client_enc_ids_pk, database_server.client_ra_list = encode_local_id_use_pk(local_ids,
                                                                                                database_server.rsa_pk)
 
-    client_enc_ids_str = []
+    client_enc_ids_pk_str = []
     for enc_id in database_server.client_enc_ids_pk:
-        client_enc_ids_str.append(str(enc_id))
+        client_enc_ids_pk_str.append(str(enc_id))
 
     request = tenseal_data_server_pb2.send_client_enc_ids_request(
         cid=cid,
         qid=qid,
-        client_enc_ids_pk_str=client_enc_ids_str
+        client_enc_ids_pk_str=client_enc_ids_pk_str
     )
     print("Sending encrypted client ids...")
 
@@ -225,26 +242,27 @@ def send_client_enc_ids_use_pk(local_ids, database_server, cid, qid, comm_IP, op
         database_server.client_enc_ids_comm_status = True
 
 
+@timer
 def send_server_enc_id_use_sk_and_client_dec_id(local_ids, database_server, cid, qid, comm_IP, options, cfg):
     client_data_server_channel = grpc.insecure_channel(comm_IP, options=options)
     client_data_server_stub = tenseal_data_server_pb2_grpc.DatabaseServerServiceStub(client_data_server_channel)
 
-    database_server.client_dec_ids = decode_ids(database_server.client_enc_ids_pk, database_server.rsa_sk)
-    database_server.server_hash_enc_ids = encode_and_hash_local_ids_use_sk(local_ids, database_server.rsa_sk)
+    client_dec_ids = decode_ids(database_server.client_enc_ids_pk, database_server.rsa_sk)
+    server_hash_enc_ids = encode_and_hash_local_ids_use_sk(local_ids, database_server.rsa_sk)
 
     client_dec_ids_str = []
-    for dec_id in database_server.client_dec_ids:
+    for dec_id in client_dec_ids:
         client_dec_ids_str.append(str(dec_id))
 
-    server_hash_enc_ids_str = []
-    for hash_enc_id in database_server.server_hash_enc_ids:
-        server_hash_enc_ids_str.append(str(hash_enc_id))
+    # server_hash_enc_ids_bytes = []
+    # for hash_enc_id in database_server.server_hash_enc_ids:
+    #     server_hash_enc_ids_bytes.append(bytes(str(hash_enc_id).encode('utf-8')))
 
     request = tenseal_data_server_pb2.send_server_enc_ids_and_client_dec_ids_request(
         cid=cid,
         qid=qid,
         client_dec_ids=client_dec_ids_str,
-        server_hash_enc_ids=server_hash_enc_ids_str
+        server_hash_enc_ids=server_hash_enc_ids
     )
     print("Sending encrypted server ids and decrypted client ids...")
 
@@ -256,6 +274,7 @@ def send_server_enc_id_use_sk_and_client_dec_id(local_ids, database_server, cid,
         database_server.server_hash_enc_ids_comm_status = True
 
 
+@timer
 def rsa_double_psi_encrypted(id_list, database_server, cid, qid, agg_server_status,
                              he_context_path, options, cfg):
     psi_participator_num = int(agg_server_status[0])
@@ -266,7 +285,7 @@ def rsa_double_psi_encrypted(id_list, database_server, cid, qid, agg_server_stat
     store_psi_result = True if strtobool(agg_server_status[5]) else False
     comm_IP = agg_server_status[6]
     carry_final_psi_result = False
-    psi_final_result = bytes("None", 'utf-8')
+    psi_final_result = None
 
     if comm_IP != '0':
         # Stage I
