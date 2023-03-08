@@ -158,10 +158,10 @@ class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer)
         sigma3_left = avg - 3 * std
         sigma3_right = avg + 3 * std
 
-        le_sql = "SELECT COUNT(*) FROM {0} WHERE {1} <= {2} AND {1} > {3}".format("database_" + self.name + "." +table_name, column_name, median, sigma3_left)
+        le_sql = "SELECT COUNT(*) FROM {0} WHERE {1} <= {2}".format("database_" + self.name + "." +table_name, column_name, median)
         le_result = get_query_results(self.name, self.cfg, le_sql)
 
-        g_sql = "SELECT COUNT(*) FROM {0} WHERE {1} > {2} AND {1} <= {3}".format("database_" + self.name + "." +table_name, column_name, median, sigma3_right)
+        g_sql = "SELECT COUNT(*) FROM {0} WHERE {1} > {2}".format("database_" + self.name + "." +table_name, column_name, median)
         g_result = get_query_results(self.name, self.cfg, g_sql)
         print("le_result: ", le_result, " g_result: ", g_result,median)
         le_result = ts.plain_tensor(le_result)
