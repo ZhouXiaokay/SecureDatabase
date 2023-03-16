@@ -67,7 +67,7 @@ def rsa_psi(database_server, id_list, local_IP, cid, qid, he_context_path, optio
             num_of_ids = 0
         agg_server_response = get_agg_server_status(database_server.data_server_status, num_of_ids,
                                                     cid, qid, psi_result_status, options, cfg)
-        if agg_server_response[1] == True:
+        if agg_server_response[1]:
             he_context_bytes = open(he_context_path, "rb").read()
             he_context = ts.context_from(he_context_bytes)
             psi_enc_result = ts.ckks_vector_from(he_context, agg_server_response[2])

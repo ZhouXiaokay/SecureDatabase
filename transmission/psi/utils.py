@@ -99,6 +99,12 @@ def invert_and_hash_decode_ids(decode_ids, ra_list, pk):
     return hash_ids
 
 
+def invert_and_hash_decode_ids_genexps(decode_ids, ra_list, pk):
+    for hash_id_index, (dec_id, ra) in enumerate(zip(decode_ids, ra_list)):
+        ra_inv = gmpy2.invert(ra, pk[0])
+        yield hash_id_index, hash_number(((dec_id * ra_inv) % pk[0]), 'str')
+
+
 def get_psi_index(client_hash_ids, server_hash_ids):
     psi_index = []
     for i in range(len(client_hash_ids)):
@@ -110,11 +116,30 @@ def get_psi_index(client_hash_ids, server_hash_ids):
     return psi_index
 
 
+def get_psi_index_genexps(client_hash_ids_gene, server_hash_ids):
+    for hash_id_index, client_hash_id in client_hash_ids_gene:
+        for server_hash_id in server_hash_ids:
+            if client_hash_id == server_hash_id:
+                yield hash_id_index
+
+
+@timer
 def get_double_psi_result(local_ids, decode_ids, ra_list, pk, server_hash_ids):
     client_hash_ids = invert_and_hash_decode_ids(decode_ids, ra_list, pk)
     psi_index = get_psi_index(client_hash_ids, server_hash_ids)
     psi_result = []
     for index in psi_index:
+        psi_result.append(local_ids[index])
+
+    return psi_result
+
+
+@timer
+def get_double_psi_result_genexps(local_ids, decode_ids, ra_list, pk, server_hash_ids):
+    client_hash_ids_gene = invert_and_hash_decode_ids_genexps(decode_ids, ra_list, pk)
+    psi_index_gene = get_psi_index_genexps(client_hash_ids_gene, server_hash_ids)
+    psi_result = []
+    for index in psi_index_gene:
         psi_result.append(local_ids[index])
 
     return psi_result
@@ -289,7 +314,7 @@ def rsa_double_psi_encrypted(id_list, database_server, cid, qid, agg_server_stat
 
     if comm_IP != '0':
         # Stage I
-        if store_psi_result == False:
+        if not store_psi_result:
             send_rsa_pk(database_server, cid, qid, comm_IP, options, cfg)
 
         # Waiting for status...
@@ -300,7 +325,7 @@ def rsa_double_psi_encrypted(id_list, database_server, cid, qid, agg_server_stat
         print("================")
 
         # Stage II
-        if store_psi_result == True:
+        if store_psi_result:
             send_client_enc_ids_use_pk(id_list, database_server, cid, qid, comm_IP, options, cfg)
 
         while not database_server.client_enc_ids_comm_status:
@@ -310,7 +335,7 @@ def rsa_double_psi_encrypted(id_list, database_server, cid, qid, agg_server_stat
         print("================")
 
         # Stage III
-        if store_psi_result == False:
+        if not store_psi_result:
             send_server_enc_id_use_sk_and_client_dec_id(id_list, database_server, cid, qid,
                                                         comm_IP, options, cfg)
 
@@ -321,11 +346,11 @@ def rsa_double_psi_encrypted(id_list, database_server, cid, qid, agg_server_stat
         print("================")
 
         # Stage IV
-        if store_psi_result == True:
-            database_server.psi_result = get_double_psi_result(id_list, database_server.client_dec_ids,
-                                                               database_server.client_ra_list,
-                                                               database_server.rsa_pk,
-                                                               database_server.server_hash_enc_ids)
+        if store_psi_result:
+            database_server.psi_result = get_double_psi_result_genexps(id_list, database_server.client_dec_ids,
+                                                                       database_server.client_ra_list,
+                                                                       database_server.rsa_pk,
+                                                                       database_server.server_hash_enc_ids)
             # print(database_server.psi_result)
             if (current_round == total_rounds) or \
                     ((len(database_server.psi_result) == 0) and (carry_final_psi_result == False)):
@@ -339,7 +364,7 @@ def rsa_double_psi_encrypted(id_list, database_server, cid, qid, agg_server_stat
         else:
             database_server.psi_result = None
     else:
-        if store_psi_result == True:
+        if store_psi_result:
             database_server.psi_result = id_list
             if current_round == total_rounds:
                 psi_final_result = generate_final_psi_result(database_server, he_context_path)

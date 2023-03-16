@@ -419,13 +419,13 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
         i = 0
         while (i < self.num_psi_participators):
             j = i + 1
-            if self.psi_store_psi_result_list[i] == True:
+            if self.psi_store_psi_result_list[i]:
                 if i in comm_IP_index_list:
                     comm_IP_index_list[i] = comm_IP_index_list.index(i)
                     i = j
                     continue
                 while (j < self.num_psi_participators):
-                    if self.psi_store_psi_result_list[j] == True:
+                    if self.psi_store_psi_result_list[j]:
                         comm_IP_index_list[i] = j
                         break
                     j += 1
@@ -511,14 +511,14 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
             while not self.waiting_for_initialize:
                 time.sleep(self.sleep_time)
 
-        if self.psi_store_psi_result_list[self.psi_cid_list.index(cid)] == True:
+        if self.psi_store_psi_result_list[self.psi_cid_list.index(cid)]:
             self.psi_cid_length_dict[cid] = data_length
         self.num_psi_request += 1
         # waiting_time_count = 0
         while (self.num_psi_request % self.num_psi_participators != 0):
             time.sleep(self.sleep_time)
 
-        if carry_psi_final_result == True:
+        if carry_psi_final_result:
             self.psi_final_result = psi_final_result
             self.psi_final_result_status = True
         self.psi_check_result_count += 1
@@ -530,7 +530,7 @@ class AggregateServer(tenseal_aggregate_server_pb2_grpc.AggregateServerServiceSe
 
         # if (self.current_psi_round == self.total_psi_rounds == int(data_server_status[2])) and \
         #         (self.psi_final_result_status == True):
-        if self.psi_final_result_status == True:
+        if self.psi_final_result_status:
             response = tenseal_aggregate_server_pb2.agg_server_status_response(
                 cid=cid,
                 qid=qid,
