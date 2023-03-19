@@ -44,6 +44,16 @@ class DatabaseServerServiceStub(object):
                 request_serializer=tenseal__data__server__pb2.query_median_posi_msg.SerializeToString,
                 response_deserializer=tenseal__data__server__pb2.query_median_posi_result.FromString,
                 )
+        self.get_count = channel.unary_unary(
+                '/DatabaseServerService/get_count',
+                request_serializer=tenseal__data__server__pb2.query_count_msg.SerializeToString,
+                response_deserializer=tenseal__data__server__pb2.enc_query_result.FromString,
+                )
+        self.get_nearest = channel.unary_unary(
+                '/DatabaseServerService/get_nearest',
+                request_serializer=tenseal__data__server__pb2.query_nearest_msg.SerializeToString,
+                response_deserializer=tenseal__data__server__pb2.query_nearest_msg.FromString,
+                )
 
 
 class DatabaseServerServiceServicer(object):
@@ -85,6 +95,18 @@ class DatabaseServerServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def get_count(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def get_nearest(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_DatabaseServerServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -117,6 +139,16 @@ def add_DatabaseServerServiceServicer_to_server(servicer, server):
                     servicer.query_median_posi,
                     request_deserializer=tenseal__data__server__pb2.query_median_posi_msg.FromString,
                     response_serializer=tenseal__data__server__pb2.query_median_posi_result.SerializeToString,
+            ),
+            'get_count': grpc.unary_unary_rpc_method_handler(
+                    servicer.get_count,
+                    request_deserializer=tenseal__data__server__pb2.query_count_msg.FromString,
+                    response_serializer=tenseal__data__server__pb2.enc_query_result.SerializeToString,
+            ),
+            'get_nearest': grpc.unary_unary_rpc_method_handler(
+                    servicer.get_nearest,
+                    request_deserializer=tenseal__data__server__pb2.query_nearest_msg.FromString,
+                    response_serializer=tenseal__data__server__pb2.query_nearest_msg.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -227,5 +259,39 @@ class DatabaseServerService(object):
         return grpc.experimental.unary_unary(request, target, '/DatabaseServerService/query_median_posi',
             tenseal__data__server__pb2.query_median_posi_msg.SerializeToString,
             tenseal__data__server__pb2.query_median_posi_result.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def get_count(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/DatabaseServerService/get_count',
+            tenseal__data__server__pb2.query_count_msg.SerializeToString,
+            tenseal__data__server__pb2.enc_query_result.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def get_nearest(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/DatabaseServerService/get_nearest',
+            tenseal__data__server__pb2.query_nearest_msg.SerializeToString,
+            tenseal__data__server__pb2.query_nearest_msg.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

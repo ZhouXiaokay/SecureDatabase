@@ -60,6 +60,16 @@ class KeyServerServiceStub(object):
                 request_serializer=tenseal__key__server__pb2.vector.SerializeToString,
                 response_deserializer=tenseal__key__server__pb2.vector.FromString,
                 )
+        self.is_odd = channel.unary_unary(
+                '/KeyServerService/is_odd',
+                request_serializer=tenseal__key__server__pb2.vector.SerializeToString,
+                response_deserializer=tenseal__key__server__pb2.boolean_result.FromString,
+                )
+        self.is_sub_abs_1 = channel.unary_unary(
+                '/KeyServerService/is_sub_abs_1',
+                request_serializer=tenseal__key__server__pb2.vector.SerializeToString,
+                response_deserializer=tenseal__key__server__pb2.boolean_result.FromString,
+                )
 
 
 class KeyServerServiceServicer(object):
@@ -123,6 +133,18 @@ class KeyServerServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def is_odd(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def is_sub_abs_1(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_KeyServerServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -170,6 +192,16 @@ def add_KeyServerServiceServicer_to_server(servicer, server):
                     servicer.unpack_enc_vector,
                     request_deserializer=tenseal__key__server__pb2.vector.FromString,
                     response_serializer=tenseal__key__server__pb2.vector.SerializeToString,
+            ),
+            'is_odd': grpc.unary_unary_rpc_method_handler(
+                    servicer.is_odd,
+                    request_deserializer=tenseal__key__server__pb2.vector.FromString,
+                    response_serializer=tenseal__key__server__pb2.boolean_result.SerializeToString,
+            ),
+            'is_sub_abs_1': grpc.unary_unary_rpc_method_handler(
+                    servicer.is_sub_abs_1,
+                    request_deserializer=tenseal__key__server__pb2.vector.FromString,
+                    response_serializer=tenseal__key__server__pb2.boolean_result.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -331,5 +363,39 @@ class KeyServerService(object):
         return grpc.experimental.unary_unary(request, target, '/KeyServerService/unpack_enc_vector',
             tenseal__key__server__pb2.vector.SerializeToString,
             tenseal__key__server__pb2.vector.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def is_odd(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/KeyServerService/is_odd',
+            tenseal__key__server__pb2.vector.SerializeToString,
+            tenseal__key__server__pb2.boolean_result.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def is_sub_abs_1(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/KeyServerService/is_sub_abs_1',
+            tenseal__key__server__pb2.vector.SerializeToString,
+            tenseal__key__server__pb2.boolean_result.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

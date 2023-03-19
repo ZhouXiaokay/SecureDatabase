@@ -61,7 +61,16 @@ class KeyServer(tenseal_key_server_pb2_grpc.KeyServerServiceServicer):
 
         return response
 
+    def is_odd(self, request, context):
+        enc_serialize_msg = request.vector_msg
+        enc_vector = ts.ckks_vector_from(self.sk_ctx, enc_serialize_msg)
+        dec_vector = enc_vector.decrypt()
+        flag = False
+        if round(abs(dec_vector[0])) % 2 == 1:
+            flag = True
+        response = tenseal_key_server_pb2.boolean_result(bool_msg=flag)
 
+        return response
 
     def generate_noise(self, request, context):
         qid = request.qid
@@ -149,6 +158,17 @@ class KeyServer(tenseal_key_server_pb2_grpc.KeyServerServiceServicer):
         if abs(dec_vector[0]) <= 1e-8:
             flag = True
 
+        response = tenseal_key_server_pb2.boolean_result(bool_msg=flag)
+
+        return response
+
+    def is_sub_abs_1(self, request, context):
+        enc_serialize_msg = request.vector_msg
+        enc_vector = ts.ckks_vector_from(self.sk_ctx, enc_serialize_msg)
+        dec_vector = enc_vector.decrypt()
+        flag = False
+        if round(abs(dec_vector[0])) == 1:
+            flag = True
         response = tenseal_key_server_pb2.boolean_result(bool_msg=flag)
 
         return response

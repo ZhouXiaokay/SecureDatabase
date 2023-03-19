@@ -16,7 +16,6 @@ if __name__ == '__main__':
     print(hash(float(i+0.01)),
     hash(float(b+0.01)))
 
-
     print_hi('PyCharm')
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

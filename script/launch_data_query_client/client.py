@@ -15,7 +15,7 @@ def send_request():
     stub = tenseal_client_proxy_pb2_grpc.ClientProxyServiceStub(channel)
 
     request = tenseal_client_proxy_pb2.query_msg_client(cid=1, qid=3457, db_name="total", column_name="column_1",
-                                                        op="var_mode",
+                                                        op="var_median",
                                                         table_name="table_1")
 
     response = stub.data_query(request)

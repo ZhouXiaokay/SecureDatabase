@@ -63,6 +63,23 @@ message query_median_posi_result {
   bytes less_e = 4;
 }
 
+message query_count_msg {
+  string table_name = 3;
+  string column_name = 4;
+}
+
+message query_nearest_msg {
+  string table_name = 3;
+  string column_name = 4;
+  bytes value = 5;
+}
+
+message query_nearest_result {
+  bytes value1 = 1;
+  bytes value2 = 2;
+  int32 count = 3;
+}
+
 service DatabaseServerService {
   rpc query_operation(query_msg_parse_server) returns(enc_query_result);
   rpc noise_query_operation(query_msg_parse_server) returns(enc_query_result);
@@ -70,4 +87,6 @@ service DatabaseServerService {
   rpc n_th_query_operation(n_th_query_msg) returns(n_th_query_result);
   rpc query_mode_using_hash(query_mode_using_hash_msg) returns(query_mode_using_hash_result);
   rpc query_median_posi(query_median_posi_msg) returns(query_median_posi_result);
+  rpc get_count(query_count_msg) returns(enc_query_result);
+  rpc get_nearest(query_nearest_msg) returns(query_nearest_msg);
 }

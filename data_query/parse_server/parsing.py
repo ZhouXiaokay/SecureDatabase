@@ -207,6 +207,14 @@ def get_total_var_mode(request, db_stub_list, pk_ctx, key_stub):
     enc_vector = ts.ckks_vector_from(pk_ctx,response.vector_msg)
     return enc_vector
 
+def get_total_count(request, db_stub_list, pk_ctx, key_stub):
+    count = 0
+    for stub in db_stub_list:
+        query_request = tenseal_data_server_pb2.query_count_msg(table_name=request.table_name,column_name=request.column_name)
+        response = stub.get_count(query_request)
+        count += ts.ckks_vector_from(pk_ctx, response.enc_result)
+    return count
+
 def get_total_var_median(request, db_stub_list, pk_ctx, key_stub):
 
     std_min = 0
@@ -215,41 +223,137 @@ def get_total_var_median(request, db_stub_list, pk_ctx, key_stub):
 
     std = get_total_std(request, db_stub_list, pk_ctx, key_stub)
     avg = get_total_avg(request, db_stub_list, pk_ctx, key_stub)
+    total = get_total_count(request, db_stub_list, pk_ctx, key_stub)
 
     max_3sigma = avg + 3 * std
     min_3sigma = avg - 3 * std
 
-    for i in range(10):
-        std_mid = (std_max+std_min)/2
+    is_odd = key_stub.is_odd(tenseal_key_server_pb2.vector(vector_msg=total.serialize())).bool_msg
 
-        temp_mid = std_mid * max_3sigma + (1 - std_mid) * min_3sigma
-        le_list = []
-        g_list = []
-        for stub in db_stub_list:
-            query_request = tenseal_data_server_pb2.query_median_posi_msg(cid = request.cid, qid = request.qid, table_name = request.table_name, column_name = request.column_name, median = temp_mid.serialize(), avg = avg.serialize(), std = std.serialize())
-            response = stub.query_median_posi(query_request)
-            le = ts.ckks_vector_from(pk_ctx, response.less_e)
-            g = ts.ckks_vector_from(pk_ctx, response.greater)
-            le_list.append(le)
-            g_list.append(g)
+    candidate_list = []
 
-        le_sum = sum(le_list)
-        g_sum = sum(g_list)
+    if is_odd:
+        while True:
+            std_mid = (std_max + std_min) / 2
+            temp_mid = std_mid * max_3sigma + (1 - std_mid) * min_3sigma
+            le_list = []
+            g_list = []
+            for stub in db_stub_list:
+                query_request = tenseal_data_server_pb2.query_median_posi_msg(cid = request.cid, qid = request.qid, table_name = request.table_name, column_name = request.column_name, median = temp_mid.serialize(), avg = avg.serialize(), std = std.serialize())
+                response = stub.query_median_posi(query_request)
+                le = ts.ckks_vector_from(pk_ctx, response.less_e)
+                g = ts.ckks_vector_from(pk_ctx, response.greater)
+                le_list.append(le)
+                g_list.append(g)
+            le_sum = sum(le_list)
+            g_sum = sum(g_list)
+            sub_diff = le_sum - g_sum
+            sub_serialize_msg = sub_diff.serialize()
+            is_sub_abs_1 = key_stub.is_sub_abs_1(tenseal_key_server_pb2.vector(vector_msg=sub_serialize_msg)).bool_msg
+            if is_sub_abs_1:
+                break
+            requests = tenseal_key_server_pb2.vector(vector_msg=sub_serialize_msg)
+            response = key_stub.boolean_positive(requests)
+            comparison_flag = response.bool_msg
+            print("std_min:",std_min,"std_max:",std_max,"std_mid:",std_mid,"comparison_flag:",comparison_flag)
+            if comparison_flag:
+                std_max = std_mid
+            else:
+                std_min = std_mid
+    else:
+        while True:
+            std_mid = (std_max + std_min) / 2
+            temp_mid = std_mid * max_3sigma + (1 - std_mid) * min_3sigma
+            le_list = []
+            g_list = []
+            for stub in db_stub_list:
+                query_request = tenseal_data_server_pb2.query_median_posi_msg(cid=request.cid, qid=request.qid,
+                                                                              table_name=request.table_name,
+                                                                              column_name=request.column_name,
+                                                                              median=temp_mid.serialize(),
+                                                                              avg=avg.serialize(), std=std.serialize())
+                response = stub.query_median_posi(query_request)
+                le = ts.ckks_vector_from(pk_ctx, response.less_e)
+                g = ts.ckks_vector_from(pk_ctx, response.greater)
+                le_list.append(le)
+                g_list.append(g)
+            le_sum = sum(le_list)
+            g_sum = sum(g_list)
+            sub_diff = le_sum - g_sum
+            sub_serialize_msg = sub_diff.serialize()
+            is_equal = key_stub.boolean_equal_proxi(tenseal_key_server_pb2.vector(vector_msg=sub_serialize_msg)).bool_msg
+            if is_equal:
+                break
+            requests = tenseal_key_server_pb2.vector(vector_msg=sub_serialize_msg)
+            response = key_stub.boolean_positive(requests)
+            comparison_flag = response.bool_msg
+            print("std_min:", std_min, "std_max:", std_max, "std_mid:", std_mid, "comparison_flag:", comparison_flag)
+            if comparison_flag:
+                std_max = std_mid
+            else:
+                std_min = std_mid
 
-        sub_diff = le_sum - g_sum
-        sub_serialize_msg = sub_diff.serialize()
-        requests = tenseal_key_server_pb2.vector(vector_msg=sub_serialize_msg)
-        response = key_stub.boolean_positive(requests)
-        comparison_flag = response.bool_msg
-        print("std_min:",std_min,"std_max:",std_max,"std_mid:",std_mid,"comparison_flag:",comparison_flag)
-        if comparison_flag:
-            std_max = std_mid
+    # get the nearest value in each dataServer
+    now_mid = std_mid * max_3sigma + (1 - std_mid) * min_3sigma
+    for stub in db_stub_list:
+        get_neareat_request = tenseal_data_server_pb2.query_nearest_msg(table_name=request.table_name, column_name=request.column_name, value=now_mid.serialize())
+        response = stub.get_nearest(get_neareat_request)
+        count = response.count
+        if count == 0:
+            continue
+        elif count == 1:
+            candidate_list.append(ts.ckks_vector_from(pk_ctx, response.value1))
         else:
-            std_min = std_mid
+            candidate_list.append(ts.ckks_vector_from(pk_ctx, response.value1))
+            candidate_list.append(ts.ckks_vector_from(pk_ctx, response.value2))
 
-    std_mid = (std_max + std_min) / 2
-    print("std_mid:", std_mid)
-    return std_mid * max_3sigma + (1 - std_mid) * min_3sigma
+    if is_odd:
+        for candidate in candidate_list:
+            le_list = []
+            g_list = []
+            for stub in db_stub_list:
+                query_request = tenseal_data_server_pb2.query_median_posi_msg(cid=request.cid, qid=request.qid,
+                                                                              table_name=request.table_name,
+                                                                              column_name=request.column_name,
+                                                                              median=candidate.serialize(),
+                                                                              avg=avg.serialize(), std=std.serialize())
+                response = stub.query_median_posi(query_request)
+                le = ts.ckks_vector_from(pk_ctx, response.less_e)
+                g = ts.ckks_vector_from(pk_ctx, response.greater)
+                le_list.append(le)
+                g_list.append(g)
+            le_sum = sum(le_list)
+            g_sum = sum(g_list)
+            sub_diff = le_sum - g_sum
+            sub_serialize_msg = sub_diff.serialize()
+            is_equal = key_stub.boolean_equal_proxi(tenseal_key_server_pb2.vector(vector_msg=sub_serialize_msg)).bool_msg
+            if is_equal:
+                return candidate
+    else:
+        two_list = []
+        for candidate in candidate_list:
+            le_list = []
+            g_list = []
+            for stub in db_stub_list:
+                query_request = tenseal_data_server_pb2.query_median_posi_msg(cid=request.cid, qid=request.qid,
+                                                                                table_name=request.table_name,
+                                                                                column_name=request.column_name,
+                                                                                median=candidate.serialize(),
+                                                                                avg=avg.serialize(), std=std.serialize())
+                response = stub.query_median_posi(query_request)
+                le = ts.ckks_vector_from(pk_ctx, response.less_e)
+                g = ts.ckks_vector_from(pk_ctx, response.greater)
+                le_list.append(le)
+                g_list.append(g)
+            le_sum = sum(le_list)
+            g_sum = sum(g_list)
+            sub_diff = le_sum - g_sum
+            sub_serialize_msg = sub_diff.serialize()
+            is_equal = key_stub.is_sub_abs_1(tenseal_key_server_pb2.vector(vector_msg=sub_serialize_msg)).bool_msg
+            if is_equal:
+                two_list.append(candidate)
+                if len(two_list) == 2:
+                    return (two_list[0] + two_list[1]) / 2
     # return std_mid * min_3sigma + (1 - std_mid) * max_3sigma
 
 def process_total_request(request, pk_ctx, address_dict, options):
@@ -353,7 +457,6 @@ def get_total_count_dp(request, db_stub_list, key_stub):
     noise_total_list = get_noise_total_list(request, db_stub_list)
     sum_noise = sum(noise_total_list)
     sum_noise_vector.append(sum_noise)
-
     return sum_noise_vector
 
 

@@ -53,4 +53,6 @@ service KeyServerService {
   rpc sqrt_enc_vector(vector) returns(vector);
   rpc div_enc_vector(div_vectors) returns(vector);
   rpc unpack_enc_vector(vector) returns(vector);
+  rpc is_odd(vector) returns(boolean_result);
+  rpc is_sub_abs_1(vector) returns(boolean_result);
 }

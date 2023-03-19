@@ -8,7 +8,6 @@ from data_query.data_server.conn_mysql import *
 import pickle
 import grpc
 
-
 class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer):
 
     def __init__(self, key_server_address, pk_ctx_file, sk_ctx_file, db_name, cfg):
@@ -171,3 +170,37 @@ class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer)
 
         msg = tenseal_data_server_pb2.query_median_posi_result(less_e = le_enc_vector.serialize(), greater = g_enc_vector.serialize())
         return msg
+
+    def get_count(self, request, context):
+        table_name = request.table_name
+        column_name = request.column_name
+        sql = "SELECT COUNT(*) FROM {0}".format("database_" + self.name + "." +table_name)
+        query_result = get_query_results(self.name, self.cfg, sql)
+        plain_vector = ts.plain_tensor(query_result)
+        enc_vector = ts.ckks_vector(self.pk_ctx, plain_vector)
+        serialize_msg = enc_vector.serialize()
+        response = tenseal_data_server_pb2.query_result_result(result = serialize_msg)
+        return response
+
+    def get_nearest(self, request, context):
+        table_name = request.table_name
+        column_name = request.column_name
+        value = request.value
+        enc_vector = ts.ckks_vector_from(self.sk_ctx, value)
+        dec_vector = enc_vector.decrypt()
+        value = dec_vector[0]
+        sql = "SELECT * FROM {0} ORDER BY ABS({1} - {2}) LIMIT 2;".format("database_" + self.name + "." +table_name,value, column_name)
+        query_result = get_query_results(self.name, self.cfg, sql)
+        if len(query_result) == 0:
+            response = tenseal_data_server_pb2.query_nearest_msg(value1 = 0, value2 = 0, count = 0)
+        elif len(query_result) == 1:
+            plain_vector1 = ts.plain_tensor(query_result[0])
+            enc_vector1 = ts.ckks_vector(self.pk_ctx, plain_vector1)
+            response = tenseal_data_server_pb2.query_nearest_msg(value1 = enc_vector1.serialize(), value2 = 0, count = 1)
+        else:
+            plain_vector1 = ts.plain_tensor(query_result[0])
+            enc_vector1 = ts.ckks_vector(self.pk_ctx, plain_vector1)
+            plain_vector2 = ts.plain_tensor(query_result[1])
+            enc_vector2 = ts.ckks_vector(self.pk_ctx, plain_vector2)
+            response = tenseal_data_server_pb2.query_nearest_msg(value1 = enc_vector1.serialize(), value2 = enc_vector2.serialize(), count = 2)
+        return response
