@@ -70,6 +70,26 @@ class KeyServerServiceStub(object):
                 request_serializer=tenseal__key__server__pb2.vector.SerializeToString,
                 response_deserializer=tenseal__key__server__pb2.boolean_result.FromString,
                 )
+        self.sub_one = channel.unary_unary(
+                '/KeyServerService/sub_one',
+                request_serializer=tenseal__key__server__pb2.vector.SerializeToString,
+                response_deserializer=tenseal__key__server__pb2.vector.FromString,
+                )
+        self.boolean_positive_abs_proxi = channel.unary_unary(
+                '/KeyServerService/boolean_positive_abs_proxi',
+                request_serializer=tenseal__key__server__pb2.vector.SerializeToString,
+                response_deserializer=tenseal__key__server__pb2.boolean_result.FromString,
+                )
+        self.show_raw_vector = channel.unary_unary(
+                '/KeyServerService/show_raw_vector',
+                request_serializer=tenseal__key__server__pb2.vector.SerializeToString,
+                response_deserializer=tenseal__key__server__pb2.raw.FromString,
+                )
+        self.abs = channel.unary_unary(
+                '/KeyServerService/abs',
+                request_serializer=tenseal__key__server__pb2.vector.SerializeToString,
+                response_deserializer=tenseal__key__server__pb2.vector.FromString,
+                )
 
 
 class KeyServerServiceServicer(object):
@@ -145,6 +165,30 @@ class KeyServerServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def sub_one(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def boolean_positive_abs_proxi(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def show_raw_vector(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def abs(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_KeyServerServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -202,6 +246,26 @@ def add_KeyServerServiceServicer_to_server(servicer, server):
                     servicer.is_sub_abs_1,
                     request_deserializer=tenseal__key__server__pb2.vector.FromString,
                     response_serializer=tenseal__key__server__pb2.boolean_result.SerializeToString,
+            ),
+            'sub_one': grpc.unary_unary_rpc_method_handler(
+                    servicer.sub_one,
+                    request_deserializer=tenseal__key__server__pb2.vector.FromString,
+                    response_serializer=tenseal__key__server__pb2.vector.SerializeToString,
+            ),
+            'boolean_positive_abs_proxi': grpc.unary_unary_rpc_method_handler(
+                    servicer.boolean_positive_abs_proxi,
+                    request_deserializer=tenseal__key__server__pb2.vector.FromString,
+                    response_serializer=tenseal__key__server__pb2.boolean_result.SerializeToString,
+            ),
+            'show_raw_vector': grpc.unary_unary_rpc_method_handler(
+                    servicer.show_raw_vector,
+                    request_deserializer=tenseal__key__server__pb2.vector.FromString,
+                    response_serializer=tenseal__key__server__pb2.raw.SerializeToString,
+            ),
+            'abs': grpc.unary_unary_rpc_method_handler(
+                    servicer.abs,
+                    request_deserializer=tenseal__key__server__pb2.vector.FromString,
+                    response_serializer=tenseal__key__server__pb2.vector.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -397,5 +461,73 @@ class KeyServerService(object):
         return grpc.experimental.unary_unary(request, target, '/KeyServerService/is_sub_abs_1',
             tenseal__key__server__pb2.vector.SerializeToString,
             tenseal__key__server__pb2.boolean_result.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def sub_one(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/KeyServerService/sub_one',
+            tenseal__key__server__pb2.vector.SerializeToString,
+            tenseal__key__server__pb2.vector.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def boolean_positive_abs_proxi(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/KeyServerService/boolean_positive_abs_proxi',
+            tenseal__key__server__pb2.vector.SerializeToString,
+            tenseal__key__server__pb2.boolean_result.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def show_raw_vector(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/KeyServerService/show_raw_vector',
+            tenseal__key__server__pb2.vector.SerializeToString,
+            tenseal__key__server__pb2.raw.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def abs(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/KeyServerService/abs',
+            tenseal__key__server__pb2.vector.SerializeToString,
+            tenseal__key__server__pb2.vector.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

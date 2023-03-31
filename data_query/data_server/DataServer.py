@@ -189,18 +189,30 @@ class DatabaseServer(tenseal_data_server_pb2_grpc.DatabaseServerServiceServicer)
         enc_vector = ts.ckks_vector_from(self.sk_ctx, value)
         dec_vector = enc_vector.decrypt()
         value = dec_vector[0]
-        sql = "SELECT * FROM {0} ORDER BY ABS({1} - {2}) LIMIT 2;".format("database_" + self.name + "." +table_name,value, column_name)
+        print(f"NearValue: {value}")
+        sql = "SELECT {2} FROM {0} ORDER BY ABS({1} - {2}) LIMIT 3;".format("database_" + self.name + "." +table_name, value , column_name)
         query_result = get_query_results(self.name, self.cfg, sql)
+        print("Query: ",query_result)
         if len(query_result) == 0:
-            response = tenseal_data_server_pb2.query_nearest_msg(value1 = 0, value2 = 0, count = 0)
+            response = tenseal_data_server_pb2.query_nearest_result(value1 = pickle.dumps([0]), value2 = pickle.dumps([0]), value3 = pickle.dumps([0]), count = 0)
         elif len(query_result) == 1:
-            plain_vector1 = ts.plain_tensor(query_result[0])
+            plain_vector1 = ts.plain_tensor([query_result[0]])
             enc_vector1 = ts.ckks_vector(self.pk_ctx, plain_vector1)
-            response = tenseal_data_server_pb2.query_nearest_msg(value1 = enc_vector1.serialize(), value2 = 0, count = 1)
-        else:
-            plain_vector1 = ts.plain_tensor(query_result[0])
+            response = tenseal_data_server_pb2.query_nearest_result(value1 = enc_vector1.serialize(), value2 = pickle.dumps([0]), value3 = pickle.dumps([0]), count = 1)
+        elif len(query_result) == 2:
+            plain_vector1 = ts.plain_tensor([query_result[0]])
             enc_vector1 = ts.ckks_vector(self.pk_ctx, plain_vector1)
-            plain_vector2 = ts.plain_tensor(query_result[1])
+            plain_vector2 = ts.plain_tensor([query_result[1]])
             enc_vector2 = ts.ckks_vector(self.pk_ctx, plain_vector2)
-            response = tenseal_data_server_pb2.query_nearest_msg(value1 = enc_vector1.serialize(), value2 = enc_vector2.serialize(), count = 2)
+            response = tenseal_data_server_pb2.query_nearest_result(value1 = enc_vector1.serialize(), value2 = enc_vector2.serialize(), value3 = pickle.dumps([0]), count = 2)
+        else:
+            plain_vector1 = ts.plain_tensor([query_result[0]])
+            enc_vector1 = ts.ckks_vector(self.pk_ctx, plain_vector1)
+            plain_vector2 = ts.plain_tensor([query_result[1]])
+            enc_vector2 = ts.ckks_vector(self.pk_ctx, plain_vector2)
+            plain_vector3 = ts.plain_tensor([query_result[1]])
+            enc_vector3 = ts.ckks_vector(self.pk_ctx, plain_vector2)
+            response = tenseal_data_server_pb2.query_nearest_result(value1=enc_vector1.serialize(),
+                                                                    value2=enc_vector2.serialize(),
+                                                                    value3=enc_vector3.serialize(), count=2)
         return response

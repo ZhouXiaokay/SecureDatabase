@@ -52,7 +52,7 @@ class DatabaseServerServiceStub(object):
         self.get_nearest = channel.unary_unary(
                 '/DatabaseServerService/get_nearest',
                 request_serializer=tenseal__data__server__pb2.query_nearest_msg.SerializeToString,
-                response_deserializer=tenseal__data__server__pb2.query_nearest_msg.FromString,
+                response_deserializer=tenseal__data__server__pb2.query_nearest_result.FromString,
                 )
 
 
@@ -148,7 +148,7 @@ def add_DatabaseServerServiceServicer_to_server(servicer, server):
             'get_nearest': grpc.unary_unary_rpc_method_handler(
                     servicer.get_nearest,
                     request_deserializer=tenseal__data__server__pb2.query_nearest_msg.FromString,
-                    response_serializer=tenseal__data__server__pb2.query_nearest_msg.SerializeToString,
+                    response_serializer=tenseal__data__server__pb2.query_nearest_result.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -292,6 +292,6 @@ class DatabaseServerService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/DatabaseServerService/get_nearest',
             tenseal__data__server__pb2.query_nearest_msg.SerializeToString,
-            tenseal__data__server__pb2.query_nearest_msg.FromString,
+            tenseal__data__server__pb2.query_nearest_result.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

@@ -77,7 +77,8 @@ message query_nearest_msg {
 message query_nearest_result {
   bytes value1 = 1;
   bytes value2 = 2;
-  int32 count = 3;
+  bytes value3 = 3;
+  int32 count = 4;
 }
 
 service DatabaseServerService {
@@ -88,5 +89,5 @@ service DatabaseServerService {
   rpc query_mode_using_hash(query_mode_using_hash_msg) returns(query_mode_using_hash_result);
   rpc query_median_posi(query_median_posi_msg) returns(query_median_posi_result);
   rpc get_count(query_count_msg) returns(enc_query_result);
-  rpc get_nearest(query_nearest_msg) returns(query_nearest_msg);
+  rpc get_nearest(query_nearest_msg) returns(query_nearest_result);
 }

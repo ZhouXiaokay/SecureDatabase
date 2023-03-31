@@ -25,7 +25,6 @@ def request_parsing(request, pk_ctx, address_dict, options):
         enc_vector = process_local_request(request, pk_ctx, db_stub)
         return enc_vector
 
-
 # process the request in which query data_modeling is only from local database
 def get_local_count(request, db_stub,n):
     mode = "encypted"
@@ -215,11 +214,38 @@ def get_total_count(request, db_stub_list, pk_ctx, key_stub):
         count += ts.ckks_vector_from(pk_ctx, response.enc_result)
     return count
 
+
+def get_min_indexs(candidate_delta_list, db_stub_list, pk_ctx, key_stub):
+    res_index = 0
+    for enc_index in range(1,len(candidate_delta_list)):
+        res = ts.ckks_vector_from(pk_ctx,key_stub.abs(tenseal_key_server_pb2.vector(vector_msg=candidate_delta_list[res_index].serialize())).vector_msg)
+        enc = ts.ckks_vector_from(pk_ctx,key_stub.abs(tenseal_key_server_pb2.vector(vector_msg=candidate_delta_list[enc_index].serialize())).vector_msg)
+        sub_diff = res - enc
+        sub_diff_rev = enc - res
+        sub_serialize_msg = sub_diff.serialize()
+        sub_serialize_msg_rev = sub_diff_rev.serialize()
+        request = tenseal_key_server_pb2.vector(vector_msg=sub_serialize_msg)
+        response = key_stub.boolean_positive_proxi(request)
+        comparison_flag = response.bool_msg
+        request = tenseal_key_server_pb2.vector(vector_msg=sub_serialize_msg_rev)
+        response = key_stub.boolean_positive_proxi(request)
+        comparison_flag_rev = response.bool_msg
+        if comparison_flag and not comparison_flag_rev:
+            res_index = enc_index
+    return res_index
+
+
+def show_all(candidate_delta_list,key_stub):
+    print("showlist: ")
+    for i in range(len(candidate_delta_list)):
+        print(key_stub.show_raw_vector(tenseal_key_server_pb2.vector(vector_msg=candidate_delta_list[i].serialize())).raw_msg)
+    pass
+
+
 def get_total_var_median(request, db_stub_list, pk_ctx, key_stub):
 
     std_min = 0
     std_max = 1
-    std_mid = (std_max+std_min)/2
 
     std = get_total_std(request, db_stub_list, pk_ctx, key_stub)
     avg = get_total_avg(request, db_stub_list, pk_ctx, key_stub)
@@ -232,10 +258,16 @@ def get_total_var_median(request, db_stub_list, pk_ctx, key_stub):
 
     candidate_list = []
 
+    i = 0
+
     if is_odd:
         while True:
+            i+=1
             std_mid = (std_max + std_min) / 2
             temp_mid = std_mid * max_3sigma + (1 - std_mid) * min_3sigma
+            if i > 100:
+                print("break early")
+                return temp_mid
             le_list = []
             g_list = []
             for stub in db_stub_list:
@@ -262,10 +294,14 @@ def get_total_var_median(request, db_stub_list, pk_ctx, key_stub):
                 std_min = std_mid
     else:
         while True:
+            i+=1
             std_mid = (std_max + std_min) / 2
             temp_mid = std_mid * max_3sigma + (1 - std_mid) * min_3sigma
             le_list = []
             g_list = []
+            if i > 100:
+                print("break early")
+                return temp_mid
             for stub in db_stub_list:
                 query_request = tenseal_data_server_pb2.query_median_posi_msg(cid=request.cid, qid=request.qid,
                                                                               table_name=request.table_name,
@@ -303,11 +339,16 @@ def get_total_var_median(request, db_stub_list, pk_ctx, key_stub):
             continue
         elif count == 1:
             candidate_list.append(ts.ckks_vector_from(pk_ctx, response.value1))
+        elif count == 2:
+            candidate_list.append(ts.ckks_vector_from(pk_ctx, response.value1))
+            candidate_list.append(ts.ckks_vector_from(pk_ctx, response.value2))
         else:
             candidate_list.append(ts.ckks_vector_from(pk_ctx, response.value1))
             candidate_list.append(ts.ckks_vector_from(pk_ctx, response.value2))
+            candidate_list.append(ts.ckks_vector_from(pk_ctx, response.value3))
 
     if is_odd:
+        candidate_delta_list = []
         for candidate in candidate_list:
             le_list = []
             g_list = []
@@ -325,10 +366,55 @@ def get_total_var_median(request, db_stub_list, pk_ctx, key_stub):
             le_sum = sum(le_list)
             g_sum = sum(g_list)
             sub_diff = le_sum - g_sum
-            sub_serialize_msg = sub_diff.serialize()
-            is_equal = key_stub.boolean_equal_proxi(tenseal_key_server_pb2.vector(vector_msg=sub_serialize_msg)).bool_msg
+            candidate_delta_list.append(sub_diff)
+
+        show_all(candidate_delta_list,key_stub)
+        show_all(candidate_list,key_stub)
+
+        index = get_min_indexs(candidate_delta_list,db_stub_list,pk_ctx,key_stub)
+        min_ = candidate_delta_list[index]
+        can = candidate_delta_list.pop(index)
+        index_ = get_min_indexs(candidate_delta_list,db_stub_list,pk_ctx,key_stub)
+        if index_ >= index:
+            index_ += 1
+        candidate_delta_list.insert(index, can)
+        min__ = candidate_delta_list[index_]
+        sub_diff = min_ - min__
+        is_greater = key_stub.boolean_positive_proxi(tenseal_key_server_pb2.vector(vector_msg=sub_diff.serialize())).bool_msg
+        is_equal = key_stub.boolean_equal_proxi(tenseal_key_server_pb2.vector(vector_msg=min__.serialize())).bool_msg
+        key_stub.show_raw_vector(tenseal_key_server_pb2.vector(vector_msg=min__.serialize()))
+        key_stub.show_raw_vector(tenseal_key_server_pb2.vector(vector_msg=candidate_list[index_].serialize()))
+        key_stub.show_raw_vector(tenseal_key_server_pb2.vector(vector_msg=min_.serialize()))
+        key_stub.show_raw_vector(tenseal_key_server_pb2.vector(vector_msg=candidate_list[index].serialize()))
+        if is_greater:
+            print("is_greater")
+            print("index:", index, "index_:", index_)
+            return candidate_list[index]
+        elif is_equal:
+            print("is_equal")
+            print("index:", index, "index_:", index_)
+            one = candidate_list[index]
+            two = candidate_list[index_]
+            sub_diff = one - two
+            is_equal = key_stub.boolean_equal_proxi(tenseal_key_server_pb2.vector(vector_msg=sub_diff.serialize())).bool_msg
+            is_greater = key_stub.boolean_positive_proxi(tenseal_key_server_pb2.vector(vector_msg=sub_diff.serialize())).bool_msg
+            ordered_ = []
             if is_equal:
-                return candidate
+                ordered_ = [one, two]
+            elif is_greater:
+                ordered_ = [two, one]
+            else:
+                ordered_ = [one, two]
+
+            delta = candidate_delta_list[index]
+            is_positive = key_stub.boolean_positive_proxi(tenseal_key_server_pb2.vector(vector_msg=delta.serialize())).bool_msg
+            if is_positive:
+                return ordered_[0]
+            else:
+                return ordered_[1]
+        else:
+            print("index:", index, "index_:", index_)
+            return candidate_list[index_]
     else:
         two_list = []
         for candidate in candidate_list:
@@ -353,6 +439,7 @@ def get_total_var_median(request, db_stub_list, pk_ctx, key_stub):
             if is_equal:
                 two_list.append(candidate)
                 if len(two_list) == 2:
+                    print("two candidate, return")
                     return (two_list[0] + two_list[1]) / 2
     # return std_mid * min_3sigma + (1 - std_mid) * max_3sigma
 

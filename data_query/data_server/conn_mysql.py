@@ -93,6 +93,13 @@ def get_query_results(db_name, cfg, sql):
             result_list.append((row[0],float(row[1])))
         db.close()
         return result_list
+    if "LIMIT" in sql:
+        results = cursor.fetchall()
+        print("In LIMIT", results)
+        db.close()
+        for i in range(len(results)):
+            result_list.append(float(results[i][0]))
+        return result_list
 
     results = cursor.fetchone()
     # close conn

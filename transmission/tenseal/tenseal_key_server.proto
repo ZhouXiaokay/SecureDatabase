@@ -39,6 +39,10 @@ message noise{
   bytes noise_msg= 1;
 }
 
+message raw {
+  double raw_msg = 1;
+}
+
 service KeyServerService {
   // requestServer remotes the call and keyServer send decrypted result to clientProxy
   rpc return_enc_query_result (query_result_parse_server) returns(google.protobuf.Empty);
@@ -55,4 +59,8 @@ service KeyServerService {
   rpc unpack_enc_vector(vector) returns(vector);
   rpc is_odd(vector) returns(boolean_result);
   rpc is_sub_abs_1(vector) returns(boolean_result);
+  rpc sub_one(vector) returns(vector);
+  rpc boolean_positive_abs_proxi(vector) returns(boolean_result);
+  rpc show_raw_vector(vector) returns(raw);
+  rpc abs(vector) returns(vector);
 }

@@ -172,3 +172,48 @@ class KeyServer(tenseal_key_server_pb2_grpc.KeyServerServiceServicer):
         response = tenseal_key_server_pb2.boolean_result(bool_msg=flag)
 
         return response
+
+
+
+    def sub_one(self, request, context):
+        enc_serialize_msg = request.vector_msg
+        enc_vector = ts.ckks_vector_from(self.sk_ctx, enc_serialize_msg)
+        dec_vector = enc_vector.decrypt()
+        res = [dec_vector[0]-1]
+        plain_vector = ts.plain_tensor(res)
+        enc_vector = ts.ckks_vector(self.sk_ctx, plain_vector)
+        sqrt_serialized_msg = enc_vector.serialize()
+        response = tenseal_key_server_pb2.vector(vector_msg=sqrt_serialized_msg)
+        return response
+
+    def boolean_positive_abs_proxi(self, request, context):
+        enc_serialize_msg = request.vector_msg
+        enc_vector = ts.ckks_vector_from(self.sk_ctx, enc_serialize_msg)
+        dec_vector = enc_vector.decrypt()
+        flag = False
+        if abs(round(dec_vector[0])) >= 0:
+            flag = True
+
+        response = tenseal_key_server_pb2.boolean_result(bool_msg=flag)
+
+        return response
+
+    def show_raw_vector(self, request, context):
+        enc_serialize_msg = request.vector_msg
+        enc_vector = ts.ckks_vector_from(self.sk_ctx, enc_serialize_msg)
+        dec_vector = enc_vector.decrypt()
+        print("show: ",dec_vector)
+        response = tenseal_key_server_pb2.raw(raw_msg=dec_vector[0])
+        return response
+
+    def abs(self, request, context):
+        enc_serialize_msg = request.vector_msg
+        enc_vector = ts.ckks_vector_from(self.sk_ctx, enc_serialize_msg)
+        dec_vector = enc_vector.decrypt()
+        res = [abs(dec_vector[0])]
+        plain_vector = ts.plain_tensor(res)
+        enc_vector = ts.ckks_vector(self.sk_ctx, plain_vector)
+        sqrt_serialized_msg = enc_vector.serialize()
+        response = tenseal_key_server_pb2.vector(vector_msg=sqrt_serialized_msg)
+        print("abs: ",res)
+        return response
