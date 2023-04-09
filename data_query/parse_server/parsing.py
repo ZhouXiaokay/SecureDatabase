@@ -379,17 +379,17 @@ def get_total_var_median(request, db_stub_list, pk_ctx, key_stub):
             index_ += 1
         candidate_delta_list.insert(index, can)
         min__ = candidate_delta_list[index_]
-        sub_diff = min_ - min__
-        is_greater = key_stub.boolean_positive_proxi(tenseal_key_server_pb2.vector(vector_msg=sub_diff.serialize())).bool_msg
-        is_equal = key_stub.boolean_equal_proxi(tenseal_key_server_pb2.vector(vector_msg=min__.serialize())).bool_msg
-        key_stub.show_raw_vector(tenseal_key_server_pb2.vector(vector_msg=min__.serialize()))
-        key_stub.show_raw_vector(tenseal_key_server_pb2.vector(vector_msg=candidate_list[index_].serialize()))
-        key_stub.show_raw_vector(tenseal_key_server_pb2.vector(vector_msg=min_.serialize()))
-        key_stub.show_raw_vector(tenseal_key_server_pb2.vector(vector_msg=candidate_list[index].serialize()))
-        if is_greater:
+        show_all([min_,min__],key_stub)
+        abs_min_ = ts.ckks_vector_from(pk_ctx,key_stub.abs(tenseal_key_server_pb2.vector(vector_msg=min_.serialize())).vector_msg)
+        abs_min__ = ts.ckks_vector_from(pk_ctx,key_stub.abs(tenseal_key_server_pb2.vector(vector_msg=min__.serialize())).vector_msg)
+        sub_diff =  abs_min_ - abs_min__
+        is_greater = key_stub.boolean_positive_round_proxi(tenseal_key_server_pb2.vector(vector_msg=sub_diff.serialize())).bool_msg
+        is_equal = key_stub.boolean_equal_round_proxi(tenseal_key_server_pb2.vector(vector_msg=sub_diff.serialize())).bool_msg
+        show_all([abs_min_,abs_min__],key_stub)
+        if is_greater and not is_equal:
             print("is_greater")
             print("index:", index, "index_:", index_)
-            return candidate_list[index]
+            return candidate_list[index_]
         elif is_equal:
             print("is_equal")
             print("index:", index, "index_:", index_)
@@ -401,20 +401,46 @@ def get_total_var_median(request, db_stub_list, pk_ctx, key_stub):
             ordered_ = []
             if is_equal:
                 ordered_ = [one, two]
+                return (one + two) * 0.5
             elif is_greater:
                 ordered_ = [two, one]
             else:
                 ordered_ = [one, two]
 
-            delta = candidate_delta_list[index]
-            is_positive = key_stub.boolean_positive_proxi(tenseal_key_server_pb2.vector(vector_msg=delta.serialize())).bool_msg
+            mid_ = (one + two) * 2
+            le_list = []
+            g_list = []
+            for stub in db_stub_list:
+                query_request = tenseal_data_server_pb2.query_median_posi_msg(cid=request.cid, qid=request.qid,
+                                                                              table_name=request.table_name,
+                                                                              column_name=request.column_name,
+                                                                              median=mid_.serialize(),
+                                                                              avg=avg.serialize(), std=std.serialize())
+                response = stub.query_median_posi(query_request)
+                le = ts.ckks_vector_from(pk_ctx, response.less_e)
+                g = ts.ckks_vector_from(pk_ctx, response.greater)
+                le_list.append(le)
+                g_list.append(g)
+            le_sum = sum(le_list)
+            g_sum = sum(g_list)
+            lr_sub_diff = le_sum - g_sum
+
+            is_positive = key_stub.boolean_positive_proxi(tenseal_key_server_pb2.vector(vector_msg=lr_sub_diff.serialize())).bool_msg
             if is_positive:
                 return ordered_[0]
             else:
                 return ordered_[1]
+
+            # delta = candidate_delta_list[index]
+            # is_positive = key_stub.boolean_positive_proxi(tenseal_key_server_pb2.vector(vector_msg=delta.serialize())).bool_msg
+            # if is_positive:
+            #     return ordered_[0]
+            # else:
+            #     return ordered_[1]
         else:
+            print("is_less")
             print("index:", index, "index_:", index_)
-            return candidate_list[index_]
+            return candidate_list[index]
     else:
         two_list = []
         for candidate in candidate_list:

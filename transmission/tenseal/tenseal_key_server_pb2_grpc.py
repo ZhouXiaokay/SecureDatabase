@@ -45,6 +45,11 @@ class KeyServerServiceStub(object):
                 request_serializer=tenseal__key__server__pb2.vector.SerializeToString,
                 response_deserializer=tenseal__key__server__pb2.boolean_result.FromString,
                 )
+        self.boolean_equal_round_proxi = channel.unary_unary(
+                '/KeyServerService/boolean_equal_round_proxi',
+                request_serializer=tenseal__key__server__pb2.vector.SerializeToString,
+                response_deserializer=tenseal__key__server__pb2.boolean_result.FromString,
+                )
         self.sqrt_enc_vector = channel.unary_unary(
                 '/KeyServerService/sqrt_enc_vector',
                 request_serializer=tenseal__key__server__pb2.vector.SerializeToString,
@@ -77,6 +82,11 @@ class KeyServerServiceStub(object):
                 )
         self.boolean_positive_abs_proxi = channel.unary_unary(
                 '/KeyServerService/boolean_positive_abs_proxi',
+                request_serializer=tenseal__key__server__pb2.vector.SerializeToString,
+                response_deserializer=tenseal__key__server__pb2.boolean_result.FromString,
+                )
+        self.boolean_positive_round_proxi = channel.unary_unary(
+                '/KeyServerService/boolean_positive_round_proxi',
                 request_serializer=tenseal__key__server__pb2.vector.SerializeToString,
                 response_deserializer=tenseal__key__server__pb2.boolean_result.FromString,
                 )
@@ -135,6 +145,12 @@ class KeyServerServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def boolean_equal_round_proxi(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def sqrt_enc_vector(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -172,6 +188,12 @@ class KeyServerServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def boolean_positive_abs_proxi(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def boolean_positive_round_proxi(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -222,6 +244,11 @@ def add_KeyServerServiceServicer_to_server(servicer, server):
                     request_deserializer=tenseal__key__server__pb2.vector.FromString,
                     response_serializer=tenseal__key__server__pb2.boolean_result.SerializeToString,
             ),
+            'boolean_equal_round_proxi': grpc.unary_unary_rpc_method_handler(
+                    servicer.boolean_equal_round_proxi,
+                    request_deserializer=tenseal__key__server__pb2.vector.FromString,
+                    response_serializer=tenseal__key__server__pb2.boolean_result.SerializeToString,
+            ),
             'sqrt_enc_vector': grpc.unary_unary_rpc_method_handler(
                     servicer.sqrt_enc_vector,
                     request_deserializer=tenseal__key__server__pb2.vector.FromString,
@@ -254,6 +281,11 @@ def add_KeyServerServiceServicer_to_server(servicer, server):
             ),
             'boolean_positive_abs_proxi': grpc.unary_unary_rpc_method_handler(
                     servicer.boolean_positive_abs_proxi,
+                    request_deserializer=tenseal__key__server__pb2.vector.FromString,
+                    response_serializer=tenseal__key__server__pb2.boolean_result.SerializeToString,
+            ),
+            'boolean_positive_round_proxi': grpc.unary_unary_rpc_method_handler(
+                    servicer.boolean_positive_round_proxi,
                     request_deserializer=tenseal__key__server__pb2.vector.FromString,
                     response_serializer=tenseal__key__server__pb2.boolean_result.SerializeToString,
             ),
@@ -380,6 +412,23 @@ class KeyServerService(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
+    def boolean_equal_round_proxi(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/KeyServerService/boolean_equal_round_proxi',
+            tenseal__key__server__pb2.vector.SerializeToString,
+            tenseal__key__server__pb2.boolean_result.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
     def sqrt_enc_vector(request,
             target,
             options=(),
@@ -493,6 +542,23 @@ class KeyServerService(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/KeyServerService/boolean_positive_abs_proxi',
+            tenseal__key__server__pb2.vector.SerializeToString,
+            tenseal__key__server__pb2.boolean_result.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def boolean_positive_round_proxi(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/KeyServerService/boolean_positive_round_proxi',
             tenseal__key__server__pb2.vector.SerializeToString,
             tenseal__key__server__pb2.boolean_result.FromString,
             options, channel_credentials,

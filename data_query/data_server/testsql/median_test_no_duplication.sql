@@ -29,6 +29,9 @@ insert into table_1 values (8,8);
 use database_2;
 insert into table_1 values (1,9);
 insert into table_1 values (2,10);
+insert into table_1 values (12,10);
+insert into table_1 values (13,10);
+insert into table_1 values (14,10);
 insert into table_1 values (3,11);
 insert into table_1 values (4,12);
 

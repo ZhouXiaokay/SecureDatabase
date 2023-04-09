@@ -162,6 +162,19 @@ class KeyServer(tenseal_key_server_pb2_grpc.KeyServerServiceServicer):
 
         return response
 
+    def boolean_equal_round_proxi(self, request, context):
+        enc_serialize_msg = request.vector_msg
+        enc_vector = ts.ckks_vector_from(self.sk_ctx, enc_serialize_msg)
+        dec_vector = enc_vector.decrypt()
+        flag = False
+        print(dec_vector[0])
+        if round(abs(dec_vector[0])) == 0:
+            flag = True
+
+        response = tenseal_key_server_pb2.boolean_result(bool_msg=flag)
+
+        return response
+
     def is_sub_abs_1(self, request, context):
         enc_serialize_msg = request.vector_msg
         enc_vector = ts.ckks_vector_from(self.sk_ctx, enc_serialize_msg)
@@ -192,6 +205,18 @@ class KeyServer(tenseal_key_server_pb2_grpc.KeyServerServiceServicer):
         dec_vector = enc_vector.decrypt()
         flag = False
         if abs(round(dec_vector[0])) >= 0:
+            flag = True
+
+        response = tenseal_key_server_pb2.boolean_result(bool_msg=flag)
+
+        return response
+
+    def boolean_positive_round_proxi(self, request, context):
+        enc_serialize_msg = request.vector_msg
+        enc_vector = ts.ckks_vector_from(self.sk_ctx, enc_serialize_msg)
+        dec_vector = enc_vector.decrypt()
+        flag = False
+        if round(dec_vector[0]) >= 0:
             flag = True
 
         response = tenseal_key_server_pb2.boolean_result(bool_msg=flag)
