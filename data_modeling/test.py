@@ -6,6 +6,7 @@ import collections
 import numpy as np
 import copy
 import pickle
+
 # torch.manual_seed(1234)
 # x = torch.tensor([[2., 1.], [1., 1.], [1., 1.]])
 # y = torch.tensor([1, 0, 1]).to(torch.float)
@@ -87,13 +88,12 @@ x = [1, 2, 31, 2, 3]
 ctx_file = "../transmission/ts_ckks.config"
 context_bytes = open(ctx_file, "rb").read()
 ctx = ts.context_from(context_bytes)
+t_x = ts.ckks_vector(ctx, x)
 
+print(t_x.decrypt())
 
 # x_1 = [ts.ckks_vector(ctx, x).serialize(),ts.ckks_vector(ctx, x).serialize()]
 # bytes_msg = pickle.dumps(x_1)
 # msg = pickle.loads(bytes_msg)
 # print(msg)
-print(np.array(y_pred).tolist())
-x_2 = np.array(y_pred)
 
-print([ts.ckks_vector(ctx, x.tolist()) for x in x_2])
